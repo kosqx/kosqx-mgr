@@ -1,0 +1,22 @@
+Praca magisterska
+
+Uniwersytet:
+    Uniwersytet Mikołaja Kopernika w Toruniu
+Wydział:
+    Wydział Matematyki i Informatyki UMK
+
+Autor:
+    Krzysztof Kosyl
+
+Temat:
+    Przechowywanie danych hierarchicznych w relacyjnych bazach danych
+
+Opis:
+    Celem pracy jest przedstawienie różnych metod przechowywania danych
+    hierarchicznych w relacyjnych bazach danych. W porównaniu szczególna
+    uwaga zostanie zwrócona na wydajność oraz łatwość wykonywania
+    standardowych operacji. Zostaną podane metody zarówno uniwersalne,
+    dostępne dla każdej bazy danych, jak i specyficzne dla konkretnych SZBD.
+    Ważnym elementem pracy będzie ocena przydatności poszczególnych metod
+    do współpracy z O/RM, wraz z przedstawieniem przykładowych rozwiązań.
+    Uzupełnieniem pracy będą przykładowe implementacje zaprezentowanych metod.

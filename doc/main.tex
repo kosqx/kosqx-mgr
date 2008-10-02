@@ -1,24 +1,181 @@
+\documentclass[10pt,a4paper,draft]{book}
 %\documentclass[10pt,a4paper,draft]{book}
-\documentclass[sfheadings,a4paper,11pt]{mwbk}
+%\documentclass[sfheadings,a4paper,11pt]{mwbk}
 
 \usepackage{polski}
+\usepackage[utf8]{inputenc}
 
-\usepackage[utf8x]{inputenc}
-\usepackage{ucs}
+%\usepackage[utf8x]{inputenc}
+%\usepackage{ucs}
 
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{makeidx}
+
+
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+   \pdffalse
+\else
+   \pdfoutput=1
+   \pdftrue
+\fi
+
+\ifpdf
+   \usepackage[pdftex]{graphics}
+   \usepackage[pdftex]{color}
+   \pdfcompresslevel9
+   \pdfinfo
+   { /Title (Sztuka kochania)
+     /Author (Michalina Wisłocka)
+     /Subject ()
+     /Keywords ()
+   }
+\else
+   \usepackage{graphics}
+   \usepackage{color}
+\fi
 
 \author{Krzysztof Kosyl}
 \title{Przechowywanie danych hierarchicznych w relacyjnych bazach danych}
+
+\usepackage[pdftex,unicode=true,backref]{hyperref}
+\hypersetup{
+  colorlinks=true,
+  bookmarks=true
+}
+
+% \usepackage{indentfirst}
+% \sloppy
+% \clubpenalty = 10000
+% \widowpenalty = 10000
+% \frenchspacing
+
+% \usepackage[pdftex]{hyperref}
+% \hypersetup{
+%   colorlinks=true,
+%   bookmarks=true
+% }
+
+% \usepackage{amsmath}
+% \usepackage{amsfonts}
+% \usepackage{amssymb}
+% \usepackage{makeidx}
+
+
+% \usepackage[pdftex]{hyperref}
+% \usepackage[pdftex]{graphics}
+% \usepackage[pdftex]{color}
+
+
+
+
+% \usepackage[pdftex]{hyperref}
+% \hypersetup{
+%   colorlinks=true,
+%   bookmarks=true
+% }
+
+
+% \pdfcompresslevel9
+% \pdfinfo
+% { /Title (Sztuka kochania)
+%      /Author (Michalina Wis�ocka)
+%      /Subject ()
+%      /Keywords ()
+%    }
+
+% 
+% \hypersetup{
+%   pdfauthor = {Krzysztof Kosyl},
+%   pdftitle = {Przechowywanie danych hierarchicznych w relacyjnych bazach danych},
+%   pdfsubject = {Subject},
+%   pdfkeywords = {Keyword1, Keyword2},
+%   pdfcreator = {LaTeX with hyperref package},
+%   pdfproducer = {dvips + ps2pdf}
+% }
+
+
+
+
 
 \begin{document}
 \maketitle{}
 \tableofcontents{}
 
+\chapter{Wstęp}
+
 \include{tex/01_intro}
+
+
+\chapter{Wprowadzenie do tematu}
+
+\section{Co to jest drzewo}
+
+Tu: matematyczny opis drzew, ich podstawowe własności, omówienie terminów:
+\begin{itemize}
+ \item drzewo
+ \item las
+ \item rodzic
+ \item przodek
+ \item korzeń
+ \item dziecko
+ \item potomek
+ \item głębokość, mini
+\end{itemize}
+
+
+
+\section{Podstawowe algorytmy dla drzew}
+\subsection{Wyszukiwanie w głąb}
+\subsection{Wyszukiwanie w szerz}
+
+
+\section{Różnice pomiędzy drzewami w algorytmice a w bazach danych}
+
+Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach danych chodzi o strukturę a nie o optywamizację czasu dostępu.
+
+\section{Tematy porównania}
+\subsection{Operacje}
+\begin{description}
+ \item[pobranie rodzica] polega na pobraniu rodzica bieżącego elementu
+ \item[pobranie przodków] polega na pobraniu rodzica, rodzica rodzica aż do korzenia elemętów
+ \end{description}
+
+\section{Dostępność}
+\subsection{Mapowanie relacyjno-obiektowe}
+\subsection{W zależności od bazy danych}
+
+\chapter{Metody przechowywania danych}
+
+\section{Metoda stałej wysokości drzewa}
+
+\section{Metoda klucza obcego do rodzica}
+
+\section{Metoda zagnieżdzonych zbiorów}
+
+\section{Metoda łączona}
+
+\section{Metoda pełnych ścieżek}
+
+\section{Metoda drzew prefiksowych (trie)}
+
+\section{Metody specyficzne dla bazy danych}
+\subsection{PostgreSQL \texttt{ltree}}
+\subsection{Oracle \texttt{connect by}}
+\subsection{DB2 \texttt{with}}
+
+\chapter{Porównanie wydajności}
+
+\section{Metodyka testów}
+
+Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny. Program który zajmuje się tym zadaniem został dołączony do tej pracy.
+
+\chapter{Zastosowania i przykłady}
+
+\section{LDAP}
+\section{DNS?}
+\section{XML}
+\subsection{}
+
+
 \end{document}
 
 

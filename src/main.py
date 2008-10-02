@@ -88,6 +88,47 @@ class SimpleTree(Tree):
 
 
 
+class AscTree(Tree):
+    def __init__(self, db):
+        self.db = db
+
+    def create_table(self):
+        if self.db.run("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name='asc_data'")[0]:
+            self.db.ddl("DROP TABLE asc_data")
+        if self.db.run("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name='asc'")[0]:
+            self.db.ddl("DROP TABLE asc_tree")
+
+        self.db.ddl("CREATE TABLE asc(id serial PRIMARY KEY, name varchar(50))")
+        self.db.ddl("CREATE TABLE asc(id serial PRIMARY KEY, top int, bottom int, distance int)")
+
+    def insert(self, parent, name):
+        self.db.execute('INSERT INTO asc VALUES (DEFAULT, %s, %s)', [parent, name])
+
+    def get_roots(self, id):
+        return self.db.run("SELECT * FROM asc WHERE parent IS NULL")
+
+    def get_parent(self, id):
+        return self.db.run("SELECT * FROM asc WHERE id = %s", [id])
+
+    def get_ancestors(self, id):
+        result = []
+        i = id
+        while i is not None:
+            a = self.db.run("SELECT * FROM asc WHERE id = %s", [i])
+            print a
+
+            result.append(a[0])
+            i = a[0][1]
+        return result
+
+    def get_childs(self, id):
+        return self.db.run("SELECT * FROM asc WHERE parent = %s", [id])
+
+
+    def get_descendants(self, id):
+        pass
+
+
 
 class PostgresDB:
     def __init__(self):
