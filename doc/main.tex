@@ -20,12 +20,6 @@
    \usepackage[pdftex]{graphics}
    \usepackage[pdftex]{color}
    \pdfcompresslevel9
-%    \pdfinfo
-%    { /Title (Przechowywanie danych hierarchicznych w relacyjnych bazach danych)
-%      /Author (Krzysztof Kosyl)
-%      /Subject ()
-%      /Keywords ()
-%    }
 \else
    \usepackage{graphics}
    \usepackage{color}
@@ -47,7 +41,7 @@
 \author{Krzysztof Kosyl}
 \title{Przechowywanie danych hierarchicznych w relacyjnych bazach danych}
 
-
+\makeindex
 
 \usepackage[unicode=true,pdftex,backref]{hyperref}
 \hypersetup{
@@ -80,32 +74,15 @@
 
 \begin{document}
 
-\begin{titlepage}
-\begin{center}
- Uniwersytet Mikołaja Kopernika -- Wydział Matematyki i Informatyki
-\end{center}
-\vfill
-\begin{center}
- \large{Tytuł}
-\end{center}
-
-\vfill
-\begin{center}
- Toruń 2008
-\end{center}
-\end{titlepage}
-
-% \begin{abstract}
-%  O czym jest ten dokument.
-% \end{abstract} 
-
-\maketitle{}
+\include{tex/00_titlepage}
+\include{tex/00_abstract}
 
 \tableofcontents{}
 
-\chapter{Wstęp}
+\chapter*{Wstęp}
+\addcontentsline{toc}{chapter}{Wstęp}
 
-\include{tex/01_intro}
+\include{tex/10_intro}
 
 
 \chapter{Wprowadzenie do tematu}
@@ -114,14 +91,14 @@
 
 Tu: matematyczny opis drzew, ich podstawowe własności, omówienie terminów:
 \begin{itemize}
- \item drzewo
- \item las
- \item rodzic
- \item przodek
- \item korzeń
- \item dziecko
- \item potomek
- \item głębokość, mini
+	\item drzewo
+	\item las
+	\item rodzic
+	\item przodek
+	\item korzeń
+	\item dziecko
+	\item potomek
+	\item głębokość, mini
 \end{itemize}
 
 
@@ -138,9 +115,9 @@ Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach d
 \section{Tematy porównania}
 \subsection{Operacje}
 \begin{description}
- \item[pobranie rodzica] polega na pobraniu rodzica bieżącego elementu
- \item[pobranie przodków] polega na pobraniu rodzica, rodzica rodzica aż do korzenia elemętów
- \end{description}
+	\item[pobranie rodzica] polega na pobraniu rodzica bieżącego elementu
+	\item[pobranie przodków] polega na pobraniu rodzica, rodzica rodzica aż do korzenia elementów
+\end{description}
 
 \section{Dostępność}
 \subsection{Mapowanie relacyjno-obiektowe}
@@ -239,10 +216,15 @@ Parametry generatora danych:
 \begin{itemize}
  \item minimalny poziom zagłębienia
  \item maksymalny poziom zagłębienia
- \item rozklad prawdopodobieństwa wygenerowania dzieci
+ \item rozklad prawdopodobieństwa wygenerowania dzieci (\cite{asdf}, \cite[Ala]{asdf})
 \end{itemize}
 
 
+\include{tex/90_bibliography}
 
+
+
+\listoffigures
+\listoftables
 
 \end{document}

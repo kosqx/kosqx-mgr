@@ -1,8 +1,12 @@
 **.aux
+**.idx
+**.lof
+**.lot
 **.log
 **.pdf
 **.toc
 **.out
+**.brf
 **.tex~
 **.py~
 **.backup
