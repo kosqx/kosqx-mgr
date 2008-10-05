@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper,draft]{book}
+\documentclass[10pt,a4paper,oneside]{book}
 %\documentclass[10pt,a4paper,draft]{book}
 %\documentclass[sfheadings,a4paper,11pt]{mwbk}
 
@@ -7,8 +7,6 @@
 
 %\usepackage[utf8x]{inputenc}
 %\usepackage{ucs}
-
-
 
 \newif\ifpdf
 \ifx\pdfoutput\undefined
@@ -22,82 +20,87 @@
    \usepackage[pdftex]{graphics}
    \usepackage[pdftex]{color}
    \pdfcompresslevel9
-   \pdfinfo
-   { /Title (Sztuka kochania)
-     /Author (Michalina Wisłocka)
-     /Subject ()
-     /Keywords ()
-   }
+%    \pdfinfo
+%    { /Title (Przechowywanie danych hierarchicznych w relacyjnych bazach danych)
+%      /Author (Krzysztof Kosyl)
+%      /Subject ()
+%      /Keywords ()
+%    }
 \else
    \usepackage{graphics}
    \usepackage{color}
 \fi
 
+\usepackage{indentfirst}
+\sloppy
+\clubpenalty = 10000
+\widowpenalty = 10000
+\frenchspacing
+
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{makeidx}
+
+
 \author{Krzysztof Kosyl}
 \title{Przechowywanie danych hierarchicznych w relacyjnych bazach danych}
 
-\usepackage[pdftex,unicode=true,backref]{hyperref}
+
+
+\usepackage[unicode=true,pdftex,backref]{hyperref}
 \hypersetup{
+%glowne
+%kolory
   colorlinks=true,
-  bookmarks=true
+  linkcolor=blue,
+  %anchorcolor=black,
+  %citecolor=green,
+  %filecolor=magenta,
+  %menucolor=red,
+  %pagecolor=red,
+  %urlcolor=cyan,
+%zakladki
+  bookmarks=true,
+  bookmarksopen=true,
+  bookmarksnumbered=true,
+%metadane
+  pdfauthor = {Krzysztof Kosyl},
+  pdftitle = {Przechowywanie danych hierarchicznych w relacyjnych bazach danych},
+  pdfsubject = {Trees in relational DB},
+  pdfkeywords = {tree, db},
+  %pdfcreator = {LaTeX with hyperref package},
+  %pdfproducer = {dvips + ps2pdf}
 }
-
-% \usepackage{indentfirst}
-% \sloppy
-% \clubpenalty = 10000
-% \widowpenalty = 10000
-% \frenchspacing
-
-% \usepackage[pdftex]{hyperref}
-% \hypersetup{
-%   colorlinks=true,
-%   bookmarks=true
-% }
-
-% \usepackage{amsmath}
-% \usepackage{amsfonts}
-% \usepackage{amssymb}
-% \usepackage{makeidx}
-
-
-% \usepackage[pdftex]{hyperref}
-% \usepackage[pdftex]{graphics}
-% \usepackage[pdftex]{color}
-
-
-
-
-% \usepackage[pdftex]{hyperref}
-% \hypersetup{
-%   colorlinks=true,
-%   bookmarks=true
-% }
-
-
-% \pdfcompresslevel9
-% \pdfinfo
-% { /Title (Sztuka kochania)
-%      /Author (Michalina Wis�ocka)
-%      /Subject ()
-%      /Keywords ()
-%    }
-
-% 
-% \hypersetup{
-%   pdfauthor = {Krzysztof Kosyl},
-%   pdftitle = {Przechowywanie danych hierarchicznych w relacyjnych bazach danych},
-%   pdfsubject = {Subject},
-%   pdfkeywords = {Keyword1, Keyword2},
-%   pdfcreator = {LaTeX with hyperref package},
-%   pdfproducer = {dvips + ps2pdf}
-% }
 
 
 
 
 
 \begin{document}
+
+\begin{titlepage}
+\begin{center}
+ Uniwersytet Mikołaja Kopernika -- Wydział Matematyki i Informatyki
+\end{center}
+\vfill
+\begin{center}
+ \large{Tytuł}
+\end{center}
+
+\vfill
+\begin{center}
+ Toruń 2008
+\end{center}
+\end{titlepage}
+
+% \begin{abstract}
+%  O czym jest ten dokument.
+% \end{abstract} 
+
 \maketitle{}
+
 \tableofcontents{}
 
 \chapter{Wstęp}
@@ -161,21 +164,85 @@ Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach d
 \subsection{PostgreSQL \texttt{ltree}}
 \subsection{Oracle \texttt{connect by}}
 \subsection{DB2 \texttt{with}}
+Opis standardowej metody with która pojawiła się w standardzie SQL??. Porównanie z connect by
 
 \chapter{Porównanie wydajności}
+\section{Po czym porównywać?}
+\subsection{Metodzie}
+\subsection{Bazie danych}
 
-\section{Metodyka testów}
+
 
 Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny. Program który zajmuje się tym zadaniem został dołączony do tej pracy.
 
+\chapter{Możliwości korzystania z danych hierarchicznych w O/RM}
+\section{Active Record}
+\section{Hibernate}
+\subsection{HQL}
 \chapter{Zastosowania i przykłady}
 
 \section{LDAP}
 \section{DNS?}
 \section{XML}
-\subsection{}
+\subsection{Różnice pomiędzy XML a drzewami}
+\begin{itemize}
+ \item kolejność jest istotna
+ \item język XPath i ścieżki w dokumencie
+\end{itemize}
+
+\appendix
+
+\chapter{Opis Python DB API}
+
+\chapter{Załączone programy}
+
+\chapter{Metodyka testów}
+\section{Wybrane SZDB}
+\begin{itemize}
+ \item PostgreSQL
+ \item MySQL
+ \item SQLite
+ \item Firebirld?
+ \item Oracle
+ \item DB2
+ \item MS SQL Server
+\end{itemize}
+
+
+Wybrane zostały SZDB spełniające następujące cechy:
+\begin{itemize}
+ \item popularne
+ \item darmowe do użytku domowego 
+\end{itemize}
+
+
+Dla porównania innych rozwiązań zostały dobrane następujące bazy danych:
+
+\begin{itemize}
+ \item db4o
+ \item berkeley DB
+ \item ??
+\end{itemize}
+
+\section{Dane testowe}
+
+Aby przetestować przedstawione rozwiązania wykożystane zostały następujące zestawy danych:
+\begin{itemize}
+ \item mały test 100 dwupoziomowo
+ \item test mocnego zagłębienia
+ \item test małego zagłebienia
+ \item test 6 pozimów po 3 zagłębienia 
+\end{itemize}
+
+
+Parametry generatora danych:
+\begin{itemize}
+ \item minimalny poziom zagłębienia
+ \item maksymalny poziom zagłębienia
+ \item rozklad prawdopodobieństwa wygenerowania dzieci
+\end{itemize}
+
+
 
 
 \end{document}
-
-

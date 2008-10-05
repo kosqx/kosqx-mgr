@@ -2,6 +2,7 @@
 **.log
 **.pdf
 **.toc
+**.out
 **.tex~
 **.py~
 **.backup
