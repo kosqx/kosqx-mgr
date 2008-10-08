@@ -1,5 +1,7 @@
 **.aux
 **.idx
+**.ind
+**.ilg
 **.lof
 **.lot
 **.log
@@ -11,3 +13,5 @@
 **.py~
 **.backup
 **~
+**.png
+
