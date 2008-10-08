@@ -5,16 +5,22 @@
 \usepackage{polski}
 \usepackage[utf8]{inputenc}
 
+\usepackage{ifpdf}
+
+% \setcounter{tocdepth}{1}
+\usepackage{geometry}
+\geometry{verbose,a4paper,tmargin=2.5cm,bmargin=2.5cm,lmargin=3.5cm,rmargin=2.5cm}
+
 %\usepackage[utf8x]{inputenc}
 %\usepackage{ucs}
 
-\newif\ifpdf
-\ifx\pdfoutput\undefined
-   \pdffalse
-\else
-   \pdfoutput=1
-   \pdftrue
-\fi
+% \newif\ifpdf
+% \ifx\pdfoutput\undefined
+%    \pdffalse
+% \else
+%    \pdfoutput=1
+%    \pdftrue
+% \fi
 
 \ifpdf
    \usepackage[pdftex]{graphics}
@@ -31,6 +37,7 @@
 \widowpenalty = 10000
 \frenchspacing
 
+\linespread{1.3}
 
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -43,9 +50,10 @@
 
 \makeindex
 
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
 \usepackage[unicode=true,pdftex,backref]{hyperref}
 \hypersetup{
-%glowne
 %kolory
   colorlinks=true,
   linkcolor=blue,
@@ -64,8 +72,6 @@
   pdftitle = {Przechowywanie danych hierarchicznych w relacyjnych bazach danych},
   pdfsubject = {Trees in relational DB},
   pdfkeywords = {tree, db},
-  %pdfcreator = {LaTeX with hyperref package},
-  %pdfproducer = {dvips + ps2pdf}
 }
 
 
@@ -74,15 +80,15 @@
 
 \begin{document}
 
-\include{tex/00_titlepage}
-\include{tex/00_abstract}
+\input{tex/00_titlepage}
+\input{tex/00_abstract}
 
 \tableofcontents{}
 
 \chapter*{Wstęp}
 \addcontentsline{toc}{chapter}{Wstęp}
 
-\include{tex/10_intro}
+\input{tex/10_intro}
 
 
 \chapter{Wprowadzenie do tematu}
@@ -112,12 +118,24 @@ Tu: matematyczny opis drzew, ich podstawowe własności, omówienie terminów:
 
 Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach danych chodzi o strukturę a nie o optywamizację czasu dostępu.
 
-\section{Tematy porównania}
+\section{Tematy porównania - operacje}
+
+
+
 \subsection{Operacje}
-\begin{description}
-	\item[pobranie rodzica] polega na pobraniu rodzica bieżącego elementu
-	\item[pobranie przodków] polega na pobraniu rodzica, rodzica rodzica aż do korzenia elementów
-\end{description}
+\subsection{Pobranie korzeni}
+\subsection{Pobranie przodków}
+\subsection{Pobranie rodzica}
+\subsection{Pobranie dzieci}
+\subsection{Pobranie potomków}
+\subsection{Pobranie (najmłodszego) wspólnego przodka}
+
+
+
+% \begin{description}
+% 	\item[pobranie rodzica] polega na pobraniu rodzica bieżącego elementu
+% 	\item[pobranie przodków] polega na pobraniu rodzica, rodzica rodzica aż do korzenia elementów
+% \end{description}
 
 \section{Dostępność}
 \subsection{Mapowanie relacyjno-obiektowe}
@@ -126,6 +144,8 @@ Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach d
 \chapter{Metody przechowywania danych}
 
 \section{Metoda stałej wysokości drzewa}
+
+Przenieść do sekcji o metodach, o których nie będziemy mówili. Takich jak również, Dział -- pracownik.
 
 \section{Metoda klucza obcego do rodzica}
 
@@ -156,6 +176,9 @@ Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny.
 \section{Active Record}
 \section{Hibernate}
 \subsection{HQL}
+
+Ten akapit opisuje HQL\index{HQL}.
+
 \chapter{Zastosowania i przykłady}
 
 \section{LDAP}
@@ -176,8 +199,8 @@ Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny.
 \chapter{Metodyka testów}
 \section{Wybrane SZDB}
 \begin{itemize}
- \item PostgreSQL
- \item MySQL
+ \item PostgreSQL\index{PostgreSQL}
+ \item MySQL\index{MySQL}
  \item SQLite
  \item Firebirld?
  \item Oracle
@@ -220,11 +243,17 @@ Parametry generatora danych:
 \end{itemize}
 
 
-\include{tex/90_bibliography}
+\input{tex/90_bibliography}
 
 
 
-\listoffigures
-\listoftables
+%\listoffigures
+%\listoftables
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\indexname}
+\printindex
+
 
 \end{document}
