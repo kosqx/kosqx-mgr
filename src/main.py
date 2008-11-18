@@ -134,10 +134,59 @@ class FullTree(Tree):
     def get_descendants(self, id):
         pass
 
+class RowObject(object):
+    def __init__(self, data, names):
+        self._data = data
+        self._names = names
+    def __getitem__(self, key):
+        if key in self:
+            return dict.__getitem__(self, key)
+        else:
+            return self.default
+
+class Database(object):
+    def _get_sql(self, sql):
+        if isinstance(sql, basestring):
+            return sql
+        else:
+            for i in self._short_db_names:
+                if i in sql:
+                    return sql[i]
+            return sql['*']
+
+    def _build_names(self):
+        result = {}
+        self._cur.description
+
+    def execute(self, sql, data=None):
+        asql = self._get_sql(sql)
+        if data is not None:
+            self._cur.execute(asql, data)
+        else:
+            self._cur.execute(asql)
+        return self
+
+    def executemany(self, sql, data):
+        self._cur.executemany(self._get_sql(sql), data)
+
+    def commit(self):
+        self._db.commit()
+
+    def list(self):
+        result = []
+        try:
+            if self._cur.rowcount >= 0
+                for i in self.cur.fetchall():
+                    result.append(i)
+        except:
+            pass
+        return result
 
 
 class PostgresDB:
     def __init__(self):
+        Database.__init__(self)
+        self._short_db_names = ['pg', 'psql', 'postgres', 'postgresql']
         self.db = psycopg2.connect(DSN)
         self.cur = self.db.cursor()
 
@@ -158,14 +207,6 @@ class PostgresDB:
         self.cur.execute(sql)
         self.db.commit()
 
-    def execute(self, sql, data):
-        self.cur.execute(sql, data)
-
-    def executemany(self, sql, data):
-        self.cur.executemany(sql, data)
-
-    def commit(self):
-        self.db.commit()
 
     def drop_if_exists(self, name, kind='table'):
         kind = kind.lower()
