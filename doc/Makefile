@@ -16,5 +16,5 @@ final: clean full
 	@echo "Done"
 
 clean:
-	rm -f main.aux main.ind main.ilg main.brf main.log main.pdf main.tex~ main.tex.backup main.toc main.out Makefile~ tex/*.aux tex/*.tex~
+	rm -f main.{aux,ind,idx,ilg,brf,log,lof,lot,pdf,tex~,tex.backup,toc,out} Makefile~ tex/*.aux tex/*.tex~
 
