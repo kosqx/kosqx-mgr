@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-DSN = "dbname='test_tree' user='kosqx' host='localhost' password='kos144'"
+#DSN = "dbname='test_tree' user='kosqx' host='localhost' password='kos144'"
 
-import psycopg2
+#import psycopg2
+
+import pada
 
 class Tree:
+    def __init__(self, db):
+        self.db = db
+    
     def get_roots(self):
-        pass
-
-    def get_roots_count(self):
         pass
 
     def get_parent(self, id):
@@ -18,20 +20,20 @@ class Tree:
     def get_ancestors(self, id):
         pass
 
-    def get_ancestors_count(self, id):
-        pass
-
-    def get_childs(self, id):
-        pass
-
-    def get_childs_count(self, id):
+    def get_children(self, id):
         pass
 
     def get_descendants(self, id):
         pass
 
+    def get_roots_count(self):
+        return len(self.get_roots())
+    def get_ancestors_count(self, id):
+        return len(self.get_ancestors_count(id))
+    def get_children_count(self, id):
+        return len(self.get_children_count(id))
     def get_descendants_count(self, id):
-        pass
+        return len(self.get_descendants_count(id))
 
 
 
@@ -50,10 +52,8 @@ class Tree:
     def move(self, id, parent_to):
         pass
 
-class SimpleTree(Tree):
-    def __init__(self, db):
-        self.db = db
 
+class SimpleTree(Tree):
     def create_table(self):
         if self.db.run("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name='simple'")[0]:
             self.db.ddl("DROP TABLE simple")
@@ -79,7 +79,7 @@ class SimpleTree(Tree):
             i = a[0][1]
         return result
 
-    def get_childs(self, id):
+    def get_children(self, id):
         return self.db.run("SELECT * FROM simple WHERE parent = %s", [id])
 
 
@@ -89,16 +89,12 @@ class SimpleTree(Tree):
 
 
 class FullTree(Tree):
-    def __init__(self, db):
-        self.db = db
-
     def create_table(self):
-        #if self.db.run("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name='full_data'")[0]:
-            #self.db.ddl("DROP TABLE full_data")
-        #if self.db.run("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name='full_tree'")[0]:
-            #self.db.ddl("DROP TABLE full_tree")
-        self.db.drop_if_exists('full_data')
-        self.db.drop_if_exists('full_tree')
+        tables = self.db.schema_list('table')
+        if 'full_data' in tables:
+            self.db.execute('DROP TABLE full_data')
+        if 'full_tree' in tables:
+            self.db.execute('DROP TABLE full_tree')
 
         self.db.ddl("CREATE TABLE full_data(id serial PRIMARY KEY, name varchar(50))")
         self.db.ddl("CREATE TABLE full_tree(id serial PRIMARY KEY, top int, bottom int, distance int)")
@@ -110,12 +106,12 @@ class FullTree(Tree):
         if parent is not None:
 
             for row in self.db.run('SELECT top, distance FROM full_tree WHERE bottom = %s', [parent]):
-                print '  row', row
-                self.db.run('INSERT INTO full_tree VALUES (DEFAULT, %s, %s, %s)', [row[0], pid, row[1] + 1])
-            self.db.run('INSERT INTO full_tree VALUES (DEFAULT, %s, %s, %s)', [pid, pid, 0])
+                #print '  row', row
+                self.db.execute('INSERT INTO full_tree VALUES (DEFAULT, %s, %s, %s)', [row[0], pid, row[1] + 1])
+            self.db.execute('INSERT INTO full_tree VALUES (DEFAULT, %s, %s, %s)', [pid, pid, 0])
         else:
-            self.db.run('INSERT INTO full_tree VALUES (DEFAULT, %s, %s, %s)', [None, pid, 0])
-            self.db.run('INSERT INTO full_tree VALUES (DEFAULT, %s, %s, %s)', [pid, pid, 0])
+            self.db.execute('INSERT INTO full_tree VALUES (DEFAULT, %s, %s, %s)', [None, pid, 0])
+            self.db.execute('INSERT INTO full_tree VALUES (DEFAULT, %s, %s, %s)', [pid, pid, 0])
 
 
     def get_roots(self):
@@ -127,102 +123,70 @@ class FullTree(Tree):
     def get_ancestors(self, id):
         return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.top) WHERE t.distance > 0 AND t.bottom = %s ORDER BY t.distance ASC", [id])
 
-    def get_childs(self, id):
+    def get_children(self, id):
         return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom) WHERE t.top = %s AND t.distance = 1", [id])
-
 
     def get_descendants(self, id):
         pass
 
-class RowObject(object):
-    def __init__(self, data, names):
-        self._data = data
-        self._names = names
-    def __getitem__(self, key):
-        if key in self:
-            return dict.__getitem__(self, key)
+class NestedSets(Tree):
+    def create_table(self):
+        tables = self.db.schema_list('table')
+        if 'sets_data' in tables:
+            self.db.execute('DROP TABLE sets_data')
+
+        self.db.ddl("CREATE TABLE sets_data(id serial PRIMARY KEY, lft int, rgt int, name varchar(50))")
+        
+    def insert(self, parent, name):
+        if parent is None:
+            right = self.db.run('SELECT max(rgt) as max_rgt FROM sets_data')[0]['max_rgt']
+            right = right or 0
+            pid = self.db.run('INSERT INTO sets_data VALUES (DEFAULT, %s, %s, %s) RETURNING id', [right + 1, right + 2, name])[0][0]
         else:
-            return self.default
-
-class Database(object):
-    def _get_sql(self, sql):
-        if isinstance(sql, basestring):
-            return sql
-        else:
-            for i in self._short_db_names:
-                if i in sql:
-                    return sql[i]
-            return sql['*']
-
-    def _build_names(self):
-        result = {}
-        self._cur.description
-
-    def execute(self, sql, data=None):
-        asql = self._get_sql(sql)
-        if data is not None:
-            self._cur.execute(asql, data)
-        else:
-            self._cur.execute(asql)
-        return self
-
-    def executemany(self, sql, data):
-        self._cur.executemany(self._get_sql(sql), data)
-
-    def commit(self):
-        self._db.commit()
-
-    def list(self):
-        result = []
-        try:
-            if self._cur.rowcount >= 0
-                for i in self.cur.fetchall():
-                    result.append(i)
-        except:
-            pass
-        return result
-
-
-class PostgresDB:
-    def __init__(self):
-        Database.__init__(self)
-        self._short_db_names = ['pg', 'psql', 'postgres', 'postgresql']
-        self.db = psycopg2.connect(DSN)
-        self.cur = self.db.cursor()
-
-    def run(self, sql, data=None):
-        result = []
-        try:
-            if data is not None:
-                self.cur.execute(sql, data)
-            else:
-                self.cur.execute(sql)
-            for i in self.cur.fetchall():
-                result.append(i)
-        except psycopg2.ProgrammingError, e:
-            print 'ProgrammingError', e
-        return result
-
-    def ddl(self, sql):
-        self.cur.execute(sql)
-        self.db.commit()
-
-
-    def drop_if_exists(self, name, kind='table'):
-        kind = kind.lower()
-        print 'drop', kind
-        if kind in ['table']:
-            print 'aaa'
-            r = self.run("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = %s ", [name])
-            print r
-            if len(r) > 0:
-                self.run('DROP TABLE "%s"' % name)
-                self.commit()
+            right = self.db.run('SELECT rgt FROM sets_data WHERE id = %s', [parent])[0]['rgt']
+            #self.db.execute('UPDATE sets_data SET lft = lft + 2, rgt = rgt + 2 WHERE rgt > %s', [right])
+            #self.db.execute('UPDATE sets_data SET rgt = rgt + 2 WHERE rgt = %s', [right])
+            self.db.execute('UPDATE sets_data SET lft = lft + 2 WHERE lft >  %s', [right])
+            self.db.execute('UPDATE sets_data SET rgt = rgt + 2 WHERE rgt >= %s', [right])
+            self.db.execute('INSERT INTO sets_data VALUES (DEFAULT, %s, %s, %s)', [right, right + 1, name])
+            
+    def get_ancestors(self, id):
+        return self.db.run("""
+            SELECT d.id, d.name 
+            FROM sets_data d 
+            WHERE 
+                d.lft < (SELECT d.lft FROM sets_data d WHERE d.id = %s) 
+                AND 
+                (SELECT d.rgt FROM sets_data d WHERE d.id = %s) < d.rgt 
+            ORDER BY (d.rgt - d.lft) ASC""", [id, id])
+            
+    def get_descendants(self, id):
+        return self.db.run("""
+            SELECT d.id, d.name 
+            FROM sets_data d 
+            WHERE 
+                d.lft > (SELECT d.lft FROM sets_data d WHERE d.id = %s) 
+                AND 
+                (SELECT d.rgt FROM sets_data d WHERE d.id = %s) > d.rgt 
+            ORDER BY (d.rgt - d.lft) ASC""", [id, id])
+            
+    def get_roots(self):
+        left = 0
+        roots = []
+        while True:
+            data = self.db.run("""SELECT d.id, d.name, d.rgt as rgt FROM sets_data d WHERE d.lft = %s""", [left + 1])
+            if len(data) == 0:
+                break
+            # TODO: co zrobić z niepotrzebnym left?
+            roots.append(data[0])
+            left = data[0]['rgt']
+        return roots
 
 def main():
-    db = PostgresDB()
+    db = pada.connect(dsn="dialect='postgresql' dbname='test_tree' host='localhost' user='kosqx' password='kos144'")
     #tree = SimpleTree(db)
-    tree = FullTree(db)
+    #tree = FullTree(db)
+    tree = NestedSets(db)
     tree.create_table()
     for i in xrange(1,1000):
         parent = i / 10
@@ -231,10 +195,11 @@ def main():
         tree.insert(parent, "%.4d" % i)
     db.commit()
 
-    print 'roots: ', tree.get_roots()
-    print 'parent:', tree.get_parent(100)
-    print 'childs:', tree.get_childs(10)
-    print 'ancest:', tree.get_ancestors(777)
+    print 'roots:   ', tree.get_roots()
+    print 'parent:  ', tree.get_parent(100)
+    print 'children:', tree.get_children(10)
+    print 'ancest:  ', tree.get_ancestors(777)
+    print 'ancest:  ', tree.get_descendants(8)
 
     #print tree.get_ancestors(100)
 
