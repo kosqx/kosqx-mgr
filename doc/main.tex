@@ -38,7 +38,10 @@
 \widowpenalty = 10000
 \frenchspacing
 
-\linespread{1.3}
+% dla łatwiejszego sprawdzania
+% \linespread{1.3}
+% \linespread{1.0}
+\setcounter{tocdepth}{1}
 
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -88,88 +91,50 @@
 
 \tableofcontents{}
 
-\chapter*{Wstęp}
-\addcontentsline{toc}{chapter}{Wstęp}
-
+% \chapter*{Wstęp}
 \input{tex/10_intro}
 
 
-\chapter{Wprowadzenie do tematu}
+% \chapter{Wprowadzenie do tematu}
+\input{tex/11_theory}
 
-\section{Co to jest drzewo}
+\chapter{Podstawowe metody przechowywania danych}
 
-Tu: matematyczny opis drzew, ich podstawowe własności, omówienie terminów:
-\begin{itemize}
-	\item drzewo
-	\item las
-	\item rodzic
-	\item przodek
-	\item korzeń
-	\item dziecko
-	\item potomek
-	\item głębokość, mini
-\end{itemize}
+	% \section{Metoda stałej wysokości drzewa}
+	% Przenieść do sekcji o metodach, o których nie będziemy mówili. Takich jak również, Dział -- pracownik.
+	
+	% \section{Metoda klucza obcego do rodzica}
+	\input{tex/21_adjacency}
+	
+	% \section{Metoda zagnieżdzonych zbiorów}
+	\input{tex/22_nested}
+	
+	% \section{Metoda pełnych ścieżek}
+	\input{tex/23_full}
+	
+	% \section{Metoda drzew prefiksowych (trie)}
+	\input{tex/24_trie}
+	% zwane też lineage
 
-\section{Podział drzew}
-\subsection{Jednorodność}
-Warto by dodać o drzewach jednorodnych oraz niejednorodnych.
-
-\subsection{Kolejność}
-
-
-\section{Podstawowe algorytmy dla drzew}
-\subsection{Wyszukiwanie w głąb}
-\subsection{Wyszukiwanie w szerz}
+	% drzewa binarne
+	% http://commons.wikimedia.org/wiki/File:Binary_tree_in_array.svg
+	% http://en.wikipedia.org/wiki/K-ary_tree
 
 
-\section{Różnice pomiędzy drzewami w algorytmice a w bazach danych}
-
-Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach danych chodzi o strukturę a nie o optywamizację czasu dostępu.
-
-\section{Tematy porównania - operacje}
+\chapter{Modifikacje metod przechowywania danych}
+	% \section{Metoda łączona}
 
 
+\chapter{Metody specyficzne dla bazy danych}
+	% \section{PostgreSQL \texttt{ltree}}
+	\input{tex/41_postgresql_ltree}
+	
+	% \section{Oracle \texttt{connect by}}
+	\input{tex/42_oracle_connect_by}
 
-\subsection{Operacje}
-\subsection{Pobranie korzeni}
-\subsection{Pobranie przodków}
-\subsection{Pobranie rodzica}
-\subsection{Pobranie dzieci}
-\subsection{Pobranie potomków}
-\subsection{Pobranie (najmłodszego) wspólnego przodka}
-
-
-
-% \begin{description}
-% 	\item[pobranie rodzica] polega na pobraniu rodzica bieżącego elementu
-% 	\item[pobranie przodków] polega na pobraniu rodzica, rodzica rodzica aż do korzenia elementów
-% \end{description}
-
-\section{Dostępność}
-\subsection{Mapowanie relacyjno-obiektowe}
-\subsection{W zależności od bazy danych}
-
-\chapter{Metody przechowywania danych}
-
-\section{Metoda stałej wysokości drzewa}
-
-Przenieść do sekcji o metodach, o których nie będziemy mówili. Takich jak również, Dział -- pracownik.
-
-\section{Metoda klucza obcego do rodzica}
-
-\section{Metoda zagnieżdzonych zbiorów}
-
-\section{Metoda łączona}
-
-\section{Metoda pełnych ścieżek}
-
-\section{Metoda drzew prefiksowych (trie)}
-
-\section{Metody specyficzne dla bazy danych}
-\subsection{PostgreSQL \texttt{ltree}}
-\subsection{Oracle \texttt{connect by}}
-\subsection{DB2 \texttt{with}}
-Opis standardowej metody with która pojawiła się w standardzie SQL??. Porównanie z connect by
+	% \section{DB2 \texttt{with}}
+	\input{tex/43_db2_with}
+	
 
 \chapter{Porównanie wydajności}
 \section{Po czym porównywać?}
@@ -181,75 +146,31 @@ Opis standardowej metody with która pojawiła się w standardzie SQL??. Porówn
 Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny. Program który zajmuje się tym zadaniem został dołączony do tej pracy.
 
 \chapter{Możliwości korzystania z danych hierarchicznych w O/RM}
-\section{Active Record}
-\section{Hibernate}
-\subsection{HQL}
-
-Ten akapit opisuje HQL\index{HQL}.
+% \section{Active Record}
+% \section{Hibernate}
+% \subsection{HQL}
+% Ten akapit opisuje HQL\index{HQL}.
 
 \chapter{Zastosowania i przykłady}
 
-\section{LDAP}
-\section{DNS?}
-\section{XML}
-\subsection{Różnice pomiędzy XML a drzewami}
-\begin{itemize}
- \item kolejność jest istotna
- \item język XPath i ścieżki w dokumencie
-\end{itemize}
+% \section{LDAP}
+% \section{DNS?}
+% \section{XML}
+% \subsection{Różnice pomiędzy XML a drzewami}
+% \begin{itemize}
+%  \item kolejność jest istotna
+%  \item język XPath i ścieżki w dokumencie
+% \end{itemize}
 
 \appendix
 
-\chapter{Opis Python DB API}
-
-\chapter{Załączone programy}
-
 \chapter{Metodyka testów}
-\section{Wybrane SZDB}
-\begin{itemize}
- \item PostgreSQL\index{PostgreSQL}
- \item MySQL\index{MySQL}
- \item SQLite
- \item Firebirld?
- \item Oracle
- \item DB2
- \item MS SQL Server
-\end{itemize}
 
+\input{tex/91_test}
 
-Wybrane zostały SZDB spełniające następujące cechy:
-\begin{itemize}
- \item popularne
- \item darmowe do użytku domowego 
-\end{itemize}
+\chapter{Program testujący}
 
-
-Dla porównania innych rozwiązań zostały dobrane następujące bazy danych:
-
-\begin{itemize}
- \item db4o
- \item berkeley DB
- \item ??
-\end{itemize}
-
-\section{Dane testowe}
-
-Aby przetestować przedstawione rozwiązania wykożystane zostały następujące zestawy danych:
-\begin{itemize}
- \item mały test 100 dwupoziomowo
- \item test mocnego zagłębienia
- \item test małego zagłebienia
- \item test 6 pozimów po 3 zagłębienia 
-\end{itemize}
-
-
-Parametry generatora danych:
-\begin{itemize}
- \item minimalny poziom zagłębienia
- \item maksymalny poziom zagłębienia
- \item rozklad prawdopodobieństwa wygenerowania dzieci (\cite{asdf}, \cite[Ala]{asdf})
-\end{itemize}
-
+\input{tex/92_app}
 
 \input{tex/90_bibliography}
 

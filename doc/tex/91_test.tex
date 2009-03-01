@@ -1,0 +1,58 @@
+\section{Wybrane SZDB}
+
+Do testów zostały wybrane popularne, dostępne bezpłatnie\footnote{również do zastosowań komercyjnych} bazy danych. 
+W przypadku baz Open Source wykorzystano najnowsze, stabilne wersje.
+Dla baz komercyjnych zostały wybrane ich darmowe edycje. Posiadają one
+ograniczenia co do wielkości baz danych, wykorzystania zasobów oraz zmniejszoną funkcjonalność. 
+Specyfika testów sprawia jednak, że te ograniczenia 
+
+
+\begin{itemize}
+ \item PostgreSQL\index{PostgreSQL}
+ \item MySQL\index{MySQL}
+ \item SQLite
+ \item Oracle Database 10g Express Edition
+ \item IBM DB2 Express-C
+ \item Microsoft SQL Server 2008 Express
+\end{itemize}
+
+Aby zminimalizować potencjalne problemy wynikające z instalacji wielu baz na jednej maszynie dla potrzeb testów zostały stworzone dla nich odzielne maszyny wirtualne. 
+
+Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. Baza Microsoft SQL Server została zainstalowana na Windows XP Service Pack 2.
+
+
+
+% Wybrane zostały SZDB spełniające następujące cechy:
+% \begin{itemize}
+%  \item popularne
+%  \item darmowe do użytku domowego 
+% \end{itemize}
+
+
+% Dla porównania innych rozwiązań zostały dobrane następujące bazy danych:
+% 
+% \begin{itemize}
+%  \item db4o
+%  \item berkeley DB
+%  \item ??
+% \end{itemize}
+
+\section{Dane testowe}
+
+
+
+Aby przetestować przedstawione rozwiązania wykożystane zostały następujące zestawy danych:
+\begin{itemize}
+ \item mały test 100 dwupoziomowo
+ \item test mocnego zagłębienia
+ \item test małego zagłebienia
+ \item test 6 pozimów po 3 zagłębienia 
+\end{itemize}
+
+
+Parametry generatora danych:
+\begin{itemize}
+ \item minimalny poziom zagłębienia
+ \item maksymalny poziom zagłębienia
+ \item rozklad prawdopodobieństwa wygenerowania dzieci (\cite{asdf}, \cite[Ala]{asdf})
+\end{itemize}

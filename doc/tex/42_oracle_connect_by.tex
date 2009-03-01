@@ -1,0 +1,9 @@
+\section{Oracle \texttt{connect by}}
+
+% napisać czy to przeszukiwanie w głąb czy wszerz
+
+\begin{verbatim}
+SELECT sum(empcount) FROM STRUCREL
+   CONNECT BY PRIOR superdept = deptid
+     START WITH deptname = 'Production';
+\end{verbatim}

@@ -1,13 +1,30 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-#DSN = "dbname='test_tree' user='kosqx' host='localhost' password='kos144'"
-
-#import psycopg2
 import sys
+import time
 
 import pada
 
+class Stopwatch():
+    def __init__(self):
+        self._results = []
+        self._time = None
+        self._name = ''
+    
+    def start(self, name):
+        self.stop()
+        self._name = name
+        self._time = time.time()
+        
+    def stop(self):
+        if self._time is not None:
+            self._results.append((self._name, time.time() - self._time))
+        
+    def __str__(self):
+        return '\n'.join(['%s \t %5.2f' % i for i in self._results])
+        
+        
 class Tree:
     def __init__(self, db):
         self.db = db
@@ -54,7 +71,59 @@ class Tree:
         pass
 
 
-class SimpleTree(Tree):
+class Memory(Tree):
+    def __init__(self, db):
+        self._d = {}
+    
+    def _by_ids(self,  ids):
+        return [self._value(i) for i in self._d if self._d[i][0] in ids]
+    
+    def _value(self, key):
+        return key
+    
+    def get_roots(self):
+        return [self._value(i) for i in self._d if self._d[i][0] == None]
+
+    def get_parent(self, id):
+        pass
+
+    def get_ancestors(self, id):
+        pass
+
+    def get_children(self, id):
+        pass
+
+    def get_descendants(self, id):
+        pass
+
+    def get_roots_count(self):
+        return len(self.get_roots())
+    def get_ancestors_count(self, id):
+        return len(self.get_ancestors_count(id))
+    def get_children_count(self, id):
+        return len(self.get_children_count(id))
+    def get_descendants_count(self, id):
+        return len(self.get_descendants_count(id))
+
+
+
+    def create_table(self):
+        pass
+
+    def insert(self, parent, name):
+        pass
+
+    def update(self, parent, name):
+        pass
+
+    def delete(self, id):
+        pass
+
+    def move(self, id, parent_to):
+        pass
+    
+
+class Simple(Tree):
     tree_name = 'simple'
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
@@ -75,6 +144,7 @@ class SimpleTree(Tree):
                     #'CREATE TRIGGER simple_id_trigger BEFORE INSERT ON simple FOR EACH row BEGIN SELECT simple_id_seq.nextval INTO :new.id FROM dual; END; /',
                 ],
                 'db2':    "CREATE TABLE simple(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), parent int, name varchar(50))", 
+                'mssql':  "CREATE TABLE simple(id int IDENTITY PRIMARY KEY, parent int, name varchar(50))",
                 '*':      "CREATE TABLE simple(id serial PRIMARY KEY, parent int, name varchar(50))",
         })
 
@@ -110,7 +180,7 @@ class SimpleTree(Tree):
         ids = [id]
 
         while True:
-            a = self.db.run("SELECT id, parent, name FROM simple WHERE parent in (%s)" % ','.join([str(i) for i in ids]))
+            a = [] #self.db.run("SELECT id, parent, name FROM simple WHERE (%s)" % 'OR'.join([' parent = %d ' % i for i in ids]))
             #print a
             result.extend(a)
             ids = [i['id'] for i in a]
@@ -120,7 +190,7 @@ class SimpleTree(Tree):
         return result
 
 
-class FullTree(Tree):
+class Full(Tree):
     #tree_name = 'full'
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
@@ -233,7 +303,16 @@ class NestedSets(Tree):
             left = data[0]['rgt']
         return roots
 
-def main():
+class Trie(Tree):
+    pass
+    
+class LTree(Tree):
+    pass
+    
+class ConnectBySimple(Tree):
+    pass
+
+def main_old():
     db = pada.connect(dsn="dialect='postgresql' dbname='test_tree' host='localhost' user='kosqx' password='kos144'")
     #tree = SimpleTree(db)
     #tree = FullTree(db)
@@ -259,25 +338,35 @@ def run_test(tree_class, database):
     db = pada.connect(file='config/%s.cfg' % database)
     db.set_paramstyle('format')
     tree = tree_class(db)
+    sw = Stopwatch()
     
+    sw.start('create')
     tree.create_table()
+    
+    sw.start('insert')
     for i in xrange(1,1000):
         parent = i / 10
         if parent == 0:
             parent = None
+        print i
         tree.insert(parent, "%.4d" % i)
     db.commit()
-
+    
+    sw.start('roots')
     print 'roots:       ', tree.get_roots()
+    sw.start('parent')
     print 'parent:      ', tree.get_parent(100)
+    sw.start('children')
     print 'children:    ', tree.get_children(10)
+    sw.start('ancestors')
     print 'ancestors:   ', tree.get_ancestors(777)
+    sw.start('descendants')
     print 'descendants: ', tree.get_descendants(8)
+    sw.stop()
+    
+    print sw
 
-
-if __name__ == '__main__':
-    #main()
-    # usage: main.py [method [database]]
+def main():
     names = {}
     bases = {'postgresql': [], 'mysql': [], 'sqlite': [], 'oracle': [], 'db2': [], 'sqlserver': []}
     for name in dir():
@@ -296,4 +385,9 @@ if __name__ == '__main__':
     database = args[0]
     for i in bases[database]:
         run_test(i, database)
+
+if __name__ == '__main__':
+    #main()
+    # usage: main.py [method [database]]
+    main()
 

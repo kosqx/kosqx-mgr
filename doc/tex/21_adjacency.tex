@@ -1,0 +1,58 @@
+\section{Metoda klucza obcego do rodzica}
+
+
+% Hierarchies like trees, organizational charts, ... are sometimes difficult to
+% store in database tables. The most common database pattern to store 
+% hierachical data is known as the adjacency model. It has been introduced 
+% by the famous computer scientist Edgar Frank Codd. It's called the "adjacency"
+% model because a reference to the parent data is stored in the same row as the
+% child data, in an adjacent column. These kind of tables are also called self 
+% referencing tables.
+% http://www.scip.be/index.php?Page=ArticlesNET18
+
+
+% It was Scott's pet cat called "tiger".
+% And, who was Scott? His first name was Scott but Bruce. Bruce Scott was
+% employee number #4 at the then Software Development Laboratories that
+% eventually became Oracle. He co-authored and co-architected Oracle V1, V2 & V3.
+% http://www.dba-oracle.com/t_scott_tiger.htm
+
+
+
+Najprostszą, najbardziej intuicyjną i zapewne najpopularniejszą metodą jest metoda przyległej listy.
+Została ona spopularyzowana przez Edgara Franka Codda. 
+On też nadał im nazwę, która odnosi się do tego, że informacja o rodzicu elementu znajduje się w tej samej krotce co dane.
+
+Zasługa spopularyzowania tej metody przypada Oracle. 
+Dołączył on do swojego produktu przykładową bazę danych, nazywaną ,,Scott/Tiger'' 
+korzystającą z tej metody.
+\footnote{
+    Nazwa tej bazy danych pochodzi od metody autoryzacji w bazie Oracle (login/hasło).
+    Login pochodził z nazwiska jednego z pierwszych pracowników 
+    Software Development Laboratories (przekształconych ostatecznie w Oracle) Bruce'a Scott'a. 
+    Natomiast hasło to imię jego kota.
+}
+
+Na popularność metody przekłada się również jej znaczące podobieństwo do 
+używanego między innymi w~językach C i~C++ sposobu przechowywania list i drzew.
+Mianowicie każdy węzeł zawiera wskaźnik na rodzica. 
+W relacyjnych bazach danych odpowiednikiem wskaźnika jest klucz obcy. 
+
+\paragraph{Definicja danych}
+
+\begin{verbatim}[sql]
+CREATE TABLE tree (  
+  id INTEGER PRIMARY KEY,  
+  parent INTEGER  
+    REFERENCES tree(id)  
+    ON DELETE CASCADE,  
+  value VARCHAR(100)  
+);
+\end{verbatim}
+
+\paragraph{Pobieranie potomków}
+
+Należy zwrócić uwagę na wykorzystanie operatora \emph{IN}. Bez niego wydajność metody spada znacząco. 
+
+\paragraph{Wstawianie danych}
+
