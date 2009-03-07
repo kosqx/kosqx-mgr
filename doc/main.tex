@@ -9,8 +9,8 @@
 \usepackage{ifpdf}
 
 % \setcounter{tocdepth}{1}
-\usepackage{geometry}
-\geometry{verbose,a4paper,tmargin=2.5cm,bmargin=2.5cm,lmargin=3.5cm,rmargin=2.5cm}
+% \usepackage{geometry}
+% \geometry{verbose,a4paper,tmargin=2.5cm,bmargin=2.5cm,lmargin=3.5cm,rmargin=2.5cm}
 
 %\usepackage[utf8x]{inputenc}
 %\usepackage{ucs}
@@ -39,7 +39,7 @@
 \frenchspacing
 
 % dla łatwiejszego sprawdzania
-% \linespread{1.3}
+\linespread{1.3}
 % \linespread{1.0}
 \setcounter{tocdepth}{1}
 
@@ -48,13 +48,19 @@
 \usepackage{amssymb}
 \usepackage{makeidx}
 
+\usepackage{showidx}
+\usepackage{makeidx}
+\makeindex
 
 \author{Krzysztof Kosyl}
 \title{Przechowywanie danych hierarchicznych w relacyjnych bazach danych}
 
-\makeindex
+
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+% wyświetla TODO: wrazie potrzeby
+\newcommand{\todo}[1]{(\textcolor{red}{\textbf{#1}})}
 
 \usepackage[unicode=true,pdftex,backref]{hyperref}
 \hypersetup{
@@ -100,6 +106,10 @@
 
 \chapter{Podstawowe metody przechowywania danych}
 
+Metody wymienione w tym rozdziale są uniwersalne. Daje się je zaimplementować w każdej relacyjnej bazie danych. 
+Można również (przy odrobinie wysiłku) kożystać z nich również w \emph{mapowaniach obiektowo-relacyjnych}\index{ORM}.
+Nic nie stoi na przeszkodzie aby wykożystać te metody również w obiektowych bazach danych.
+
 	% \section{Metoda stałej wysokości drzewa}
 	% Przenieść do sekcji o metodach, o których nie będziemy mówili. Takich jak również, Dział -- pracownik.
 	
@@ -132,8 +142,15 @@
 	% \section{Oracle \texttt{connect by}}
 	\input{tex/42_oracle_connect_by}
 
-	% \section{DB2 \texttt{with}}
+	% \section{IBM DB2 \texttt{with}}
 	\input{tex/43_db2_with}
+
+	\section{Microsoft SQL Server \texttt{hierarchyid}}
+	% http://technet.microsoft.com/en-us/library/bb677173.aspx
+	% http://blogs.msdn.com/manisblog/archive/2007/08/17/sql-server-2008-hierarchyid.aspx
+	% http://www.microsoft.com/poland/technet/bazawiedzy/centrumrozwiazan/cr314_01.mspx
+
+	
 	
 
 \chapter{Porównanie wydajności}
@@ -173,6 +190,8 @@ Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny.
 \input{tex/92_app}
 
 \input{tex/90_bibliography}
+
+ala ma kota
 
 
 

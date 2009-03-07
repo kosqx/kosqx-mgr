@@ -2,6 +2,8 @@
 
 % napisać czy to przeszukiwanie w głąb czy wszerz
 
+% http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/queries003.htm
+
 \begin{verbatim}
 SELECT sum(empcount) FROM STRUCREL
    CONNECT BY PRIOR superdept = deptid

@@ -4,7 +4,7 @@ Do testów zostały wybrane popularne, dostępne bezpłatnie\footnote{również 
 W przypadku baz Open Source wykorzystano najnowsze, stabilne wersje.
 Dla baz komercyjnych zostały wybrane ich darmowe edycje. Posiadają one
 ograniczenia co do wielkości baz danych, wykorzystania zasobów oraz zmniejszoną funkcjonalność. 
-Specyfika testów sprawia jednak, że te ograniczenia 
+Specyfika testów sprawia jednak, że te ograniczenia nie miały znaczenia podczas testów.
 
 
 \begin{itemize}
@@ -16,9 +16,7 @@ Specyfika testów sprawia jednak, że te ograniczenia
  \item Microsoft SQL Server 2008 Express
 \end{itemize}
 
-Aby zminimalizować potencjalne problemy wynikające z instalacji wielu baz na jednej maszynie dla potrzeb testów zostały stworzone dla nich odzielne maszyny wirtualne. 
 
-Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. Baza Microsoft SQL Server została zainstalowana na Windows XP Service Pack 2.
 
 
 
@@ -36,6 +34,8 @@ Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. B
 %  \item berkeley DB
 %  \item ??
 % \end{itemize}
+
+
 
 \section{Dane testowe}
 
@@ -56,3 +56,10 @@ Parametry generatora danych:
  \item maksymalny poziom zagłębienia
  \item rozklad prawdopodobieństwa wygenerowania dzieci (\cite{asdf}, \cite[Ala]{asdf})
 \end{itemize}
+
+
+\section{Środowisko testowe}
+
+Aby zminimalizować potencjalne problemy wynikające z instalacji wielu baz na jednej maszynie dla potrzeb testów zostały stworzone dla nich odzielne maszyny wirtualne. Wykorzystano VirtualBox 2.1. Każdej maszynie został przyznany 10GB virtualny dysk o stałym rozmiarze oraz 512 MB RAM. Program testujący działał również na maszynie wirtualnej, więc ominięto problem przepustowości interfacu sieciowego. \todo{lepsze nazwy; wersja; usunac powtórzenia}
+
+Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. Baza Microsoft SQL Server została zainstalowana na Windows XP Service Pack 2.

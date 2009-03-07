@@ -15,3 +15,11 @@
 **~
 **.png
 **.db
+**.pyc
+
+**.kilepr
+**.tar.gz
+
+
+# softlink
+**/pada.py
