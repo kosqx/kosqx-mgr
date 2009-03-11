@@ -54,6 +54,7 @@
 
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\operacja}[1]{(\subsubsection*{#1}}
 
 % wyświetla TODO: wrazie potrzeby
 \newcommand{\todo}[1]{(\textcolor{red}{\textbf{#1}})}
@@ -117,49 +118,14 @@ Nic nie stoi na przeszkodzie aby wykożystać te metody również w obiektowych 
 	% \section{Metoda klucza obcego do rodzica}
 	\input{tex/21_adjacency}
 
-\begin{figure}
-\begin{center}
-%%%\includegraphics{img/212_img.png}
-%! result-chart simple deep3
-\end{center}
-\caption{Metoda asdf}
-\label{fig:img_chart_simple}
-\end{figure}
-
-\begin{table}[h]
-  \caption{Wyniki metody }
-\begin{center}
-%! result-table simple deep3
-\end{center}
-\end{table}
-	
-	
 	% \section{Metoda zagnieżdzonych zbiorów}
 	\input{tex/22_nested}
 
-\begin{figure}
-\begin{center}
-%%%\includegraphics{img/212_img.png}
-%! result-chart nested deep3
-\end{center}
-\caption{Metoda asdf}
-\label{fig:img_chart_simple}
-\end{figure}
-
-\begin{table}[h]
-  \caption{Wyniki metody zagnieżdzonych zbiorów}
-   \begin{center}
-%! result-table nested deep3
-   \end{center}
-\end{table}
 	% \section{Metoda pełnych ścieżek}
 	\input{tex/23_full}
 	
 	% \section{Metoda drzew prefiksowych (trie)}
 	\input{tex/24_trie}
-	% zwane też lineage
-
-
 
 	% drzewa binarne
 	% http://commons.wikimedia.org/wiki/File:Binary_tree_in_array.svg
@@ -247,6 +213,8 @@ Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny.
 % \section{Hibernate}
 % \subsection{HQL}
 % Ten akapit opisuje HQL\index{HQL}.
+% Przydatność: - jeśli przy move trzeba aktualizować mnóstwo elementów to metoda będzie bardzo czasochłonna dla OR/M
+
 
 % \chapter{Zastosowania i przykłady}
 
@@ -271,7 +239,7 @@ Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny.
 
 \input{tex/90_bibliography}
 
-%\listoffigures
+%\listoffimakegures
 %\listoftables
 
 \clearpage
@@ -281,3 +249,21 @@ Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny.
 
 
 \end{document}
+
+
+%% snippets
+
+% \begin{table}[h!]
+%   \caption{Wyniki rmeprezentacji zagnieżdzonych zbiorów}
+%    \begin{center}
+% %! result-table nested deep3
+%    \end{center}
+% \end{table}
+% 
+% \begin{figure}[h!t]
+%   \caption{Wyniki reprezentacji zagnieżdzonych zbiorów}
+%   \label{fig:img_chart_nested}
+%   \begin{center}
+% %! result-chart nested deep3
+%   \end{center}
+% \end{figure}

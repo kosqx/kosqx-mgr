@@ -14,8 +14,13 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import LatexFormatter
 
-#global results
-#results = {}
+import numpy as np
+import matplotlib
+matplotlib.use('GTK')
+import matplotlib.pyplot as plt
+
+#--------------------------------------------------------------------
+# Util functions
 
 def write_file(path, data):
     def makepath(path):
@@ -31,73 +36,6 @@ def write_file(path, data):
     fout.write(data)
     fout.close()
 
-
-def process_tex(infile, outfile, rules):
-    result = []
-    fin = open(infile)
-    
-    block_in = False
-    block_regexp = ''
-    block_data = []
-    block_code = None
-    
-    for line in fin:
-        if block_in:
-            if block_regexp.match(line):
-                tmp = block_code(block_data)
-                result.append(tmp)
-            else:
-                block_data.append(line)
-            continue
-        for rule in rules:
-            if rule[0].match(line):
-                if rule[1] is None:
-                    tmp = rule[2](line)
-                    result.append(tmp)
-                else:
-                    block_in = True
-                    block_regexp = rule[1]
-                    block_code = rule[2]
-                    block_data = [line]
-                break
-        else:
-            result.append(line)
-    
-    fin.close()
-    
-    write_file(outfile, ''.join(result))
-
-
-def process_files(files, abspath, rules_in):
-    def to_regexp(s):
-        if s is None:
-            return None
-        else:
-            return re.compile(s)
-    
-    rules = [(to_regexp(i[0]), to_regexp(i[1]), i[2]) for i in rules_in]
-    
-    for tex in files:
-        print 'file:', tex
-        infile = os.path.join(abspath, tex)
-        process_tex(infile, tex, rules)
-            
-
-def code_pre(lines):
-    code = ''.join(lines[1:])
-
-    lexer = get_lexer_by_name("sql", stripall=True)
-    formatter = LatexFormatter(linenos=True, commandprefix='PYG')
-    
-    result = highlight(code, lexer, formatter)
-    
-    lines = result.splitlines()
-    if len(lines[-2].strip()) == 0:
-        lines[-2:-1] =  []
-    return (u'\n'.join(lines)).encode('utf-8')
-    
-def code_pre_style(line):
-    return LatexFormatter(commandprefix='PYG').get_style_defs().encode('utf-8')
 
 def value2desc(value, none=' --- '):
     names = {
@@ -126,12 +64,40 @@ def value2desc(value, none=' --- '):
         return value
 
 
-import numpy as np
-import matplotlib
-matplotlib.use('GTK')
-import matplotlib.pyplot as plt
+def read_results(filename):
+    result = {}
+    
+    fin = open(filename)
+    for line in fin:
+        if line.startswith('#') or line.strip() == '':
+            continue
+        
+        parts = line.split()
+        name = tuple(parts[0].split(':'))
+        value = float(parts[1])
+        
+        result[name] = value
+        
+    return result
 
-import random
+
+def process_results(results, method, testdata):
+    operation_order = ['create', 'insert', 'roots', 'parent', 'children', 'ancestors', 'descendants']
+    database_order = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
+    
+    final = [[''] + operation_order]
+    
+    for db in database_order:
+        line = [db]
+        for op in operation_order:
+            line.append(results.get((method, db, testdata, op), None))
+        final.append(line)
+    
+    return final
+
+
+#--------------------------------------------------------------------
+# Chart create
 
 def chart(data, filename):
     def none2zero(seq):
@@ -178,51 +144,27 @@ def chart(data, filename):
     plt.savefig(filename, dpi=150)
     plt.close()
 
-def read_results(filename):
-    result = {}
-    
-    fin = open(filename)
-    for line in fin:
-        if line.startswith('#') or line.strip() == '':
-            continue
-        
-        parts = line.split()
-        name = tuple(parts[0].split(':'))
-        value = float(parts[1])
-        
-        result[name] = value
-        
-    return result
-    
-    
-def process_results(results, method, testdata):
-    operation_order = ['create', 'insert', 'roots', 'parent', 'children', 'ancestors', 'descendants']
-    database_order = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
-    
-    final = [[''] + operation_order]
-    
-    for db in database_order:
-        line = [db]
-        for op in operation_order:
-            line.append(results.get((method, db, testdata, op), None))
-        final.append(line)
-    
-    return final
 
-def code_results_chart(line):
-    global results
+#--------------------------------------------------------------------
+# Functions inserting data to tex
+
+def code_pre(lines):
+    code = ''.join(lines[1:])
+
+    lexer = get_lexer_by_name("sql", stripall=True)
+    formatter = LatexFormatter(linenos=True, commandprefix='PYG')
     
-    parts = line.split()
-    method = parts[-2]
-    testdata = parts[-1]
-    data = process_results(results, method, testdata)
+    result = highlight(code, lexer, formatter)
     
-    print data
-    
-    filename = 'img_chart_%s.png' % method
-    chart(data, filename)
-    
-    return r'\includegraphics[width=\textwidth]{%s}' % filename
+    lines = result.splitlines()
+    if len(lines[-2].strip()) == 0:
+        lines[-2:-1] =  []
+    return (u'\n'.join(lines)).encode('utf-8')
+
+
+def code_pre_style(line):
+    return LatexFormatter(commandprefix='PYG').get_style_defs().encode('utf-8')
+
 
 def code_results_table(line):
     global results
@@ -257,33 +199,91 @@ def code_results_table(line):
     ])
     
     return '\n'.join(lines)
+
+
+def code_results_chart(line):
+    global results
     
+    parts = line.split()
+    method = parts[-2]
+    testdata = parts[-1]
+    data = process_results(results, method, testdata)
+    
+    print data
+    
+    filename = 'img_chart_%s.png' % method
+    chart(data, filename)
+    
+    return r'\includegraphics[width=\textwidth]{%s}' % filename
+
+
+#--------------------------------------------------------------------
+# Main functions
+
+def process_tex(infile, outfile, rules):
+    result = []
+    fin = open(infile)
+    
+    block_in = False
+    block_regexp = ''
+    block_data = []
+    block_code = None
+    
+    for line in fin:
+        if block_in:
+            if block_regexp.match(line):
+                tmp = block_code(block_data)
+                result.append(tmp)
+                block_in = False
+            else:
+                block_data.append(line)
+            continue
+        for rule in rules:
+            if rule[0].match(line):
+                if rule[1] is None:
+                    tmp = rule[2](line)
+                    result.append(tmp)
+                else:
+                    block_in = True
+                    block_regexp = rule[1]
+                    block_code = rule[2]
+                    block_data = [line]
+                break
+        else:
+            result.append(line)
+    
+    fin.close()
+    
+    write_file(outfile, ''.join(result))
+
+
+def process_files(files, abspath, rules_in):
+    def to_regexp(s):
+        if s is None:
+            return None
+        else:
+            return re.compile(s)
+    
+    rules = [(to_regexp(i[0]), to_regexp(i[1]), i[2]) for i in rules_in]
+    
+    for tex in files:
+        print 'file:', tex
+        infile = os.path.join(abspath, tex)
+        process_tex(infile, tex, rules)
 
 
 def main(args):
     global results
     results = read_results('../src/results.txt')
     
-    print results
-    
     tmpdir = tempfile.mkdtemp()
-    print tmpdir
-    
     abspath = os.path.abspath(args[0])
     
     os.chdir(abspath)
     
     shutil.copyfile('Makefile', os.path.join(tmpdir, 'Makefile'))
-    
     files = glob.glob('*.tex') + glob.glob('tex/*.tex')
-    
-    #process_files(files, tmpdir, [
-        #(r'\\begin\{verbatim\}\[sql\]', r'\\end\{verbatim\}', code_pre),
-        #(r'^%! *pygments-style',        None,                 code_pre_style),
-        #(r'^%! *result-table',          None,                 code_results_table),
-        #(r'^%! *result-chart',          None,                 code_results_chart),
-    #])
-    
+ 
     os.chdir(tmpdir)
     
     process_files(files, abspath, [
@@ -293,15 +293,15 @@ def main(args):
         (r'^%! *result-chart',          None,                 code_results_chart),
     ])
     
-    #write_file(os.path.join(tmpdir, 'Makefile'), open(args[0]).read())
-    #shutil.copyfile('Makefile', os.path.join(tmpdir, 'Makefile'))
-    #os.chdir(tmpdir)
     os.system('make pdf')
     result_pdf = glob.glob('*.pdf')[0]
     os.chdir(abspath)
     os.system('pwd')
-    #os.unlink(result_pdf)
     shutil.copyfile(os.path.join(tmpdir, result_pdf), result_pdf)
+
+#--------------------------------------------------------------------
+# Start point
 
 if __name__ == '__main__':
     main(sys.argv[1:])
+
