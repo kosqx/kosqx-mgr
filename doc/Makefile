@@ -1,4 +1,8 @@
-all: final
+all: 
+	python ../tools/preprocess.py .
+
+
+pdf: final
 	@echo "Done"
 
 draft:

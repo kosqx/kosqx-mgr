@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper,intlimits,oneside]{report}
+\documentclass[12pt,a4paper,oneside]{report}
 %\documentclass[10pt,a4paper,oneside]{book}
 %\documentclass[10pt,a4paper,draft]{book}
 %\documentclass[sfheadings,a4paper,11pt]{mwbk}
@@ -8,12 +8,8 @@
 
 \usepackage{ifpdf}
 
-% \setcounter{tocdepth}{1}
-% \usepackage{geometry}
-% \geometry{verbose,a4paper,tmargin=2.5cm,bmargin=2.5cm,lmargin=3.5cm,rmargin=2.5cm}
-
-%\usepackage[utf8x]{inputenc}
-%\usepackage{ucs}
+\usepackage{geometry}
+\geometry{verbose,a4paper,tmargin=2.5cm,bmargin=2.5cm,lmargin=3.5cm,rmargin=2.5cm}
 
 % \newif\ifpdf
 % \ifx\pdfoutput\undefined
@@ -87,7 +83,12 @@
 % numery stron u góry
 \pagestyle{headings}
 
+% rotacje w nagłówku kolumny
+\usepackage{rotating}
 
+% dla pygments // \begin{Verbatim}
+\usepackage{fancyvrb}
+%! pygments-style
 
 
 \begin{document}
@@ -115,16 +116,50 @@ Nic nie stoi na przeszkodzie aby wykożystać te metody również w obiektowych 
 	
 	% \section{Metoda klucza obcego do rodzica}
 	\input{tex/21_adjacency}
+
+\begin{figure}
+\begin{center}
+%%%\includegraphics{img/212_img.png}
+%! result-chart simple deep3
+\end{center}
+\caption{Metoda asdf}
+\label{fig:img_chart_simple}
+\end{figure}
+
+\begin{table}[h]
+  \caption{Wyniki metody }
+\begin{center}
+%! result-table simple deep3
+\end{center}
+\end{table}
+	
 	
 	% \section{Metoda zagnieżdzonych zbiorów}
 	\input{tex/22_nested}
-	
+
+\begin{figure}
+\begin{center}
+%%%\includegraphics{img/212_img.png}
+%! result-chart nested deep3
+\end{center}
+\caption{Metoda asdf}
+\label{fig:img_chart_simple}
+\end{figure}
+
+\begin{table}[h]
+  \caption{Wyniki metody zagnieżdzonych zbiorów}
+   \begin{center}
+%! result-table nested deep3
+   \end{center}
+\end{table}
 	% \section{Metoda pełnych ścieżek}
 	\input{tex/23_full}
 	
 	% \section{Metoda drzew prefiksowych (trie)}
 	\input{tex/24_trie}
 	% zwane też lineage
+
+
 
 	% drzewa binarne
 	% http://commons.wikimedia.org/wiki/File:Binary_tree_in_array.svg
@@ -136,6 +171,8 @@ Nic nie stoi na przeszkodzie aby wykożystać te metody również w obiektowych 
 
 
 \chapter{Metody specyficzne dla bazy danych}
+	\section{PL/SQL}
+
 	% \section{PostgreSQL \texttt{ltree}}
 	\input{tex/41_postgresql_ltree}
 	
@@ -145,30 +182,73 @@ Nic nie stoi na przeszkodzie aby wykożystać te metody również w obiektowych 
 	% \section{IBM DB2 \texttt{with}}
 	\input{tex/43_db2_with}
 
-	\section{Microsoft SQL Server \texttt{hierarchyid}}
-	% http://technet.microsoft.com/en-us/library/bb677173.aspx
-	% http://blogs.msdn.com/manisblog/archive/2007/08/17/sql-server-2008-hierarchyid.aspx
-	% http://www.microsoft.com/poland/technet/bazawiedzy/centrumrozwiazan/cr314_01.mspx
+	% \section{Microsoft SQL Server \texttt{hierarchyid}}
+	\input{tex/44_sqlserver_hierarchyid}
 
-	
+% \begin{center}
+% \begin{tabular}{| r | p{1.5cm} p{1.5cm} p{1.5cm} p{1.5cm} p{4.5cm} |}
+% \hline
+%  & \small{Wstawianie} & Dzieci & Potomkowie & Rodzic & Przodkowie \\
+% \hline
+%   PostgreSQL & 1 & 2 & 3 & 4 & 5 \\
+%   MySQL      & 1 & 2 & 3 & 4 & 5 \\
+%   SQLite     & 1 & 2 & 3 & 4 & 5 \\
+% \hline
+% \end{tabular}
+% \end{center}
+% 
+% \begin{table}[h]
+%   \caption{Performance at peak F-measure}
+% \begin{tabular}{| r | p{1.8cm}| p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm} |}
+% \hline
+% Operacja & \small{PostgreSQL} & \small{MySQL} & \small{SQLite} & \small{Oracle} & \small{DB2} & \small{MS SQL}\\
+% \hline
+%   Wstawianie & 1 & 2 & 3 & 4 & 5 & 6\\
+%   Przodkowie      & 1 & 2 & 3 & 4 & 5 & 6 \\
+%   Potomkowie     & 1 & 2 & 3 & 4 & 5 & 6\\
+% \hline
+% \end{tabular}
+% \end{table}
+
+
+
+\begin{table}[h]
+  \caption{Metoda asdf}
+\begin{center}
+\begin{tabular}{| r | r r r r r  |}
+\hline
+ &
+ \begin{sideways} Wstawianie \end{sideways} &
+ \begin{sideways} Dzieci \end{sideways} &
+ \begin{sideways} Potomkowie \end{sideways} &
+ \begin{sideways} Rodzic \end{sideways} &
+ \begin{sideways} Przodkowie \end{sideways} \\
+\hline
+  PostgreSQL & 1.2 & 2.3 & 123.5 & 34.6 & 5.3 \\
+  MySQL      & 1 & 2 & 3 & 4 & 5 \\
+  SQLite     & 1 & 2 & 3 & 4 & 5 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
 	
 
-\chapter{Porównanie wydajności}
-\section{Po czym porównywać?}
-\subsection{Metodzie}
-\subsection{Bazie danych}
+% \chapter{Porównanie wydajności}
+% \section{Po czym porównywać?}
+% \subsection{Metodzie}
+% \subsection{Bazie danych}
 
 
 
 Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny. Program który zajmuje się tym zadaniem został dołączony do tej pracy.
 
-\chapter{Możliwości korzystania z danych hierarchicznych w O/RM}
+% \chapter{Możliwości korzystania z danych hierarchicznych w O/RM}
 % \section{Active Record}
 % \section{Hibernate}
 % \subsection{HQL}
 % Ten akapit opisuje HQL\index{HQL}.
 
-\chapter{Zastosowania i przykłady}
+% \chapter{Zastosowania i przykłady}
 
 % \section{LDAP}
 % \section{DNS?}
@@ -190,10 +270,6 @@ Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny.
 \input{tex/92_app}
 
 \input{tex/90_bibliography}
-
-ala ma kota
-
-
 
 %\listoffigures
 %\listoftables

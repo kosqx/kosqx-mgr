@@ -11,29 +11,37 @@ import methods
 import utils
 
 class Stopwatch():
-    def __init__(self):
+    def __init__(self, prefix=''):
         self._results = []
+        self._prefix = ':'.join(prefix)
         self._time = None
         self._name = ''
     
     def start(self, name):
         self.stop()
-        self._name = name
+        self._name = '%s:%s' % (self._prefix, name)
         self._time = time.time()
         
     def stop(self):
         if self._time is not None:
             self._results.append((self._name, time.time() - self._time))
         
+    def lines(self):
+        total = sum([t for n, t in self._results])
+        self._results.append(('%s:total' % self._prefix, total))
+        size = max([len(n) for n, t in self._results])
+        return ['%s %5.3f' % (n.ljust(size), t)  for n, t  in self._results]
+        
     def __str__(self):
-        return '\n'.join(['%s \t %5.2f' % i for i in self._results])
+        return '\n'.join(self.lines())
 
 
 def run_test(database, tree_class, data):
     db = pada.connect(file='config/%s.cfg' % database)
     db.set_paramstyle('format')
     tree = tree_class(db)
-    sw = Stopwatch()
+    
+    sw = Stopwatch([tree_class.tree_name, database, data])
     
     sw.start('create')
     tree.create_table()

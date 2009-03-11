@@ -23,3 +23,7 @@
 
 # softlink
 **/pada.py
+
+src/data/*.xml
+# except
+!src/data/example.xml

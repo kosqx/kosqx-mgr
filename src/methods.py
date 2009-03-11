@@ -20,6 +20,10 @@ class Tree:
 
     def get_descendants(self, id):
         pass
+    
+    # TODO
+    #def get_descendants_level(self, id, level):
+        #pass
 
     def get_roots_count(self):
         return len(self.get_roots())
@@ -79,27 +83,24 @@ class Simple(Tree):
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
     def create_table(self):
-        #if self.db.run("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name='simple'")[0]:
         if 'simple' in self.db.schema_list('table'):
             self.db.ddl({
-                #'oracle': ['DROP TRIGGER simple_id_trigger', 'DROP TABLE simple', 'DROP SEQUENCE simple_id_seq'],
                 'oracle': ['DROP TABLE simple', 'DROP SEQUENCE simple_id_seq'],
                 '*':      "DROP TABLE simple",
             })
+        
         self.db.ddl({
                 'sqlite': "CREATE TABLE simple(id INTEGER PRIMARY KEY AUTOINCREMENT, parent int, name varchar(50))",
                 'oracle': [
                     'CREATE SEQUENCE simple_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
                     'CREATE TABLE simple(id int, parent int, name varchar(50))',
-                    #'CREATE TRIGGER simple_id_trigger BEFORE INSERT ON simple FOR EACH row BEGIN SELECT simple_id_seq.nextval INTO :new.id FROM dual; END; /',
-                ],
+                    ],
                 'db2':    "CREATE TABLE simple(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), parent int, name varchar(50))", 
                 'mssql':  "CREATE TABLE simple(id int IDENTITY PRIMARY KEY, parent int, name varchar(50))",
                 '*':      "CREATE TABLE simple(id serial PRIMARY KEY, parent int, name varchar(50))",
         })
 
     def insert(self, parent, name):
-        #pid = self.db.insert_id('INSERT INTO simple(parent, name) VALUES (%s, %s)', [parent, name])
         pid = self.db.insert('simple', parent=parent, name=name)
         return pid
 
@@ -192,61 +193,73 @@ class Full(Tree):
 
 
 class NestedSets(Tree):
-    #tree_name = 'nested'
+    tree_name = 'nested'
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
+   
     def create_table(self):
         tables = self.db.schema_list('table')
-        if 'sets_data' in tables:
-            self.db.execute('DROP TABLE sets_data')
+        if 'nested_sets' in tables:
+            self.db.ddl({
+                'oracle': ['DROP TABLE nested_sets', 'DROP SEQUENCE nested_sets_id_seq'],
+                '*':      "DROP TABLE nested_sets",
+            })
 
         self.db.ddl({
-            'sqlite': "CREATE TABLE sets_data(id integer PRIMARY KEY AUTOINCREMENT, lft int, rgt int, name varchar(50))",
-            '*':      "CREATE TABLE sets_data(id serial PRIMARY KEY, lft int, rgt int, name varchar(50))",
+            'sqlite': "CREATE TABLE nested_sets(id integer PRIMARY KEY AUTOINCREMENT, lft int, rgt int, name varchar(50))",
+            'oracle': [
+                    'CREATE SEQUENCE nested_sets_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
+                    'CREATE TABLE nested_sets(id int, lft int, rgt int, name varchar(50))',
+                ],
+            'db2': "CREATE TABLE nested_sets(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), lft int, rgt int, name varchar(50))",
+            'mssql': "CREATE TABLE nested_sets(id int IDENTITY PRIMARY KEY, lft int, rgt int, name varchar(50))",
+            '*':      "CREATE TABLE nested_sets(id serial PRIMARY KEY, lft int, rgt int, name varchar(50))",
         })
         
     def insert(self, parent, name):
         if parent is None:
-            right = self.db.run('SELECT max(rgt) as max_rgt FROM sets_data')[0]['max_rgt']
+            right = self.db.run('SELECT max(rgt) as max_rgt FROM nested_sets')[0]['max_rgt']
             right = right or 0
-            #pid = self.db.run('INSERT INTO sets_data VALUES (DEFAULT, %s, %s, %s) RETURNING id', [right + 1, right + 2, name])[0][0]
-            pid = self.db.insert_id('INSERT INTO sets_data(lft, rgt, name) VALUES (%s, %s, %s)', [right + 1, right + 2, name])
+            ##pid = self.db.run('INSERT INTO nested_sets VALUES (DEFAULT, %s, %s, %s) RETURNING id', [right + 1, right + 2, name])[0][0]
+            #pid = self.db.insert_id('INSERT INTO nested_sets(lft, rgt, name) VALUES (%s, %s, %s)', [right + 1, right + 2, name])
+            pid = self.db.insert('nested_sets', lft=(right + 1), rgt=(right + 2), name=name)
         else:
-            right = self.db.run('SELECT rgt FROM sets_data WHERE id = %s', [parent])[0]['rgt']
-            #self.db.execute('UPDATE sets_data SET lft = lft + 2, rgt = rgt + 2 WHERE rgt > %s', [right])
-            #self.db.execute('UPDATE sets_data SET rgt = rgt + 2 WHERE rgt = %s', [right])
-            self.db.execute('UPDATE sets_data SET lft = lft + 2 WHERE lft >  %s', [right])
-            self.db.execute('UPDATE sets_data SET rgt = rgt + 2 WHERE rgt >= %s', [right])
-            #self.db.execute('INSERT INTO sets_data VALUES (DEFAULT, %s, %s, %s)', [right, right + 1, name])
-            pid = self.db.insert_id('INSERT INTO sets_data(lft, rgt, name) VALUES (%s, %s, %s)', [right, right + 1, name])
+            right = self.db.run('SELECT rgt FROM nested_sets WHERE id = %s', [parent])[0]['rgt']
+            #self.db.execute('UPDATE nested_sets SET lft = lft + 2, rgt = rgt + 2 WHERE rgt > %s', [right])
+            #self.db.execute('UPDATE nested_sets SET rgt = rgt + 2 WHERE rgt = %s', [right])
+            self.db.execute('UPDATE nested_sets SET lft = lft + 2 WHERE lft >  %s', [right])
+            self.db.execute('UPDATE nested_sets SET rgt = rgt + 2 WHERE rgt >= %s', [right])
+            ##self.db.execute('INSERT INTO nested_sets VALUES (DEFAULT, %s, %s, %s)', [right, right + 1, name])
+            #pid = self.db.insert_id('INSERT INTO nested_sets(lft, rgt, name) VALUES (%s, %s, %s)', [right, right + 1, name])
+            pid = self.db.insert('nested_sets', lft=(right), rgt=(right + 1), name=name)
         
         return pid
             
     def get_ancestors(self, id):
         return self.db.run("""
             SELECT d.id, d.name 
-            FROM sets_data d 
+            FROM nested_sets d 
             WHERE 
-                d.lft < (SELECT d.lft FROM sets_data d WHERE d.id = %s) 
+                d.lft < (SELECT d.lft FROM nested_sets d WHERE d.id = %s) 
                 AND 
-                (SELECT d.rgt FROM sets_data d WHERE d.id = %s) < d.rgt 
+                (SELECT d.rgt FROM nested_sets d WHERE d.id = %s) < d.rgt 
             ORDER BY (d.rgt - d.lft) ASC""", [id, id])
             
     def get_descendants(self, id):
         return self.db.run("""
             SELECT d.id, d.name 
-            FROM sets_data d 
+            FROM nested_sets d 
             WHERE 
-                d.lft > (SELECT d.lft FROM sets_data d WHERE d.id = %s) 
+                d.lft > (SELECT d.lft FROM nested_sets d WHERE d.id = %s) 
                 AND 
-                (SELECT d.rgt FROM sets_data d WHERE d.id = %s) > d.rgt 
+                (SELECT d.rgt FROM nested_sets d WHERE d.id = %s) > d.rgt 
             ORDER BY (d.rgt - d.lft) ASC""", [id, id])
             
     def get_roots(self):
         left = 0
         roots = []
         while True:
-            data = self.db.run("""SELECT d.id, d.name, d.rgt as rgt FROM sets_data d WHERE d.lft = %s""", [left + 1])
+            data = self.db.run("""SELECT d.id, d.name, d.rgt as rgt FROM nested_sets d WHERE d.lft = %s""", [left + 1])
             if len(data) == 0:
                 break
             # TODO: co zrobić z niepotrzebnym left?

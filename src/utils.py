@@ -154,7 +154,7 @@ class TestHandler(ContentHandler):
     def startElement(self, name, attrs):
         attr = {}
         for i in attrs.keys():
-            attr[str(i)] = attrs[i]
+            attr[str(i)] = str(attrs[i])
         
         if name == 'node':
             idn = str(attr.pop('id'))
