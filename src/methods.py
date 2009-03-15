@@ -79,7 +79,7 @@ class Tree:
 
 
 class Simple(Tree):
-    tree_name = 'simple'
+    #tree_name = 'simple'
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
     def create_table(self):
@@ -108,6 +108,7 @@ class Simple(Tree):
         return self.db.run("SELECT * FROM simple WHERE parent IS NULL")
 
     def get_parent(self, id):
+        # TODO: tu jest błąd
         return self.db.run("SELECT * FROM simple WHERE id = %s", [id])
 
     def get_ancestors(self, id):
@@ -143,7 +144,7 @@ class Simple(Tree):
 
 
 class Full(Tree):
-    #tree_name = 'full'
+    tree_name = 'full'
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
     def create_table(self):
@@ -153,8 +154,25 @@ class Full(Tree):
         if 'full_tree' in tables:
             self.db.execute('DROP TABLE full_tree')
 
-        self.db.ddl("CREATE TABLE full_data(id serial PRIMARY KEY, name varchar(50))")
-        self.db.ddl("CREATE TABLE full_tree(id serial PRIMARY KEY, top int, bottom int, distance int)")
+        #self.db.ddl("CREATE TABLE full_data(id serial PRIMARY KEY, name varchar(50))")
+        #self.db.ddl("CREATE TABLE full_tree(id serial PRIMARY KEY, top int, bottom int, distance int)")
+        
+        self.db.ddl({
+                'sqlite': "CREATE TABLE full_data(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(50))",
+                'oracle': [
+                    'CREATE SEQUENCE full_data_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
+                    'CREATE TABLE full_data(id int, name varchar(50))',
+                    ],
+                'db2':    "CREATE TABLE full_data(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), name varchar(50))", 
+                'mssql':  "CREATE TABLE full_data(id int IDENTITY PRIMARY KEY, name varchar(50))",
+                '*':      "CREATE TABLE full_data(id serial PRIMARY KEY, name varchar(50))",
+        })
+        
+        self.db.ddl("CREATE TABLE full_tree(top int, bottom int, distance int)")
+        
+        self.db.ddl("CREATE INDEX full_tree_idx_top    ON full_tree (top)")
+        self.db.ddl("CREATE INDEX full_tree_idx_bottom ON full_tree (bottom)")
+
 
     def insert(self, parent, name):
         #if self.db.is_dialect('postgresql'):
@@ -162,18 +180,19 @@ class Full(Tree):
         #if self.db.is_dialect('mysql'):
             #self.db.execute('INSERT INTO full_data VALUES (DEFAULT, %s)', [name])
             #pid = self.db.run('SELECT LAST_INSERT_ID()')[0][0]
-        pid = self.db.insert_id('INSERT INTO full_data(name) VALUES (%s)', [name])
-        #print 'pid', pid
-        #print '  parent', parent
-        if parent is not None:
+            
+        #pid = self.db.insert_id('INSERT INTO full_data(name) VALUES (%s)', [name])
+        pid = self.db.insert('full_data', name=name)
 
+        if parent is not None:
             for row in self.db.run('SELECT top, distance FROM full_tree WHERE bottom = %s', [parent]):
-                #print '  row', row
                 self.db.execute('INSERT INTO full_tree(top, bottom, distance) VALUES (%s, %s, %s)', [row[0], pid, row[1] + 1])
-            self.db.execute('INSERT INTO full_tree(top, bottom, distance) VALUES (%s, %s, %s)', [pid, pid, 0])
+                #self.db.insert('full_tree', top=row[0], bottom=pid, distance=row[1] + 1)
         else:
             self.db.execute('INSERT INTO full_tree(top, bottom, distance) VALUES (%s, %s, %s)', [None, pid, 0])
-            self.db.execute('INSERT INTO full_tree(top, bottom, distance) VALUES (%s, %s, %s)', [pid, pid, 0])
+            #self.db.insert('full_tree', top=None, bottom=pid, distance=0)
+        self.db.execute('INSERT INTO full_tree(top, bottom, distance) VALUES (%s, %s, %s)', [pid, pid, 0])
+        #self.db.insert('full_tree', top=pid, bottom=pid, distance=0)
 
 
     def get_roots(self):
@@ -189,11 +208,11 @@ class Full(Tree):
         return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom) WHERE t.top = %s AND t.distance = 1", [id])
 
     def get_descendants(self, id):
-        pass
+        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom) WHERE t.top = %s AND t.distance > 0", [id])
 
 
 class NestedSets(Tree):
-    tree_name = 'nested'
+    #tree_name = 'nested'
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
    

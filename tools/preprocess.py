@@ -14,10 +14,13 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import LatexFormatter
 
-import numpy as np
-import matplotlib
-matplotlib.use('GTK')
-import matplotlib.pyplot as plt
+#import numpy as np
+#import matplotlib
+#matplotlib.use('GTK')
+##matplotlib.use('cairo')
+#import matplotlib.pyplot as plt
+
+from chart import chart
 
 #--------------------------------------------------------------------
 # Util functions
@@ -97,62 +100,19 @@ def process_results(results, method, testdata):
 
 
 #--------------------------------------------------------------------
-# Chart create
-
-def chart(data, filename):
-    def none2zero(seq):
-        return [0.0 if i is None else i for i in seq]
-    
-    maxval = max([max(i[1:]) for i in data[1:]])
-    
-    colors = {
-        'postgresql': '#0094bb',
-        'mysql':      '#e97b00',
-        'sqlite':     '#80a796',
-        'oracle':     '#f00000',
-        'db2':        '#167018',
-        'sqlserver':  '#000000',
-    }
-    
-    N = len(data[0]) - 1
-    
-    ind = np.arange(N)
-    width = 1.0 / N
-
-    plt.subplot(111)
-    
-    rects = []
-    for i, fordb in enumerate(data[1:]):
-        rects.append(plt.bar(ind + width * i, none2zero(fordb[1:]), width, color=colors[fordb[0]]))
-
-
-    plt.ylabel(u'Przepustowość (zapytań/s) \u00a0', clip_on=True)
-    plt.xticks(ind + (width * N / 2), [value2desc(i) for i in data[0][1:]], fontsize=10)
-    plt.ylim(ymax=maxval * 1.45)
-    
-    leg = plt.legend( [i[0] for i in rects], [value2desc(i[0]) for i in data[1:]], shadow=True, pad = 0.08)
-    #borderpad=0, numpoints=2, 
-    # matplotlib.text.Text instances
-    for t in leg.get_texts():
-        t.set_fontsize('small')    # the legend text fontsize
-    
-    # matplotlib.lines.Line2D instances
-    for l in leg.get_lines():
-        l.set_linewidth(1.5)
-    
-    #plt.show()
-    plt.savefig(filename, dpi=150)
-    plt.close()
-
-
-#--------------------------------------------------------------------
 # Functions inserting data to tex
 
 def code_pre(lines):
     code = ''.join(lines[1:])
 
-    lexer = get_lexer_by_name("sql", stripall=True)
-    formatter = LatexFormatter(linenos=True, commandprefix='PYG')
+    head = lines[0].strip()
+
+    if lines[0].endswith('[python]'):
+        lexer = get_lexer_by_name("python", stripall=True)
+    else:
+        lexer = get_lexer_by_name("sql", stripall=True)
+    
+    formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=single,xleftmargin=5mm')
     
     result = highlight(code, lexer, formatter)
     
@@ -212,7 +172,7 @@ def code_results_chart(line):
     print data
     
     filename = 'img_chart_%s.png' % method
-    chart(data, filename)
+    chart(data, filename, value2desc)
     
     return r'\includegraphics[width=\textwidth]{%s}' % filename
 
@@ -287,7 +247,7 @@ def main(args):
     os.chdir(tmpdir)
     
     process_files(files, abspath, [
-        (r'\\begin\{verbatim\}\[sql\]', r'\\end\{verbatim\}', code_pre),
+        (r'\\begin\{verbatim\}\[.*\]\s*', r'\\end\{verbatim\}', code_pre),
         (r'^%! *pygments-style',        None,                 code_pre_style),
         (r'^%! *result-table',          None,                 code_results_table),
         (r'^%! *result-chart',          None,                 code_results_chart),

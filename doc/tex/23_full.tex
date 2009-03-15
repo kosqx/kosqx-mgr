@@ -1,1 +1,35 @@
 \section{Metoda pełnych ścieżek}
+\index{metoda!pełnych ścieżek|textbf}
+% http://troels.arvin.dk/db/rdbms/links/#hierarchical
+% 
+% http://en.wikipedia.org/wiki/Transitive_closure
+% http://pl.wikipedia.org/wiki/Domknięcie_przechodnie
+
+% Domknięcie_przechodnie Cormen:644
+
+Metoda został spopularyzowana w Polskim Internecie przez \emph{Huberta Lubaczewskiego}\index{Lubaczewski Hubert} lepiej znanego pod pseudonimem \emph{depesz}\index{depesz|see{Lubaczewski Hubert}}.
+
+\index{drzewo!domknięcie przechodnie}
+
+Idea metody jest prosta. 
+Głowna tabela z danymi nie zawiera żadnych informacji o hierarchi danych. 
+Jedynym wymogiem jest istnienie w niej klucza głównego\index{klucz!główny}.
+
+Cała informacja potrzebna do operowania na drzewie zawiera się w dodatkowej tabeli. 
+Zawiera ona informacje o odległości pomiędzy każdym elementem a wszystkimi jego potomkami.
+ 
+
+\begin{table}[h!]
+  \caption{Wyniki reprezentacji pełnych ścieżek}
+   \begin{center}
+%! result-table full deep3
+   \end{center}
+\end{table}
+
+\begin{figure}[h!t]
+  \caption{Wyniki reprezentacji pełnych ścieżek}
+  \label{fig:img_chart_nested}
+  \begin{center}
+%! result-chart full deep3
+  \end{center}
+\end{figure}

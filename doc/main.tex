@@ -44,7 +44,7 @@
 \usepackage{amssymb}
 \usepackage{makeidx}
 
-\usepackage{showidx}
+%\usepackage{showidx}
 \usepackage{makeidx}
 \makeindex
 
@@ -52,12 +52,22 @@
 \title{Przechowywanie danych hierarchicznych w relacyjnych bazach danych}
 
 
-
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
-\newcommand{\operacja}[1]{(\subsubsection*{#1}}
+\newcommand{\operacja}[1]{\subsubsection*{#1}}
 
-% wyświetla TODO: wrazie potrzeby
+% wyświetla TODO: wrazie potrzeby zmodyfikować
 \newcommand{\todo}[1]{(\textcolor{red}{\textbf{#1}})}
+
+% numery stron u góry
+\pagestyle{headings}
+
+% rotacje w nagłówku kolumny
+\usepackage{rotating}
+
+% dla pygments // \begin{Verbatim}
+\usepackage{fancyvrb}
+%! pygments-style
+
 
 \usepackage[unicode=true,pdftex,backref]{hyperref}
 \hypersetup{
@@ -81,15 +91,7 @@
   pdfkeywords = {tree, db},
 }
 
-% numery stron u góry
-\pagestyle{headings}
 
-% rotacje w nagłówku kolumny
-\usepackage{rotating}
-
-% dla pygments // \begin{Verbatim}
-\usepackage{fancyvrb}
-%! pygments-style
 
 
 \begin{document}
@@ -139,65 +141,19 @@ Nic nie stoi na przeszkodzie aby wykożystać te metody również w obiektowych 
 \chapter{Metody specyficzne dla bazy danych}
 	\section{PL/SQL}
 
-	% \section{PostgreSQL \texttt{ltree}}
-	\input{tex/41_postgresql_ltree}
-	
-	% \section{Oracle \texttt{connect by}}
-	\input{tex/42_oracle_connect_by}
-
 	% \section{IBM DB2 \texttt{with}}
 	\input{tex/43_db2_with}
 
+	% \section{Oracle \texttt{connect by}}
+	\input{tex/42_oracle_connect_by}
+
+	% \section{PostgreSQL \texttt{ltree}}
+	\input{tex/41_postgresql_ltree}
+	
 	% \section{Microsoft SQL Server \texttt{hierarchyid}}
 	\input{tex/44_sqlserver_hierarchyid}
 
-% \begin{center}
-% \begin{tabular}{| r | p{1.5cm} p{1.5cm} p{1.5cm} p{1.5cm} p{4.5cm} |}
-% \hline
-%  & \small{Wstawianie} & Dzieci & Potomkowie & Rodzic & Przodkowie \\
-% \hline
-%   PostgreSQL & 1 & 2 & 3 & 4 & 5 \\
-%   MySQL      & 1 & 2 & 3 & 4 & 5 \\
-%   SQLite     & 1 & 2 & 3 & 4 & 5 \\
-% \hline
-% \end{tabular}
-% \end{center}
-% 
-% \begin{table}[h]
-%   \caption{Performance at peak F-measure}
-% \begin{tabular}{| r | p{1.8cm}| p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm} |}
-% \hline
-% Operacja & \small{PostgreSQL} & \small{MySQL} & \small{SQLite} & \small{Oracle} & \small{DB2} & \small{MS SQL}\\
-% \hline
-%   Wstawianie & 1 & 2 & 3 & 4 & 5 & 6\\
-%   Przodkowie      & 1 & 2 & 3 & 4 & 5 & 6 \\
-%   Potomkowie     & 1 & 2 & 3 & 4 & 5 & 6\\
-% \hline
-% \end{tabular}
-% \end{table}
 
-
-
-\begin{table}[h]
-  \caption{Metoda asdf}
-\begin{center}
-\begin{tabular}{| r | r r r r r  |}
-\hline
- &
- \begin{sideways} Wstawianie \end{sideways} &
- \begin{sideways} Dzieci \end{sideways} &
- \begin{sideways} Potomkowie \end{sideways} &
- \begin{sideways} Rodzic \end{sideways} &
- \begin{sideways} Przodkowie \end{sideways} \\
-\hline
-  PostgreSQL & 1.2 & 2.3 & 123.5 & 34.6 & 5.3 \\
-  MySQL      & 1 & 2 & 3 & 4 & 5 \\
-  SQLite     & 1 & 2 & 3 & 4 & 5 \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
-	
 
 % \chapter{Porównanie wydajności}
 % \section{Po czym porównywać?}

@@ -1,4 +1,5 @@
-\section{Metoda listy sąsiedztwa}
+\section{Metoda krawędziowa}
+\index{metoda!krawędziowa|textbf}
 
 
 % Hierarchies like trees, organizational charts, ... are sometimes difficult to
@@ -21,11 +22,11 @@
 
 
 
-Najprostszą, najbardziej intuicyjną i zapewne najpopularniejszą metodą jest metoda przyległej listy.
-Została ona spopularyzowana przez Edgara Franka Codda. 
+Najprostszą, najbardziej intuicyjną i zapewne najpopularniejszą metodą jest metoda krawędziowa.
+Została ona spopularyzowana przez Edgara Franka Codda\index{Codd E.F.}. 
 On też nadał im nazwę, która odnosi się do tego, że informacja o rodzicu elementu znajduje się w tej samej krotce co dane.
 
-Zasługa spopularyzowania tej metody przypada Oracle. 
+Zasługa spopularyzowania tej metody przypada Oracle.
 Dołączył on do swojego produktu przykładową bazę danych, nazywaną ,,Scott/Tiger'' 
 korzystającą z tej metody.
 \footnote{
@@ -38,10 +39,16 @@ korzystającą z tej metody.
 Na popularność metody przekłada się również jej znaczące podobieństwo do 
 używanego między innymi w~językach C i~C++ sposobu przechowywania list i drzew.
 Mianowicie każdy węzeł zawiera wskaźnik na rodzica. 
-W relacyjnych bazach danych odpowiednikiem wskaźnika jest klucz obcy. 
+W relacyjnych bazach danych odpowiednikiem wskaźnika jest klucz obcy\index{klucz!obcy}. 
 
-\operacja{Definicja danych}
 
+Ta metoda jest na tyle popularna, że w bazach danych pojawiły się specjalne konstrukcje do jej obsługi. 
+Zostaną one przedstawione w rozdziale \todo{wstawić jakoś nazwę rodziału} o metodach specyficznych dla systemu zarządzania bazą danych.
+
+
+\operacja{Reprezentacja}
+
+\operacja{Reprezentacja w SQL}
 \begin{verbatim}[sql]
 CREATE TABLE tree (
   id INTEGER PRIMARY KEY,
@@ -50,14 +57,48 @@ CREATE TABLE tree (
 );
 \end{verbatim}
 
+Należy zwrócić uwagę na \todo{warunek} \texttt{ON DELETE CASCADE}. Sprawia on, że w razie usunięcia węzła \todo{ustalić terminologię} automatycznie zostaną usunięci wszyscy jego potomkowie.
+
+
+\operacja{Wstawianie danych}
+\begin{verbatim}[sql]
+INSERT INTO simple (parent, name) VALUES (:parent, :name)
+\end{verbatim}
+
+
+\operacja{Pobranie korzeni}
+\begin{verbatim}[sql]
+SELECT * FROM simple WHERE parent IS NULL
+\end{verbatim}
+
+
+
+
+\operacja{Pobranie rodzica}
+\begin{verbatim}[sql]
+SELECT * FROM simple WHERE id = :id
+\end{verbatim}
+
+
+
+\operacja{Pobranie dzieci}
+\begin{verbatim}[sql]
+SELECT 
+\end{verbatim}
+
+\operacja{Pobranie przodków}
+\begin{verbatim}[sql]
+SELECT 
+\end{verbatim}
+
 \operacja{Pobieranie potomków}
+\begin{verbatim}[sql]
+SELECT 
+\end{verbatim}
 
 Należy zwrócić uwagę na wykorzystanie operatora \emph{IN}. Bez niego wydajność metody spada znacząco. 
 
-\operacja{Wstawianie danych}
-
 \operacja{Wyniki}
-
 
 \begin{table}[h!]
   \caption{Wyniki reprezentacji krawędziowej}

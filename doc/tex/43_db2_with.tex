@@ -1,8 +1,10 @@
 \section{IBM DB2 \texttt{with}}
-
+\index{metoda!with@\texttt{with}|textbf}\index{IBM DB2}\index{SQL Server}
 % http://www.ibm.com/developerworks/data/library/techarticle/0307steinbach/0307steinbach.html
 
-Opis standardowej metody with która pojawiła się w standardzie SQL??. Porównanie z connect by
+Opis standardowej metody with która pojawiła się w standardzie SQL:1999. Porównanie z connect by
+
+W standardzie SQL:99\index{SQL!SQL:99} wprowadzono rozszerzenie \texttt{WITH} pozwalające na rekurencyjne wykonywanie zapytań w bazie danych.
 
 \begin{verbatim}[sql]
 WITH temptab(deptid, empcount, superdept) AS

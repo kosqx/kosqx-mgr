@@ -22,3 +22,6 @@ final: clean full
 clean:
 	rm -f main.{aux,ind,idx,ilg,brf,log,lof,lot,pdf,tex~,tex.backup,toc,out} Makefile~ tex/*.aux tex/*.tex~
 
+wc:
+	cat *.tex tex/*.tex | detex | wc
+
