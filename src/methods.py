@@ -79,7 +79,7 @@ class Tree:
 
 
 class Simple(Tree):
-    #tree_name = 'simple'
+    tree_name = 'simple'
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
     def create_table(self):
@@ -149,13 +149,17 @@ class Full(Tree):
     
     def create_table(self):
         tables = self.db.schema_list('table')
+        print tables
         if 'full_data' in tables:
-            self.db.execute('DROP TABLE full_data')
+            self.db.ddl({
+                'oracle': ['DROP SEQUENCE full_data_id_seq', 'DROP TABLE full_data'],
+                '*': 'DROP TABLE full_data',
+            })
         if 'full_tree' in tables:
             self.db.execute('DROP TABLE full_tree')
 
         #self.db.ddl("CREATE TABLE full_data(id serial PRIMARY KEY, name varchar(50))")
-        #self.db.ddl("CREATE TABLE full_tree(id serial PRIMARY KEY, top int, bottom int, distance int)")
+        #self.db.ddl("CREATE TABLE full_tree(id serial PRIMARY KEY, top_id int, bottom_id int, distance int)")
         
         self.db.ddl({
                 'sqlite': "CREATE TABLE full_data(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(50))",
@@ -168,10 +172,10 @@ class Full(Tree):
                 '*':      "CREATE TABLE full_data(id serial PRIMARY KEY, name varchar(50))",
         })
         
-        self.db.ddl("CREATE TABLE full_tree(top int, bottom int, distance int)")
+        self.db.ddl("CREATE TABLE full_tree(top_id int, bottom_id int, distance int)")
         
-        self.db.ddl("CREATE INDEX full_tree_idx_top    ON full_tree (top)")
-        self.db.ddl("CREATE INDEX full_tree_idx_bottom ON full_tree (bottom)")
+        self.db.ddl("CREATE INDEX full_tree_idx_top_id    ON full_tree (top_id)")
+        self.db.ddl("CREATE INDEX full_tree_idx_bottom_id ON full_tree (bottom_id)")
 
 
     def insert(self, parent, name):
@@ -185,34 +189,34 @@ class Full(Tree):
         pid = self.db.insert('full_data', name=name)
 
         if parent is not None:
-            for row in self.db.run('SELECT top, distance FROM full_tree WHERE bottom = %s', [parent]):
-                self.db.execute('INSERT INTO full_tree(top, bottom, distance) VALUES (%s, %s, %s)', [row[0], pid, row[1] + 1])
-                #self.db.insert('full_tree', top=row[0], bottom=pid, distance=row[1] + 1)
+            for row in self.db.run('SELECT top_id, distance FROM full_tree WHERE bottom_id = %s', [parent]):
+                self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (%s, %s, %s)', [row[0], pid, row[1] + 1])
+                #self.db.insert('full_tree', top_id=row[0], bottom_id=pid, distance=row[1] + 1)
         else:
-            self.db.execute('INSERT INTO full_tree(top, bottom, distance) VALUES (%s, %s, %s)', [None, pid, 0])
-            #self.db.insert('full_tree', top=None, bottom=pid, distance=0)
-        self.db.execute('INSERT INTO full_tree(top, bottom, distance) VALUES (%s, %s, %s)', [pid, pid, 0])
-        #self.db.insert('full_tree', top=pid, bottom=pid, distance=0)
+            self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (%s, %s, %s)', [None, pid, 0])
+            #self.db.insert('full_tree', top_id=None, bottom_id=pid, distance=0)
+        self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (%s, %s, %s)', [pid, pid, 0])
+        #self.db.insert('full_tree', top_id=pid, bottom_id=pid, distance=0)
 
 
     def get_roots(self):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom) WHERE t.top IS NULL AND t.distance = 0")
+        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom_id) WHERE t.top_id IS NULL AND t.distance = 0")
 
     def get_parent(self, id):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.top) WHERE t.distance = 1 AND t.bottom = %s", [id])
+        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.top_id) WHERE t.distance = 1 AND t.bottom_id = %s", [id])
 
     def get_ancestors(self, id):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.top) WHERE t.distance > 0 AND t.bottom = %s ORDER BY t.distance ASC", [id])
+        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.top_id) WHERE t.distance > 0 AND t.bottom_id = %s ORDER BY t.distance ASC", [id])
 
     def get_children(self, id):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom) WHERE t.top = %s AND t.distance = 1", [id])
+        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom_id) WHERE t.top_id = %s AND t.distance = 1", [id])
 
     def get_descendants(self, id):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom) WHERE t.top = %s AND t.distance > 0", [id])
+        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom_id) WHERE t.top_id = %s AND t.distance > 0", [id])
 
 
 class NestedSets(Tree):
-    #tree_name = 'nested'
+    tree_name = 'nested'
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
    
@@ -294,3 +298,20 @@ class NestedSets(Tree):
     
 #class ConnectBySimple(Tree):
     #pass
+
+
+class ConnectBy(Simple):
+    tree_name = 'connectby'
+    tree_base = ['oracle']
+    
+    # P main.py sql oracle 'SELECT level, id, parent, name FROM simple START WITH id=4 CONNECT BY parent = PRIOR id'
+
+    def get_ancestors(self, id):
+        return self.db.run("""
+            SELECT level, id, parent, name 
+                FROM simple 
+                START WITH id = %s 
+                CONNECT BY id = PRIOR parent""", [id])
+
+    def get_descendants(self, id):
+        return self.db.run("SELECT level, id, parent, name FROM simple START WITH id = %s CONNECT BY parent = PRIOR id", [id])

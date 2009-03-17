@@ -99,6 +99,13 @@ def main():
     
     elif args[0] == 'generate':
         utils.generate_test('data/%s.xml' % args[1], int(args[2]), int(args[3]))
+    
+    elif args[0] == 'sql':
+        database, sql = args[1], args[2]
+        
+        db = pada.connect(file='config/%s.cfg' % database)
+        db.execute(sql)
+        print db.format_ascii()
 
 if __name__ == '__main__':
     main()
