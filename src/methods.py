@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+
 
 
 class Tree:
@@ -42,13 +42,10 @@ class Tree:
     def insert(self, parent, name):
         pass
 
-    def update(self, parent, name):
-        pass
-
     def delete(self, id):
         pass
 
-    def move(self, id, parent_to):
+    def reparent(self, id, new_parent):
         pass
 
 
@@ -97,25 +94,48 @@ class Simple(Tree):
                     ],
                 'db2':    "CREATE TABLE simple(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), parent int, name varchar(50))", 
                 'mssql':  "CREATE TABLE simple(id int IDENTITY PRIMARY KEY, parent int, name varchar(50))",
-                '*':      "CREATE TABLE simple(id serial PRIMARY KEY, parent int, name varchar(50))",
+                '*':      """
+                    CREATE TABLE simple(
+                        id serial PRIMARY KEY, 
+                        parent int REFERENCES simple(id) ON DELETE CASCADE, 
+                        name varchar(50)
+                    )""",
         })
 
     def insert(self, parent, name):
+        """
+            INSERT INTO simple (parent, name) 
+                VALUES (:parent, :name)
+        """
         pid = self.db.insert('simple', parent=parent, name=name)
         return pid
 
     def get_roots(self):
-        return self.db.run("SELECT * FROM simple WHERE parent IS NULL")
+        return self.db.run("""
+            SELECT * 
+                FROM simple 
+                WHERE parent IS NULL
+            """
+        )
 
     def get_parent(self, id):
-        # TODO: tu jest błąd
-        return self.db.run("SELECT * FROM simple WHERE id = %s", [id])
+        return self.db.run("""
+            SELECT * 
+                FROM simple 
+                WHERE id = (
+                    SELECT parent 
+                        FROM simple 
+                        WHERE id = :id
+                )
+            """, 
+            dict(id=id)
+        )
 
     def get_ancestors(self, id):
         result = []
         i = id
         while i is not None:
-            a = self.db.run("SELECT id, parent, name FROM simple WHERE id = %s", [i])
+            a = self.db.run("SELECT id, parent, name FROM simple WHERE id = :id", dict(id=i))
             #print a
 
             result.append(a[0])
@@ -123,7 +143,12 @@ class Simple(Tree):
         return result
 
     def get_children(self, id):
-        return self.db.run("SELECT * FROM simple WHERE parent = %s", [id])
+        return self.db.run("""
+            SELECT * 
+                FROM simple 
+                WHERE parent = :parent""", 
+            dict(parent=id)
+        )
 
 
     def get_descendants(self, id):
@@ -131,15 +156,12 @@ class Simple(Tree):
         ids = [id]
 
         while True:
-            #a = [] #self.db.run("SELECT id, parent, name FROM simple WHERE (%s)" % 'OR'.join([' parent = %d ' % i for i in ids]))
             a = self.db.run("SELECT id, parent, name FROM simple WHERE (%s)" % ' OR '.join(['parent = %d' % i for i in ids]))
-            #a = self.db.run("SELECT id, parent, name FROM simple WHERE parent IN %s", [ids])
-            #print a
             result.extend(a)
             ids = [i['id'] for i in a]
             if not ids:
                 break
-            
+        
         return result
 
 
@@ -157,9 +179,6 @@ class Full(Tree):
             })
         if 'full_tree' in tables:
             self.db.execute('DROP TABLE full_tree')
-
-        #self.db.ddl("CREATE TABLE full_data(id serial PRIMARY KEY, name varchar(50))")
-        #self.db.ddl("CREATE TABLE full_tree(id serial PRIMARY KEY, top_id int, bottom_id int, distance int)")
         
         self.db.ddl({
                 'sqlite': "CREATE TABLE full_data(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(50))",
@@ -169,50 +188,105 @@ class Full(Tree):
                     ],
                 'db2':    "CREATE TABLE full_data(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), name varchar(50))", 
                 'mssql':  "CREATE TABLE full_data(id int IDENTITY PRIMARY KEY, name varchar(50))",
-                '*':      "CREATE TABLE full_data(id serial PRIMARY KEY, name varchar(50))",
+                '*':      """
+                    CREATE TABLE full_data(
+                        id serial PRIMARY KEY, 
+                        name varchar(50)
+                    )""",
         })
         
-        self.db.ddl("CREATE TABLE full_tree(top_id int, bottom_id int, distance int)")
+        self.db.ddl("""
+            CREATE TABLE full_tree(
+                top_id int, 
+                bottom_id int, 
+                distance int
+            )"""
+        )
         
-        self.db.ddl("CREATE INDEX full_tree_idx_top_id    ON full_tree (top_id)")
-        self.db.ddl("CREATE INDEX full_tree_idx_bottom_id ON full_tree (bottom_id)")
+        self.db.ddl("""
+            CREATE INDEX full_tree_idx_top_id    ON full_tree (top_id)""")
+        self.db.ddl("""
+            CREATE INDEX full_tree_idx_bottom_id ON full_tree (bottom_id)""")
 
 
     def insert(self, parent, name):
-        #if self.db.is_dialect('postgresql'):
-            #pid = self.db.run('INSERT INTO full_data VALUES (DEFAULT, %s) RETURNING id', [name])[0][0]
-        #if self.db.is_dialect('mysql'):
-            #self.db.execute('INSERT INTO full_data VALUES (DEFAULT, %s)', [name])
-            #pid = self.db.run('SELECT LAST_INSERT_ID()')[0][0]
-            
-        #pid = self.db.insert_id('INSERT INTO full_data(name) VALUES (%s)', [name])
         pid = self.db.insert('full_data', name=name)
 
         if parent is not None:
-            for row in self.db.run('SELECT top_id, distance FROM full_tree WHERE bottom_id = %s', [parent]):
-                self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (%s, %s, %s)', [row[0], pid, row[1] + 1])
-                #self.db.insert('full_tree', top_id=row[0], bottom_id=pid, distance=row[1] + 1)
+            for row in self.db.run('SELECT top_id, distance FROM full_tree WHERE bottom_id = :parent', dict(parent=parent)):
+                self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
+                    dict(top_id=row[0], bottom_id=pid, distance=row[1] + 1)
+                )
         else:
-            self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (%s, %s, %s)', [None, pid, 0])
-            #self.db.insert('full_tree', top_id=None, bottom_id=pid, distance=0)
-        self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (%s, %s, %s)', [pid, pid, 0])
-        #self.db.insert('full_tree', top_id=pid, bottom_id=pid, distance=0)
+            self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
+                dict(top_id=None, bottom_id=pid, distance=0)
+            )
+        self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
+            dict(top_id=pid, bottom_id=pid, distance=0)
+        )
 
 
     def get_roots(self):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom_id) WHERE t.top_id IS NULL AND t.distance = 0")
+        return self.db.run("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.bottom_id) 
+                WHERE t.top_id IS NULL AND t.distance = 0
+            """
+        )
 
     def get_parent(self, id):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.top_id) WHERE t.distance = 1 AND t.bottom_id = %s", [id])
+        return self.db.run("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.top_id) 
+                WHERE t.distance = 1 AND t.bottom_id = :id
+            """, 
+            dict(id=id)
+        )
 
     def get_ancestors(self, id):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.top_id) WHERE t.distance > 0 AND t.bottom_id = %s ORDER BY t.distance ASC", [id])
+        #return self.db.run("""
+            #SELECT d.id, d.name 
+                #FROM full_data d 
+                    #JOIN full_tree t 
+                        #ON (d.id=t.top_id)
+                #WHERE t.distance > 0 AND t.bottom_id = :id 
+                #ORDER BY t.distance ASC
+            #""", 
+            #dict(id=id)
+        #)
+        return self.db.run("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.top_id)
+                WHERE t.bottom_id = :id AND t.distance > 0 
+            """, 
+            dict(id=id)
+        )
 
     def get_children(self, id):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom_id) WHERE t.top_id = %s AND t.distance = 1", [id])
+        return self.db.run("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.bottom_id) 
+                WHERE t.top_id = :id AND t.distance = 1""", 
+            dict(id=id)
+        )
 
     def get_descendants(self, id):
-        return self.db.run("SELECT d.id, d.name FROM full_data d JOIN full_tree t ON (d.id=t.bottom_id) WHERE t.top_id = %s AND t.distance > 0", [id])
+        return self.db.run("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.bottom_id) 
+                WHERE t.top_id = :id AND t.distance > 0""", 
+            dict(id=id)
+        )
 
 
 class NestedSets(Tree):
@@ -236,56 +310,61 @@ class NestedSets(Tree):
                 ],
             'db2': "CREATE TABLE nested_sets(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), lft int, rgt int, name varchar(50))",
             'mssql': "CREATE TABLE nested_sets(id int IDENTITY PRIMARY KEY, lft int, rgt int, name varchar(50))",
-            '*':      "CREATE TABLE nested_sets(id serial PRIMARY KEY, lft int, rgt int, name varchar(50))",
+            '*':     """
+                CREATE TABLE nested_sets(
+                    id serial PRIMARY KEY, 
+                    lft int, 
+                    rgt int, 
+                    name varchar(50)
+                )""",
         })
         
     def insert(self, parent, name):
         if parent is None:
             right = self.db.run('SELECT max(rgt) as max_rgt FROM nested_sets')[0]['max_rgt']
             right = right or 0
-            ##pid = self.db.run('INSERT INTO nested_sets VALUES (DEFAULT, %s, %s, %s) RETURNING id', [right + 1, right + 2, name])[0][0]
-            #pid = self.db.insert_id('INSERT INTO nested_sets(lft, rgt, name) VALUES (%s, %s, %s)', [right + 1, right + 2, name])
             pid = self.db.insert('nested_sets', lft=(right + 1), rgt=(right + 2), name=name)
         else:
             right = self.db.run('SELECT rgt FROM nested_sets WHERE id = %s', [parent])[0]['rgt']
-            #self.db.execute('UPDATE nested_sets SET lft = lft + 2, rgt = rgt + 2 WHERE rgt > %s', [right])
-            #self.db.execute('UPDATE nested_sets SET rgt = rgt + 2 WHERE rgt = %s', [right])
-            self.db.execute('UPDATE nested_sets SET lft = lft + 2 WHERE lft >  %s', [right])
-            self.db.execute('UPDATE nested_sets SET rgt = rgt + 2 WHERE rgt >= %s', [right])
-            ##self.db.execute('INSERT INTO nested_sets VALUES (DEFAULT, %s, %s, %s)', [right, right + 1, name])
-            #pid = self.db.insert_id('INSERT INTO nested_sets(lft, rgt, name) VALUES (%s, %s, %s)', [right, right + 1, name])
+            self.db.execute('UPDATE nested_sets SET lft = lft + 2 WHERE lft >  :val', dict(val=right))
+            self.db.execute('UPDATE nested_sets SET rgt = rgt + 2 WHERE rgt >= %s', dict(val=right))
             pid = self.db.insert('nested_sets', lft=(right), rgt=(right + 1), name=name)
         
         return pid
-            
+    
     def get_ancestors(self, id):
         return self.db.run("""
             SELECT d.id, d.name 
-            FROM nested_sets d 
-            WHERE 
-                d.lft < (SELECT d.lft FROM nested_sets d WHERE d.id = %s) 
-                AND 
-                (SELECT d.rgt FROM nested_sets d WHERE d.id = %s) < d.rgt 
-            ORDER BY (d.rgt - d.lft) ASC""", [id, id])
-            
+                FROM nested_sets d 
+                WHERE 
+                    d.lft < (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
+                    AND 
+                    (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) < d.rgt 
+                ORDER BY (d.rgt - d.lft) ASC
+            """, dict(id=id))
+    
     def get_descendants(self, id):
         return self.db.run("""
             SELECT d.id, d.name 
-            FROM nested_sets d 
-            WHERE 
-                d.lft > (SELECT d.lft FROM nested_sets d WHERE d.id = %s) 
-                AND 
-                (SELECT d.rgt FROM nested_sets d WHERE d.id = %s) > d.rgt 
-            ORDER BY (d.rgt - d.lft) ASC""", [id, id])
-            
+                FROM nested_sets d 
+                WHERE 
+                    d.lft > (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
+                    AND 
+                    (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) > d.rgt 
+                ORDER BY (d.rgt - d.lft) ASC""", dict(id=id))
+    
     def get_roots(self):
         left = 0
         roots = []
         while True:
-            data = self.db.run("""SELECT d.id, d.name, d.rgt as rgt FROM nested_sets d WHERE d.lft = %s""", [left + 1])
+            data = self.db.run("""
+                SELECT d.id, d.name, d.rgt as rgt 
+                    FROM nested_sets d 
+                    WHERE d.lft = :left""", 
+                dict(left=left + 1)
+            )
             if len(data) == 0:
                 break
-            # TODO: co zrobić z niepotrzebnym left?
             roots.append(data[0])
             left = data[0]['rgt']
         return roots
@@ -295,23 +374,177 @@ class NestedSets(Tree):
     
 #class LTree(Tree):
     #pass
-    
-#class ConnectBySimple(Tree):
-    #pass
 
 
 class ConnectBy(Simple):
     tree_name = 'connectby'
     tree_base = ['oracle']
-    
-    # P main.py sql oracle 'SELECT level, id, parent, name FROM simple START WITH id=4 CONNECT BY parent = PRIOR id'
 
     def get_ancestors(self, id):
         return self.db.run("""
             SELECT level, id, parent, name 
                 FROM simple 
-                START WITH id = %s 
-                CONNECT BY id = PRIOR parent""", [id])
+                START WITH id = :id 
+                CONNECT BY id = PRIOR parent""", 
+            dict(id=id)
+        )
 
     def get_descendants(self, id):
-        return self.db.run("SELECT level, id, parent, name FROM simple START WITH id = %s CONNECT BY parent = PRIOR id", [id])
+        return self.db.run("""
+            SELECT level, id, parent, name 
+                FROM simple 
+                START WITH id = :id 
+                CONNECT BY parent = PRIOR id""", 
+            dict(id=id)
+        )
+
+
+class With(Simple):
+    tree_name = 'with'
+    tree_base = ['db2', 'sqlserver']
+
+    def get_ancestors(self, id):
+        return self.db.run("""
+            WITH temptab(node_level, id, parent, name) AS
+            (
+                SELECT 0, root.id, root.parent, root.name
+                    FROM simple root
+                    WHERE root.id = :id
+            UNION ALL
+                SELECT t.node_level + 1, s.id, s.parent, s.name
+                    FROM simple s, temptab t
+                    WHERE s.id = t.parent
+            )
+            SELECT node_level, id, parent, name FROM temptab""",
+            dict(id=id)
+        )
+
+    def get_descendants(self, id):
+        return self.db.run("""
+            WITH temptab(level, id, parent, name) AS
+            (
+                SELECT 0, root.id, root.parent, root.name
+                    FROM simple root
+                    WHERE root.id = :id
+            UNION ALL
+                SELECT t.level + 1, s.id, s.parent, s.name
+                    FROM simple s, temptab t
+                    WHERE s.parent = t.id
+            )
+            SELECT level, id, parent, name FROM temptab""",
+            dict(id=id)
+        )
+
+
+class HierarchyId(Tree):
+    tree_name = 'hierarchyid'
+    tree_base = ['sqlserver']
+    
+    def create_table(self):
+        if 'herid' in self.db.schema_list('table'):
+            self.db.ddl("DROP TABLE herid")
+        
+        self.db.ddl("""
+            CREATE TABLE herid (
+                id int IDENTITY PRIMARY KEY,
+                node hierarchyid,
+                name varchar(50)
+            )
+        """)
+        
+        self.db.execute("""
+            INSERT INTO herid (node, name) 
+                VALUES (hierarchyid::GetRoot(), 'ROOT')""")
+
+    def insert(self, parent, name):
+        ''' http://technet.microsoft.com/en-us/library/bb677212.aspx '''
+        if parent is None:
+            parent = 1
+            
+        self.db.execute(u"""
+                INSERT INTO herid (node, name) VALUES (
+                    (SELECT node 
+                        FROM herid 
+                        WHERE id = :parent
+                    ).GetDescendant(
+                        (SELECT max(node) node 
+                            FROM herid 
+                            WHERE node.GetAncestor(1) = (
+                                SELECT node 
+                                    FROM herid 
+                                    WHERE id = :parent
+                            )
+                        ), 
+                        NULL
+                    ), 
+                    :name)
+                """.encode('ascii'),
+                dict(parent=parent, name=name)
+        )
+        ##self.db.execute(u'''
+            ##WITH temp1 (node) AS (
+                ##SELECT node FROM herid WHERE id = :parent
+            ##),
+            ##temp2 (node) AS (
+                ##SELECT max(node) node FROM herid WHERE node.GetAncestor(1) = temp1.node
+            ##)
+            ##INSERT INTO herid (node, name) VALUES (temp1.node.GetDescendant(temp2.node, NULL), NULL)
+            ##'''.encode('ascii'),
+            ##dict(parent=parent)
+        ##)
+        pid = self.db.execute('SELECT id FROM herid WHERE id = @@IDENTITY').list()[0][0]
+        return pid
+
+    def get_roots(self):
+        return self.db.run("""
+            SELECT * 
+                FROM herid 
+                WHERE node.GetLevel() = 1""")
+
+    def get_parent(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM herid 
+                WHERE node = (
+                    SELECT node.GetAncestor(1) 
+                        FROM herid 
+                        WHERE id = :id
+                )""", 
+            dict(id=id)
+        )
+
+    def get_ancestors(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM herid 
+                WHERE (
+                    SELECT node FROM herid WHERE id = :id
+                ).IsDescendant(node)
+                """,
+            dict(id=id)
+        )
+
+    def get_children(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM herid 
+                WHERE node.GetAncestor(1) = (
+                    SELECT node 
+                        FROM herid 
+                        WHERE id = :parent
+                )""", 
+            dict(parent=id)
+        )
+
+
+    def get_descendants(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM herid 
+                WHERE node.IsDescendant((
+                    SELECT node FROM herid WHERE id = :parent
+                ))""", 
+            dict(parent=id)
+        )
+
+

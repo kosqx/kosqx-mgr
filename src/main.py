@@ -38,7 +38,7 @@ class Stopwatch():
 
 def run_test(database, tree_class, data):
     db = pada.connect(file='config/%s.cfg' % database)
-    db.set_paramstyle('format')
+    db.set_paramstyle('named')
     tree = tree_class(db)
     
     sw = Stopwatch([tree_class.tree_name, database, data])
@@ -46,12 +46,13 @@ def run_test(database, tree_class, data):
     sw.start('create')
     tree.create_table()
     
-    sw.start('insert')    
+    sw.start('insert')
     testcases = utils.read_tree('data/%s.xml' % data, tree.insert)
     db.commit()
     
     sw.start('roots')
-    tree.get_roots()
+    for i in xrange(testcases.get('roots', [1])[0]):
+        tree.get_roots()
     
     sw.start('parent')
     for idn in testcases.get('parent', []):
@@ -94,8 +95,11 @@ def main():
     if args[0] == 'test':
         bases = find_methods()
         database = args[1]
-        for i in bases[database]:
-            print run_test(database, bases[database][i], args[2])
+        if len(args) == 4:
+            print run_test(database, bases[database][args[3]], args[2])
+        else:
+            for i in bases[database]:
+                print run_test(database, bases[database][i], args[2])
     
     elif args[0] == 'generate':
         utils.generate_test('data/%s.xml' % args[1], int(args[2]), int(args[3]))
