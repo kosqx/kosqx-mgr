@@ -35,8 +35,8 @@
 \frenchspacing
 
 % dla łatwiejszego sprawdzania
-\linespread{1.3}
-% \linespread{1.0}
+%\linespread{1.3}
+\linespread{1.0}
 \setcounter{tocdepth}{1}
 
 \usepackage{amsmath}
@@ -111,47 +111,56 @@
 \chapter{Podstawowe metody przechowywania danych}
 
 Metody wymienione w tym rozdziale są uniwersalne. Daje się je zaimplementować w każdej relacyjnej bazie danych. 
-Można również (przy odrobinie wysiłku) kożystać z nich również w \emph{mapowaniach obiektowo-relacyjnych}\index{ORM}.
-Nic nie stoi na przeszkodzie aby wykożystać te metody również w obiektowych bazach danych.
+Można również (przy odrobinie wysiłku) korzystać z nich również w \emph{mapowaniach obiektowo-relacyjnych}\index{OR/M}.
+Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych bazach danych.
 
 	% \section{Metoda stałej wysokości drzewa}
 	% Przenieść do sekcji o metodach, o których nie będziemy mówili. Takich jak również, Dział -- pracownik.
 	
 	% \section{Metoda klucza obcego do rodzica}
 	\input{tex/21_adjacency}
+	\clearpage
 
 	% \section{Metoda zagnieżdzonych zbiorów}
 	\input{tex/22_nested}
+	\clearpage
 
 	% \section{Metoda pełnych ścieżek}
 	\input{tex/23_full}
+	\clearpage
 	
 	% \section{Metoda drzew prefiksowych (trie)}
 	\input{tex/24_trie}
+	\clearpage
 
 	% drzewa binarne
 	% http://commons.wikimedia.org/wiki/File:Binary_tree_in_array.svg
 	% http://en.wikipedia.org/wiki/K-ary_tree
 
 
-\chapter{Modifikacje metod przechowywania danych}
+\chapter{Modyfikacje metod przechowywania danych}
 	% \section{Metoda łączona}
 
 
 \chapter{Metody specyficzne dla bazy danych}
 	\section{PL/SQL}
+	\clearpage
 
 	% \section{IBM DB2 \texttt{with}}
 	\input{tex/43_db2_with}
+	\clearpage
 
 	% \section{Oracle \texttt{connect by}}
 	\input{tex/42_oracle_connect_by}
+	\clearpage
 
 	% \section{PostgreSQL \texttt{ltree}}
 	\input{tex/41_postgresql_ltree}
+	\clearpage
 	
 	% \section{Microsoft SQL Server \texttt{hierarchyid}}
 	\input{tex/44_sqlserver_hierarchyid}
+	\clearpage
 
 
 
@@ -162,7 +171,7 @@ Nic nie stoi na przeszkodzie aby wykożystać te metody również w obiektowych 
 
 
 
-Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny. Program który zajmuje się tym zadaniem został dołączony do tej pracy.
+
 
 % \chapter{Możliwości korzystania z danych hierarchicznych w O/RM}
 % \section{Active Record}
@@ -185,12 +194,10 @@ Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny.
 
 \appendix
 
-\chapter{Metodyka testów}
-
+% \chapter{Metodyka testów}
 \input{tex/91_test}
 
-\chapter{Program testujący}
-
+% \chapter{Program testujący}
 \input{tex/92_app}
 
 \input{tex/90_bibliography}

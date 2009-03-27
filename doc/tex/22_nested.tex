@@ -1,7 +1,37 @@
 \section{Metoda zagnieżdzonych zbiorów}
 \index{metoda!zagnieżdzonych zbiorów|textbf}
-Metoda została spopularyzowana przez Joe Celko\cite{celko}\index{Celko Joe}.
 
+Metoda została spopularyzowana przez Joe Celko\cite{celkosql}\index{Celko Joe}.
+
+
+
+\operacja{Reprezentacja w SQL}
+%! method-sql nested.create
+
+\operacja{Wstawianie danych}
+% %! method-sql nested.insert
+
+% \begin{verbatim}[sql]
+% INSERT INTO simple (parent, name) VALUES (:parent, :name)
+% \end{verbatim}
+
+Wstawianie danych w tej metodzie jest jej najsłabszą stroną.
+
+
+\operacja{Pobranie korzeni}
+%! method-sql nested.roots
+
+\operacja{Pobranie rodzica}
+% %! method-sql nested.parent
+
+\operacja{Pobranie dzieci}
+% %! method-sql nested.children
+
+\operacja{Pobranie przodków}
+%! method-sql nested.ancestors
+
+\operacja{Pobieranie potomków}
+%! method-sql nested.descendants
 
 
 \begin{table}[h!]
@@ -19,4 +49,3 @@ Metoda została spopularyzowana przez Joe Celko\cite{celko}\index{Celko Joe}.
   \end{center}
 \end{figure}
 
-\clearpage

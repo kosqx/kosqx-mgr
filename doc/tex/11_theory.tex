@@ -1,5 +1,37 @@
 \chapter{Wprowadzenie do tematu}
 
+
+\section{Knuth}
+
+\emph{Drzewo} zdefiniujemy formalnie jako zbiór $T$ jednego lub więcej elementów zwanych \emph{węzłami}, takich że:
+
+\begin{enumerate}
+ \item istnieje jeden wyróżniony węzeł zwany \emph{korzeniem} drzewa, $root(T)$; oraz
+ \item pozostałe węzły (z wyłączeniem korzenia) są podzielone na $m \geq 0$ rozłącznych zbiorów $T_{1},\ldots, T_{m}$,
+	z których każdy jest drzewem. Drzewa $T_{1},\ldots, T_{m}$ nazywane są \emph{poddrzewami} korzenia.
+\end{enumerate}
+
+Z naszej definicji wynika, że każdy węzeł drzewa jest korzeniem pewnego poddrzewa zawartego w większym drzewie.
+Liczna poddrzew węzła jest nazywana stopniem tego węzła.
+Węzeł o stopniu zero nazywamy \emph{liściem} lub \emph{węzłem zewnętrznym}. 
+Węzeł nie będący liściem nazywamy \emph{węzłem wewnętrznym}. 
+Poziom węzła jest zdefiniowany rekurencyjnie: poziom korzenia $root(T)$ równa się zero,
+a poziom każdego innego węzła jest o jeden wiekszy niż poziom korzenia w najmniejszym 
+\todo{w sensie ilości węzłów} zawierającym go poddrzewie.
+
+Jeśli względny porządek poddrzew $T_{1},\ldots, T_{m}$ w części (2) definicji jest istotny,
+to mówimy, że drzewo jest \emph{uporządkowane}. \todo{...}
+Jeśli nie chcemy rozróżniać drzew, które różnią się jedynie kolejnością poddrzew, mówimy o drzewach zorientowanych
+
+\emph{Lasem} nazywamy zbiór zera lub więcej rozłącznych drzew. 
+Innym sposobem wyprowadzenia części (2) definicji jest stwierdzenie: \textit{węzły drzewa z wyłączeniem korzenia tworzą las}.
+
+Abstrakcyjnie drzewa i lasy niewiele się różnią.
+Jeśli usuniemy korzeń drzewa, otrzymamy las.
+W drugą stronę, jeśli wszystkie drzewa w lesie uczynimy poddrzewami jednego dodatkowego węzła,
+to otrzymamy drzewo.
+Z tego powodu słowa ,,drzewa'' i ,,lasy'' są przy nieformalnym omawianiu struktur danych używane niemal wymiennie.
+
 \section{Czym jest drzewo}
 \index{drzewo|textbf}
 Drzewo to bardzo powszechnie używane w informatyce pojęcie. W zależności od zastosowania może być różnie zdefiniowane.
@@ -72,5 +104,16 @@ Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach d
 \section{Przyjęte założenia}
 \todo{więcej wypisać, zastanowić się co z tym zrobić}
 
-\paragraph{Tabela zawiera tylko jedną kolumnę z danymi użytkownika} Bez problemu można dodać więcej kolumn do tabeli. Obecność wyłącznie kolumny \texttt{name} zwiększa czytelność przykładów.
-\paragraph{Zapytania wyłącznie związane z hierarchiczną strukturą danych}
+\paragraph{Tabela zawiera tylko jedną kolumnę z danymi użytkownika} 
+Bez problemu można dodać więcej kolumn do tabeli. Obecność wyłącznie kolumny \texttt{name} zwiększa czytelność przykładów.
+\paragraph{Zapytania wyłącznie związane z hierarchiczną strukturą danych} 
+
+\paragraph{Przedstawione fragmenty kodu} 
+W opisach metod znajdują się fragmenty kodu je realizujące operacje na nich. 
+Tam gdzie to jest możliwe (czyli metoda jest dostępna ) została zaprezentowana składnia PostgreSQL\index{PostgreSQL}.
+Fragmenty kodu \todo{napisać o tym że gdzieniegdzie pojawiają się \texttt{:name}} wymagające parametrów...
+
+
+\paragraph{Terminologia anglojęzyczna} \todo{nazwać to jakoś normalnie}
+Literatura dotycząca informatyki jest dzisiaj zdominowana przez publikacje w języku angielskim. Dlatego przy każdym ważnym lub nietrywialnym w tłumaczeniu terminie została podana jego angielska wersja. 
+

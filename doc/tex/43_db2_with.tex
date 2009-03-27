@@ -1,21 +1,148 @@
-\section{IBM DB2 \texttt{with}}
+\section{Wspólne Wyrażenia Tabelowe}
 \index{metoda!with@\texttt{with}|textbf}\index{IBM DB2}\index{SQL Server}
 % http://www.ibm.com/developerworks/data/library/techarticle/0307steinbach/0307steinbach.html
 
-Opis standardowej metody with która pojawiła się w standardzie SQL:1999. Porównanie z connect by
 
-W standardzie SQL:99\index{SQL!SQL:99} wprowadzono rozszerzenie \texttt{WITH} pozwalające na rekurencyjne wykonywanie zapytań w bazie danych.
+% http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=/com.ibm.db29.doc.apsg/db2z_createcte.htm
+% http://www.4guysfromrolla.com/webtech/071906-1.shtml - dobry opis, napisane do czego może się jeszcze przydać
+% http://www.depesz.com/index.php/2008/10/07/waiting-for-84-common-table-expressions-with-queries/#more-1287
 
-\begin{verbatim}[sql]
-WITH temptab(deptid, empcount, superdept) AS
-   (    SELECT root.deptid, root.empcount, root.superdept
-            FROM departments root
-            WHERE deptname='Production'
-     UNION ALL
-        SELECT sub.deptid, sub.empcount, sub.superdept
-            FROM departments sub, temptab super
-            WHERE sub.superdept = super.deptid
-   )
-SELECT sum(empcount) FROM temptab
+% Opis standardowej metody with która pojawiła się w standardzie SQL:1999. Porównanie z connect by
+% UNION ALL (should allow UNION too), and we don't have SEARCH or CYCLE clauses
+% Common Table Expressions - Wspólne wyrażenie tabelowe
+% http://www.google.com/search?client=opera&rls=en&q=Wsp%C3%B3lne+wyra%C5%BCenie+tabelowe&sourceid=opera&ie=utf-8&oe=utf-8
+
+%% TODO:
+% - napisać http://en.wikipedia.org/wiki/Common_table_expressions
+% - przerobić tytuły i opisy na CTE
+
+W standardzie SQL:99\index{SQL!SQL:99} wprowadzono \emph{Wspólne Wyrażenia Tabelowe} (ang. \emph{Common Table Expressions}).
+Ich działanie przypomina stworzenie tymczasowego widoku\index{widok}, 
+istniejącego tylko na czas wykonania danego zapytania.
+
+
+Pozwala ono również na rekurencyjne wykonywanie zapytań w bazie danych.
+
+W chwili obecnej to rozszerzenie jest dostępne w:
+\begin{description}
+ \item[IBM DB2]
+ \item[Microsoft SQL Server]
+	% http://www.mssqltips.com/tip.asp?tip=1520
+	w wersjach począwszy od SQL Server 2005
+ \item[PostgreSQL]
+	% http://developer.postgresql.org/pgdocs/postgres/queries-with.html
+	ma się pojawić w wersji 8.4 (w chwili obecnej jest ona dostępna jako \emph{beta}, ma zostać wydana w pierwszym kwartale 2009 roku)
+ \item[Firebird]
+	wersja 2.1 
+\end{description}
+
+Składnia \texttt{WITH} prezentuje się następująco:
+
+\begin{verbatim}
+WITH <<nazwa widoku>>(<<nazwy kolumn>>) AS
+(
+  <<zapytanie startowe>>
+UNION ALL
+  <<zapytanie rekurencyjne>>
+)
+SELECT <<nazwy kolumn>> FROM <<nazwa widoku>>
 \end{verbatim}
 
+Działanie tej konstrukcji jest proste.
+
+\begin{verbatim}
+widok = []
+tmp = zapytanie_startowe()
+while tmp:
+  widok.extend(tmp)
+  tmp = zapytanie_rekurencyjne(tmp)
+return widok
+\end{verbatim}
+
+Rozszerzenie to można wykorzystać do pracy z reprezentacją krawędziową. 
+Umożliwi ono wysłanie do bazy danych tylko jednego zapytania podczas pobierania potomków i przodków. 
+Bez niego konieczne było wykonywanie odzielnego zapytania podczas przechodzenia przez każdy poziom drzewa.
+
+
+\operacja{Pobranie przodków}
+%! method-sql with.ancestors
+
+% \begin{verbatim}[sql]
+% WITH temptab(node_level, id, parent, name) AS
+% (
+%     SELECT 0, root.id, root.parent, root.name
+%       FROM simple root
+%       WHERE root.id = :id
+%   UNION ALL
+%     SELECT t.node_level + 1, s.id, s.parent, s.name
+%       FROM simple s, temptab t
+%       WHERE s.id = t.parent
+% )
+% SELECT node_level, id, parent, name FROM temptab
+% \end{verbatim}
+
+\operacja{Pobieranie potomków}
+%! method-sql connectby.descendants
+
+% \begin{verbatim}[sql]
+% WITH temptab(level, id, parent, name) AS
+% (
+%   SELECT 0, root.id, root.parent, root.name
+%     FROM simple root
+%     WHERE root.id = :id
+% UNION ALL
+%   SELECT t.level + 1, s.id, s.parent, s.name
+%     FROM simple s, temptab t
+%     WHERE s.parent = t.id
+% )
+% SELECT level, id, parent, name FROM temptab
+% \end{verbatim}
+
+Warto zwrócić uwagę, że ta konstrukcja przeszukuje drzwewo wszerz. Można można to dostrzec w tym jak zapytanie jest sformuowane. 
+
+Jeśli by zaszła potrzeba pobrania całego drzewa wystarczy w zapytaniu startowym zmienić \texttt{WHERE root.id = :id} na \texttt{WHERE root.parent IS NULL}
+
+
+
+% \begin{verbatim}[sql]
+% WITH temptab(deptid, empcount, superdept) AS
+%    (    SELECT root.deptid, root.empcount, root.superdept
+%             FROM departments root
+%             WHERE deptname='Production'
+%      UNION ALL
+%         SELECT sub.deptid, sub.empcount, sub.superdept
+%             FROM departments sub, temptab super
+%             WHERE sub.superdept = super.deptid
+%    )
+% SELECT sum(empcount) FROM temptab
+% \end{verbatim}
+
+
+
+% P main.py sql db2 'WITH temptab(level, id, parent, name) AS (SELECT 0, r.id, r.parent, r.name FROM simple r WHERE r.id = 1 UNION ALL SELECT t.level + 1, s.id, s.parent, s.name FROM simple s, temptab t WHERE s.parent = t.id) SELECT level, id, parent, name FROM temptab'
+% +-------+----+--------+-------------+
+% | level | id | parent | name        |
+% +-------+----+--------+-------------+
+% | 0     | 1  | None   | Bazy Danych |
+% | 1     | 2  | 1      | Obiektowe   |
+% | 1     | 4  | 1      | Relacyjne   |
+% | 1     | 10 | 1      | XML         |
+% | 2     | 3  | 2      | db4o        |
+% | 2     | 5  | 4      | Komercyjne  |
+% | 2     | 6  | 4      | Open Source |
+% | 3     | 7  | 6      | PostgreSQL  |
+% | 3     | 8  | 6      | MySQL       |
+% | 3     | 9  | 6      | SQLite      |
+% +-------+----+--------+-------------+
+
+
+
+% P main.py sql db2 'WITH temptab(level, id, parent, name) AS (SELECT 0, r.id, r.parent, r.name FROM simple r WHERE r.id = 7 UNION ALL SELECT t.level + 1, s.id, s.parent, s.name FROM simple s, temptab t WHERE s.id = t.parent) SELECT level, id, parent, name FROM temptab'
+% +-------+----+--------+-------------+
+% | level | id | parent | name        |
+% +-------+----+--------+-------------+
+% | 0     | 7  | 6      | PostgreSQL  |
+% | 1     | 6  | 4      | Open Source |
+% | 2     | 4  | 1      | Relacyjne   |
+% | 3     | 1  | None   | Bazy Danych |
+% +-------+----+--------+-------------+

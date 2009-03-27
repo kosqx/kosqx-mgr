@@ -23,7 +23,7 @@
 
 
 Najprostszą, najbardziej intuicyjną i zapewne najpopularniejszą metodą jest metoda krawędziowa.
-Została ona spopularyzowana przez Edgara Franka Codda\index{Codd E.F.}. 
+Została ona spopularyzowana przez Edgara Franka Codda\index{Codd Edgar Frank}. 
 On też nadał im nazwę, która odnosi się do tego, że informacja o rodzicu elementu znajduje się w tej samej krotce co dane.
 
 Zasługa spopularyzowania tej metody przypada Oracle.
@@ -43,58 +43,74 @@ W relacyjnych bazach danych odpowiednikiem wskaźnika jest klucz obcy\index{kluc
 
 
 Ta metoda jest na tyle popularna, że w bazach danych pojawiły się specjalne konstrukcje do jej obsługi. 
-Zostaną one przedstawione w rozdziale \todo{wstawić jakoś nazwę rodziału} o metodach specyficznych dla systemu zarządzania bazą danych.
+Zostaną one przedstawione w rozdziale \todo{wstawić jakoś nazwę rozdziału} o metodach specyficznych dla systemu zarządzania bazą danych.
 
 
 \operacja{Reprezentacja}
 
 \operacja{Reprezentacja w SQL}
-\begin{verbatim}[sql]
-CREATE TABLE tree (
-  id INTEGER PRIMARY KEY,
-  parent INTEGER REFERENCES tree(id) ON DELETE CASCADE,
-  value VARCHAR(100)
-);
-\end{verbatim}
+%! method-sql simple.create
 
-Należy zwrócić uwagę na \todo{warunek} \texttt{ON DELETE CASCADE}. Sprawia on, że w razie usunięcia węzła \todo{ustalić terminologię} automatycznie zostaną usunięci wszyscy jego potomkowie.
+
+% \begin{verbatim}[sql]
+% CREATE TABLE tree (
+%   id INTEGER PRIMARY KEY,
+%   parent INTEGER REFERENCES tree(id) ON DELETE CASCADE,
+%   value VARCHAR(100)
+% );
+% \end{verbatim}
+
+Należy zwrócić uwagę na \todo{warunek} \texttt{ON DELETE CASCADE}. 
+Sprawia on, że w razie usunięcia węzła \todo{ustalić terminologię} 
+automatycznie zostaną usunięci wszyscy jego potomkowie.
 
 
 \operacja{Wstawianie danych}
-\begin{verbatim}[sql]
-INSERT INTO simple (parent, name) VALUES (:parent, :name)
-\end{verbatim}
+%! method-sql simple.insert
+
+% \begin{verbatim}[sql]
+% INSERT INTO simple (parent, name) VALUES (:parent, :name)
+% \end{verbatim}
 
 
 \operacja{Pobranie korzeni}
-\begin{verbatim}[sql]
-SELECT * FROM simple WHERE parent IS NULL
-\end{verbatim}
+%! method-sql simple.roots
+
+% \begin{verbatim}[sql]
+% SELECT * FROM simple WHERE parent IS NULL
+% \end{verbatim}
 
 
 
 
 \operacja{Pobranie rodzica}
-\begin{verbatim}[sql]
-SELECT * FROM simple WHERE id = :id
-\end{verbatim}
+%! method-sql simple.parent
+
+% \begin{verbatim}[sql]
+% SELECT * FROM simple WHERE id = :id
+% \end{verbatim}
 
 
 
 \operacja{Pobranie dzieci}
-\begin{verbatim}[sql]
-SELECT 
-\end{verbatim}
+%! method-sql simple.children
+
+% \begin{verbatim}[sql]
+% SELECT 
+% \end{verbatim}
 
 \operacja{Pobranie przodków}
-\begin{verbatim}[sql]
-SELECT 
-\end{verbatim}
+% %! method-sql simple.ancestors
+
+% \begin{verbatim}[sql]
+% SELECT 
+% \end{verbatim}
 
 \operacja{Pobieranie potomków}
-\begin{verbatim}[sql]
-SELECT 
-\end{verbatim}
+% %! method-sql simple.descendants
+% \begin{verbatim}[sql]
+% SELECT 
+% \end{verbatim}
 
 Należy zwrócić uwagę na wykorzystanie operatora \emph{IN}. Bez niego wydajność metody spada znacząco. 
 
@@ -115,7 +131,7 @@ Należy zwrócić uwagę na wykorzystanie operatora \emph{IN}. Bez niego wydajno
   \end{center}
 \end{figure}
 
-\clearpage
+
 
 
 

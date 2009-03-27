@@ -5,13 +5,103 @@
 % http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/queries003.htm
 % http://www.dba-oracle.com/t_sql99_with_clause.htm
 
+%% TODO:
+% - napisać o sortowaniu wyników
+% - operatory, zwłaszcza LEVEL, SYS_CONNECT_BY_PATH,
+% - trochę o historii
+% - literatura
+
 System zarządzania bazą danych Oracle nie posiada możliwości przetwarzania danych hierarchicznych za pomocą klauzuli \texttt{with}.
 W prawdzie jest ona dostępna od wersji \emph{Oracle 9i release 2} ale służy wyłacznie do pracy z podzapytaniami.
 
-W to miejsce \emph{Oracle} udostępnia własne rozszerzenie. 
+W to miejsce \emph{Oracle} udostępnia własne rozszerzenie.
+
+
+
+\operacja{Pobranie przodków}
+
+%! method-sql connectby.ancestors
+
+% \begin{verbatim}[sql]
+% SELECT level, id, parent, name
+%   FROM simple
+%   START WITH id=7
+%   CONNECT BY PRIOR parent =  id
+% \end{verbatim}
+
+\operacja{Pobieranie potomków}
+%! method-sql connectby.descendants
+
+% \begin{verbatim}[sql]
+% SELECT level, id, parent, name
+%   FROM simple
+%   START WITH id=1
+%   CONNECT BY parent = PRIOR id
+% \end{verbatim}
+
+\operacja{Uwagi}
+
+Oracle w wersjach wcześniejszych od 11g wykonując zapytanie korzystające z klauzuli \texttt{CONNECT BY}
+
+
+
+% http://www.postgresql.org/docs/current/static/tablefunc.html
+% wajig install postgresql-contrib-8.3
+
+\subsection*{PostgreSQL \texttt{connectby()}}
+
+PostgreSQL dostarcza moduł \texttt{tablefunc}\index{tablefunc} zawierający różne funkcje zwracające tabele.
+% Ta funkcjonalność pojawiła się w wersji 7.4, natomiast dokumentacja dal niej dopiero w wersji 8.3.
+Są one zaimplementowane w C\index{C} dla większej wydajności.
+
+Jedną z dostępnych funkcji jest \texttt{connectby()}, będąca odpowiednikiem wyrażenia \texttt{CONNECT BY}. Jej składnia\todo{składnia?} wygląda następująco:
 
 \begin{verbatim}[sql]
-SELECT sum(empcount) FROM STRUCREL
-   CONNECT BY PRIOR superdept = deptid
-     START WITH deptname = 'Production';
+connectby(
+  text relname,          -- 
+  text keyid_fld,        -- 
+  text parent_keyid_fld, -- 
+  [text orderby_fld,]    -- 
+  text start_with,       -- 
+  int max_depth,         -- 
+  [text branch_delim])   -- 
 \end{verbatim}
+
+
+% \begin{verbatim}[sql]
+% SELECT sum(empcount) FROM STRUCREL
+%    CONNECT BY PRIOR superdept = deptid
+%      START WITH deptname = 'Production';
+% \end{verbatim}
+
+
+
+% P main.py sql oracle 'SELECT level, id, parent, name FROM simple START WITH id=1 CONNECT BY parent = PRIOR id'
+% +-------+----+--------+-------------+
+% | level | id | parent | name        |
+% +-------+----+--------+-------------+
+% | 1     | 1  | None   | Bazy Danych |
+% | 2     | 2  | 1      | Obiektowe   |
+% | 3     | 3  | 2      | db4o        |
+% | 2     | 4  | 1      | Relacyjne   |
+% | 3     | 5  | 4      | Komercyjne  |
+% | 3     | 6  | 4      | Open Source |
+% | 4     | 7  | 6      | PostgreSQL  |
+% | 4     | 8  | 6      | MySQL       |
+% | 4     | 9  | 6      | SQLite      |
+% | 2     | 10 | 1      | XML         |
+% +-------+----+--------+-------------+
+% 
+
+% P main.py sql oracle 'SELECT level, id, parent, name FROM simple START WITH id=7 CONNECT BY PRIOR parent =  id'
+% +-------+----+--------+-------------+
+% | level | id | parent | name        |
+% +-------+----+--------+-------------+
+% | 1     | 7  | 6      | PostgreSQL  |
+% | 2     | 6  | 4      | Open Source |
+% | 3     | 4  | 1      | Relacyjne   |
+% | 4     | 1  | None   | Bazy Danych |
+% +-------+----+--------+-------------+
+
+
+

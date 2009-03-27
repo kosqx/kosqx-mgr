@@ -2,3 +2,156 @@
 	% http://technet.microsoft.com/en-us/library/bb677173.aspx
 	% http://blogs.msdn.com/manisblog/archive/2007/08/17/sql-server-2008-hierarchyid.aspx
 	% http://www.microsoft.com/poland/technet/bazawiedzy/centrumrozwiazan/cr314_01.mspx
+
+
+% Apparently the HierarchyID uses the ORDPATH algorithm (as far as I'm concerned). 
+% Just found the following document that elaborates somewhat on the algorithm and other things related to hierarchical storage:
+% http://sites.computer.org/debull/a07mar/kumaran.pdf
+
+
+% SQL Server 2008 adds a new feature to help with modeling hierarchical relationships: the HIERARCHYID data type. It provides compact storage and convenient methods to manipulate hierarchies. In a way it is very much like optimized materialized path. In addition the SqlHierarchyId CLR data type is available for client applications. 
+% 
+% While HIERARCHYID has a lot to offer in terms of operations with hierarchical data, it is important to understand a few basic concepts:
+% 
+% - HIERARCHYID can have only a single root (although easy to work around by adding sub-roots)
+% - It does not automatically represent a tree, the application has to define the relationships and enforce all rules 
+% - The application needs to maintain the consistency
+% http://pratchev.blogspot.com/2008/05/hierarchies-in-sql-server-2008.html
+
+% http://technet.microsoft.com/en-us/library/cc721270.aspx  !! TODO
+% The new HIERARCHYID data type in SQL Server 2008 is a system-supplied CLR UDT that can be useful for storing and manipulating hierarchies. This type is internally stored as a VARBINARY value that represents the position of the current node in the hierarchy (both in terms of parent-child position and position among siblings). You can perform manipulations on the type by using either Transact-SQL or client APIs to invoke methods exposed by the type. Let’s look at indexing strategies for the HIERARCHYID type, how to use the type to insert new nodes into a hierarchy, and how to query hierarchies.
+
+%% TODO: 
+% - opis algorytmu (zoptymalizowane ścieżki zmaterializowane)
+% - opis wszystkich funkcji
+% - http://www.cs.umb.edu/~poneil/ordpath.pdf google:ORDPATH
+% - http://msdn.microsoft.com/en-us/library/bb677173.aspx
+
+Jedną z najciekawszych nowości jakie Microsoft wprowadził w SQL Server 2008 jest nowy typ danych \texttt{hierarchyid}. 
+Pozwala on na wygodne przechowywanie danych hierarchicznych.
+
+W budowie wewnętrznej przypomina 
+
+
+\subsection*{Opis typu \texttt{hierarchyid}}
+
+\paragraph{Budowa}
+
+Typ \texttt{hierarchyid} jest przechowywany wewnętrznie jako \texttt{VARBINARY}. 
+
+
+\paragraph{Indeksowanie}
+
+
+
+\begin{description}
+  \item[\texttt{child.GetAncestor(n)}]
+	This method is useful to find the (nth ancestor of the given child node.
+
+  \item[\texttt{parent.GetDescendant(child1, child2)}]
+	This method is very useful to get the descendant of a given node. 
+	It has a great significance in terms of finding the new descendant position get the descendants etc. 
+
+	This function returns one child node that is a descendant of the parent. 
+	If parent is NULL, returns NULL. 
+	If parent is not NULL, and both child1 and child2 are NULL, returns a child of parent. 
+	If parent and child1 are not NULL, and child2 is NULL, returns a child of parent greater than child1. 
+	If parent and child2 are not NULL and child1 is NULL, returns a child of parent less than child2. 
+	If parent, child1, and child2 are all not NULL, returns a child of parent greater than child1 and less than child2. 
+	If child1 or child2 is not NULL but is not a child of parent, an exception is raised. 
+	If child1 >= child2, an exception is raised.
+
+  \item[\texttt{node.GetLevel()}]
+	Zwraca liczbę całowitą będącą poziomem danego węzła w drzewie\todo{słownik}. 
+	Korzeń ma poziom równy $0$. 
+	Jako, że typ \texttt{hierarchyid} nie obsługuje lasów to aby to kompensować tworzy się sztuczny korzeń, a korzenie obsługiwanych drzew znajdują się na poziomie $1$.
+
+	% This function will return an integer that represents the depth of this node in the current tree. 
+
+  \item[\texttt{hierarchyid::GetRoot()}]
+	This method will return the root of the hierarchy tree and this is a static method if you are using it within CLR. 
+	It will return the data type hierarchyID. 
+
+  \item[\texttt{parent.IsDescendant(child)}]
+	This method returns true/false (BIT) if the node is a descendant of the parent. 
+
+  \item[\texttt{hierarchyid::Parse (input)}]
+	Parse converts the canonical string representation of a hierarchyid to a hierarchyid value. 
+	Parse is called implicitly when a conversion from a string type to hierarchyid occurs. 
+	Acts as the opposite of ToString(). 
+	Parse() is a static method. 
+
+  \item[\texttt{void Read( BinaryReader r )}]
+	Read reads binary representation of SqlHierarchyId from the passed-in BinaryReader and sets the SqlHierarchyId object to that value. 
+	Read cannot be called by using Transact-SQL. Use CAST or CONVERT instead.
+
+  \item[\texttt{node.Reparent(oldRoot, newRoot)}]
+	This is a very useful method which helps you to reparent a node i.e. suppose if we want to align an existing node 
+	to a new parent or any other existing parent then this method is very useful. 
+
+  \item[\texttt{node.ToString()}]
+	This method is useful to get the string representation of the HierarchyID. 
+	The method returns a string that is a nvarchar(4000) data type.
+
+
+  \item[\texttt{void Write( BinaryWriter w )}]
+	Write writes out a binary representation of SqlHierarchyId to the passed-in BinaryWriter. 
+	Write cannot be called by using Transact-SQL. Use CAST or CONVERT instead.
+
+ \end{description}
+
+\subsection*{Operacje}
+
+\operacja{Reprezentacja w SQL}
+%! method-sql hierarchyid.create
+
+\operacja{Wstawianie danych}
+%! method-sql hierarchyid.insert
+
+\operacja{Pobranie korzeni}
+%! method-sql hierarchyid.roots
+
+\operacja{Pobranie rodzica}
+%! method-sql hierarchyid.parent
+
+\operacja{Pobranie dzieci}
+%! method-sql hierarchyid.children
+
+\operacja{Pobranie przodków}
+%! method-sql hierarchyid.ancestors
+
+\operacja{Pobieranie potomków}
+%! method-sql hierarchyid.descendants
+
+\operacja{Uwagi}
+
+SQL Server udostępnia \texttt{PERSISTED} --- umożliwiające dynamiczne tworzenie dynamicznych kolumn. \todo{lepiej to sformuować}
+Przykładowo może zostać to użyte do łatwego pobrania
+
+\begin{verbatim}[sql]
+CREATE TABLE tree (
+  node hierarchyid PRIMARY KEY CLUSTERED,
+  level AS node.GetLevel() PERSISTED,
+  name varchar(50)
+);
+SELECT level, name FROM tree;
+\end{verbatim}
+
+
+% P main.py sql sqlserver  'SELECT *, master.dbo.fn_varbintohexstr(cast(node as varbinary)) a, node.ToString() t FROM herid'
+% +----+------+-------------+----------+-----------+
+% | id | node | name        | a        | t         |
+% +----+------+-------------+----------+-----------+
+% | 1  |      | ROOT        | None     | /         |
+% | 2  | X    | Bazy Danych | 0x58     | /1/       |
+% | 3  | Z�   | Obiektowe   | 0x5ac0   | /1/1/     |
+% | 4  | Z�   | db4o        | 0x5ad6   | /1/1/1/   |
+% | 5  | [@   | Relacyjne   | 0x5b40   | /1/2/     |
+% | 6  | [V   | Komercyjne  | 0x5b56   | /1/2/1/   |
+% | 7  | [Z   | Open Source | 0x5b5a   | /1/2/2/   |
+% | 8  | [Z�  | PostgreSQL  | 0x5b5ab0 | /1/2/2/1/ |
+% | 9  | [Z�  | MySQL       | 0x5b5ad0 | /1/2/2/2/ |
+% | 10 | [Z�  | SQLite      | 0x5b5af0 | /1/2/2/3/ |
+% | 11 | [�   | XML         | 0x5bc0   | /1/3/     |
+% +----+------+-------------+----------+-----------+
+
