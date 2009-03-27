@@ -14,13 +14,10 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import LatexFormatter
 
-#import numpy as np
-#import matplotlib
-#matplotlib.use('GTK')
-##matplotlib.use('cairo')
-#import matplotlib.pyplot as plt
 
 from chart import chart
+from methods_sql import parse_methods
+from sql_lexer import SqlLexer
 
 #--------------------------------------------------------------------
 # Util functions
@@ -99,20 +96,14 @@ def process_results(results, method, testdata):
     return final
 
 
-#--------------------------------------------------------------------
-# Functions inserting data to tex
-
-def code_pre(lines):
-    code = ''.join(lines[1:])
-
-    head = lines[0].strip()
-
-    if lines[0].endswith('[python]'):
-        lexer = get_lexer_by_name("python", stripall=True)
+def do_highlight(code, lexer_name):
+    if lexer_name == 'sql':
+        lexer = SqlLexer()
     else:
-        lexer = get_lexer_by_name("sql", stripall=True)
+        lexer = get_lexer_by_name(lexer_name, stripall=True)
     
-    formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=single,xleftmargin=5mm')
+    #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=single,xleftmargin=5mm')
+    formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=lines,xleftmargin=5mm')
     
     result = highlight(code, lexer, formatter)
     
@@ -121,13 +112,52 @@ def code_pre(lines):
         lines[-2:-1] =  []
     return (u'\n'.join(lines)).encode('utf-8')
 
+#--------------------------------------------------------------------
+# Functions inserting data to tex
+
+
+
+def code_pre(lines):
+    code = ''.join(lines[1:])
+
+    head = lines[0].strip()
+    
+    if lines[0].endswith('[python]'):
+        lexer_name = "python"
+    else:
+        lexer_name = "sql"
+        
+    return do_highlight(code, lexer_name)
+
+    #if lines[0].endswith('[python]'):
+        #lexer = get_lexer_by_name("python", stripall=True)
+    #else:
+        #lexer = get_lexer_by_name("sql", stripall=True)
+    
+    ##formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=single,xleftmargin=5mm')
+    #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=lines,xleftmargin=5mm')
+    
+    #result = highlight(code, lexer, formatter)
+    
+    #lines = result.splitlines()
+    #if len(lines[-2].strip()) == 0:
+        #lines[-2:-1] =  []
+    #return (u'\n'.join(lines)).encode('utf-8')
+
 
 def code_pre_style(line):
     return LatexFormatter(commandprefix='PYG').get_style_defs().encode('utf-8')
 
+def code_method_sql(line):
+    global methods
+
+    name = line.split()[-1]
+    code = ';\n\n'.join(methods[name])
+    return do_highlight(code, 'sql')
 
 def code_results_table(line):
     global results
+    
     
     parts = line.split()
     method = parts[-2]
@@ -235,6 +265,8 @@ def process_files(files, abspath, rules_in):
 def main(args):
     global results
     results = read_results('../src/results.txt')
+    global methods
+    methods = parse_methods('../src/methods.py')
     
     tmpdir = tempfile.mkdtemp()
     abspath = os.path.abspath(args[0])
@@ -249,6 +281,7 @@ def main(args):
     process_files(files, abspath, [
         (r'\\begin\{verbatim\}\[.*\]\s*', r'\\end\{verbatim\}', code_pre),
         (r'^%! *pygments-style',        None,                 code_pre_style),
+        (r'^%! *method-sql',            None,                 code_method_sql),
         (r'^%! *result-table',          None,                 code_results_table),
         (r'^%! *result-chart',          None,                 code_results_chart),
     ])
