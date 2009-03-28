@@ -248,14 +248,14 @@ class Full(Tree):
         )
 
     def get_ancestors(self, id):
-        #return self.db.run("""
+        #return self.db.run('''
             #SELECT d.id, d.name 
                 #FROM full_data d 
                     #JOIN full_tree t 
                         #ON (d.id=t.top_id)
                 #WHERE t.distance > 0 AND t.bottom_id = :id 
                 #ORDER BY t.distance ASC
-            #""", 
+            #''', 
             #dict(id=id)
         #)
         return self.db.run("""

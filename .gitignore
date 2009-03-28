@@ -17,7 +17,7 @@
 **.db
 **.pyc
 
-**.kilepr
+#**.kilepr
 **.tar.gz
 
 
