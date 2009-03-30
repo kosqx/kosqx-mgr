@@ -21,8 +21,8 @@
 **.tar.gz
 
 
-# softlink
-**/pada.py
+# softlink - not longer
+# **/pada.py
 
 src/data/*.xml
 # except
