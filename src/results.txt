@@ -182,3 +182,166 @@ full:db2:deep3:children    0.218
 full:db2:deep3:ancestors   80.270
 full:db2:deep3:descendants 1.793
 full:db2:deep3:total       94.577
+## fake results, for generating test .pdf
+##
+full:postgresql:deep3:create      1.00000
+full:postgresql:deep3:insert      1.00000
+full:postgresql:deep3:roots       1.00000
+full:postgresql:deep3:parent      1.00000
+full:postgresql:deep3:children    1.00000
+full:postgresql:deep3:ancestors   1.00000
+full:postgresql:deep3:descendants 1.00000
+full:postgresql:deep3:total       1.00000
+
+full:mysql:deep3:create      1.00000
+full:mysql:deep3:insert      1.00000
+full:mysql:deep3:roots       1.00000
+full:mysql:deep3:parent      1.00000
+full:mysql:deep3:children    1.00000
+full:mysql:deep3:ancestors   1.00000
+full:mysql:deep3:descendants 1.00000
+full:mysql:deep3:total       1.00000
+
+full:sqlite:deep3:create      1.00000
+full:sqlite:deep3:insert      1.00000
+full:sqlite:deep3:roots       1.00000
+full:sqlite:deep3:parent      1.00000
+full:sqlite:deep3:children    1.00000
+full:sqlite:deep3:ancestors   1.00000
+full:sqlite:deep3:descendants 1.00000
+full:sqlite:deep3:total       1.00000
+
+full:db2:deep3:create      1.00000
+full:db2:deep3:insert      1.00000
+full:db2:deep3:roots       1.00000
+full:db2:deep3:parent      1.00000
+full:db2:deep3:children    1.00000
+full:db2:deep3:ancestors   1.00000
+full:db2:deep3:descendants 1.00000
+full:db2:deep3:total       1.00000
+
+full:oracle:deep3:create      1.00000
+full:oracle:deep3:insert      1.00000
+full:oracle:deep3:roots       1.00000
+full:oracle:deep3:parent      1.00000
+full:oracle:deep3:children    1.00000
+full:oracle:deep3:ancestors   1.00000
+full:oracle:deep3:descendants 1.00000
+full:oracle:deep3:total       1.00000
+
+full:sqlserver:deep3:create      1.00000
+full:sqlserver:deep3:insert      1.00000
+full:sqlserver:deep3:roots       1.00000
+full:sqlserver:deep3:parent      1.00000
+full:sqlserver:deep3:children    1.00000
+full:sqlserver:deep3:ancestors   1.00000
+full:sqlserver:deep3:descendants 1.00000
+full:sqlserver:deep3:total       1.00000
+
+
+
+
+pathenum:postgresql:deep3:create      1.00000
+pathenum:postgresql:deep3:insert      1.00000
+pathenum:postgresql:deep3:roots       1.00000
+pathenum:postgresql:deep3:parent      1.00000
+pathenum:postgresql:deep3:children    1.00000
+pathenum:postgresql:deep3:ancestors   1.00000
+pathenum:postgresql:deep3:descendants 1.00000
+pathenum:postgresql:deep3:total       1.00000
+
+pathenum:mysql:deep3:create      1.00000
+pathenum:mysql:deep3:insert      1.00000
+pathenum:mysql:deep3:roots       1.00000
+pathenum:mysql:deep3:parent      1.00000
+pathenum:mysql:deep3:children    1.00000
+pathenum:mysql:deep3:ancestors   1.00000
+pathenum:mysql:deep3:descendants 1.00000
+pathenum:mysql:deep3:total       1.00000
+
+pathenum:sqlite:deep3:create      1.00000
+pathenum:sqlite:deep3:insert      1.00000
+pathenum:sqlite:deep3:roots       1.00000
+pathenum:sqlite:deep3:parent      1.00000
+pathenum:sqlite:deep3:children    1.00000
+pathenum:sqlite:deep3:ancestors   1.00000
+pathenum:sqlite:deep3:descendants 1.00000
+pathenum:sqlite:deep3:total       1.00000
+
+pathenum:db2:deep3:create      1.00000
+pathenum:db2:deep3:insert      1.00000
+pathenum:db2:deep3:roots       1.00000
+pathenum:db2:deep3:parent      1.00000
+pathenum:db2:deep3:children    1.00000
+pathenum:db2:deep3:ancestors   1.00000
+pathenum:db2:deep3:descendants 1.00000
+pathenum:db2:deep3:total       1.00000
+
+pathenum:oracle:deep3:create      1.00000
+pathenum:oracle:deep3:insert      1.00000
+pathenum:oracle:deep3:roots       1.00000
+pathenum:oracle:deep3:parent      1.00000
+pathenum:oracle:deep3:children    1.00000
+pathenum:oracle:deep3:ancestors   1.00000
+pathenum:oracle:deep3:descendants 1.00000
+pathenum:oracle:deep3:total       1.00000
+
+
+pathenum:sqlserver:deep3:create      1.00000
+pathenum:sqlserver:deep3:insert      1.00000
+pathenum:sqlserver:deep3:roots       1.00000
+pathenum:sqlserver:deep3:parent      1.00000
+pathenum:sqlserver:deep3:children    1.00000
+pathenum:sqlserver:deep3:ancestors   1.00000
+pathenum:sqlserver:deep3:descendants 1.00000
+pathenum:sqlserver:deep3:total       1.00000
+
+
+
+
+
+ltree:postgresql:deep3:create      1.00000
+ltree:postgresql:deep3:insert      1.00000
+ltree:postgresql:deep3:roots       1.00000
+ltree:postgresql:deep3:parent      1.00000
+ltree:postgresql:deep3:children    1.00000
+ltree:postgresql:deep3:ancestors   1.00000
+ltree:postgresql:deep3:descendants 1.00000
+ltree:postgresql:deep3:total       1.00000
+
+
+with:db2:deep3:create      1.00000
+with:db2:deep3:insert      1.00000
+with:db2:deep3:roots       1.00000
+with:db2:deep3:parent      1.00000
+with:db2:deep3:children    1.00000
+with:db2:deep3:ancestors   1.00000
+with:db2:deep3:descendants 1.00000
+with:db2:deep3:total       1.00000
+
+with:sqlserver:deep3:create      1.00000
+with:sqlserver:deep3:insert      1.00000
+with:sqlserver:deep3:roots       1.00000
+with:sqlserver:deep3:parent      1.00000
+with:sqlserver:deep3:children    1.00000
+with:sqlserver:deep3:ancestors   1.00000
+with:sqlserver:deep3:descendants 1.00000
+with:sqlserver:deep3:total       1.00000
+
+connectby:oracle:deep3:create      1.00000
+connectby:oracle:deep3:insert      1.00000
+connectby:oracle:deep3:roots       1.00000
+connectby:oracle:deep3:parent      1.00000
+connectby:oracle:deep3:children    1.00000
+connectby:oracle:deep3:ancestors   1.00000
+connectby:oracle:deep3:descendants 1.00000
+connectby:oracle:deep3:total       1.00000
+
+hierarchyid:sqlserver:deep3:create      1.00000
+hierarchyid:sqlserver:deep3:insert      1.00000
+hierarchyid:sqlserver:deep3:roots       1.00000
+hierarchyid:sqlserver:deep3:parent      1.00000
+hierarchyid:sqlserver:deep3:children    1.00000
+hierarchyid:sqlserver:deep3:ancestors   1.00000
+hierarchyid:sqlserver:deep3:descendants 1.00000
+hierarchyid:sqlserver:deep3:total       1.00000

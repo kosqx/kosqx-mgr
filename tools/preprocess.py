@@ -203,8 +203,8 @@ def code_results_chart(line):
     
     filename = 'img_chart_%s.png' % method
     chart(data, filename, value2desc)
-    
-    return r'\includegraphics[width=\textwidth]{%s}' % filename
+    return r'\includegraphics[totalheight=0.4\textheight]{%s}' % filename
+    #return r'\includegraphics[width=\textwidth]{%s}' % filename
 
 
 #--------------------------------------------------------------------

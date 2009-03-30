@@ -18,6 +18,7 @@ class Stopwatch():
         self._name = ''
     
     def start(self, name):
+        #print '-------------', name
         self.stop()
         self._name = '%s:%s' % (self._prefix, name)
         self._time = time.time()
@@ -37,6 +38,12 @@ class Stopwatch():
 
 
 def run_test(database, tree_class, data):
+    def report_null(data):
+        pass
+    def report_print(data):
+        print data
+    report = report_print
+    
     db = pada.connect(file='config/%s.cfg' % database)
     db.set_paramstyle('named')
     tree = tree_class(db)
@@ -52,23 +59,23 @@ def run_test(database, tree_class, data):
     
     sw.start('roots')
     for i in xrange(testcases.get('roots', [1])[0]):
-        tree.get_roots()
+        report(tree.get_roots())
     
     sw.start('parent')
     for idn in testcases.get('parent', []):
-        tree.get_parent(idn)
+        report(tree.get_parent(idn))
     
     sw.start('children')
     for idn in testcases.get('children', []):
-        tree.get_children(idn)
+        report(tree.get_children(idn))
     
     sw.start('ancestors')
     for idn in testcases.get('ancestors', []):
-        tree.get_ancestors(idn)
+        report(tree.get_ancestors(idn))
     
     sw.start('descendants')
     for idn in testcases.get('descendants', []):
-        tree.get_descendants(idn)
+        report(tree.get_descendants(idn))
     
     sw.stop()
     

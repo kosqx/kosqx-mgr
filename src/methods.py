@@ -369,13 +369,111 @@ class NestedSets(Tree):
             left = data[0]['rgt']
         return roots
 
+
+class PathEnum(Tree):
+    tree_name = 'pathenum'
+    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
+    
+   
+    def create_table(self):
+        tables = self.db.schema_list('table')
+        if 'pathenum' in tables:
+            self.db.ddl("DROP TABLE pathenum")
+
+        self.db.ddl("""
+                CREATE TABLE pathenum(
+                    id serial PRIMARY KEY, 
+                    path varchar(100), 
+                    name varchar(50)
+                )"""
+        )
+        
+    def insert(self, parent, name):
+        """
+            INSERT INTO pathenum (path, name) VALUES (
+                (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
+                :name
+            )
+        """
+        if parent is None:
+            pid = self.db.execute('''
+                INSERT INTO pathenum (path, name) VALUES (
+                    '',
+                    :name
+                ) RETURNING id
+                ''', dict(parent=parent, name=name)
+            ).list()[0][0]
+        else:
+            pid = self.db.execute('''
+                INSERT INTO pathenum (path, name) VALUES (
+                    (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
+                    :name
+                ) RETURNING id
+                ''', dict(parent=parent, name=name)
+            ).list()[0][0]
+        
+        return pid
+    
+    def get_roots(self):
+        return self.db.run("""
+            SELECT *  
+                FROM pathenum 
+                WHERE path = ''
+            """)
+
+    def get_parent(self, id):
+        return self.db.run("""
+            SELECT p2.*
+                FROM pathenum p1, pathenum p2
+                WHERE p1.id = :id AND
+                    (p2.path || p2.id || '.') = p1.path
+                """,
+            dict(id=id)
+        )
+
+    def get_ancestors(self, id):
+        return self.db.run("""
+            SELECT p2.*
+                FROM pathenum p1, pathenum p2
+                WHERE p1.id = :id AND
+                    position(p2.path || p2.id IN p1.path) = 1
+                """,
+            dict(id=id)
+        )
+    
+    def get_children(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM pathenum 
+                WHERE path = (
+                    SELECT path || id ||  '.'
+                        FROM pathenum 
+                        WHERE id = :parent
+                )
+            """, 
+            dict(parent=id)
+        )
+
+    def get_descendants(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM pathenum 
+                WHERE path LIKE (
+                    SELECT path || id || '.' || '%%'
+                        FROM pathenum
+                        WHERE id = :parent
+                )
+            """, 
+            dict(parent=id)
+        )
+        
+#class EdgeEnum(Tree):
+#    tree_name = 'edgeenum'
+#    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
+
 #class Trie(Tree):
     #pass
     
-#class LTree(Tree):
-    #pass
-
-
 class ConnectBy(Simple):
     tree_name = 'connectby'
     tree_base = ['oracle']
@@ -433,6 +531,111 @@ class With(Simple):
             )
             SELECT level, id, parent, name FROM temptab""",
             dict(id=id)
+        )
+
+
+class Ltree(Tree):
+    tree_name = 'ltree'
+    tree_base = ['postgresql']
+    
+   
+    def create_table(self):
+        tables = self.db.schema_list('table')
+        if 'ltreetab' in tables:
+            self.db.ddl("DROP TABLE ltreetab")
+
+        self.db.ddl("""
+                CREATE TABLE ltreetab(
+                    id serial PRIMARY KEY, 
+                    path ltree, 
+                    name varchar(50)
+                )"""
+        )
+        
+    def insert(self, parent, name):
+        """
+            INSERT INTO ltreetab (path, name) VALUES (
+                text2ltree('' || currval('ltreetab_path_seq')),
+                :name
+            ) RETURNING id
+        """
+        if parent is None:
+                        pid = self.db.execute('''
+                INSERT INTO ltreetab (path, name) VALUES (
+                    text2ltree('' || currval('ltreetab_id_seq')),
+                    :name
+                ) RETURNING id
+                ''', dict(parent=parent, name=name)
+            ).list()[0][0]
+        else:
+            pid = self.db.execute('''
+                INSERT INTO ltreetab (path, name) VALUES (
+                    (SELECT path FROM ltreetab WHERE id = :parent) ||
+                        ('' ||currval('ltreetab_id_seq')),
+                    :name
+                ) RETURNING id
+                ''', dict(parent=parent, name=name)
+            ).list()[0][0]
+        
+        return pid
+    
+    def get_roots(self):
+        return self.db.run("""
+            SELECT *  
+                FROM ltreetab 
+                WHERE path ~ '*{1}'
+            """)
+
+    def get_parent(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM ltreetab 
+                WHERE path = (
+                    SELECT subpath(path, 0, -1) 
+                        FROM ltreetab 
+                        WHERE id = :id
+                )""", 
+            dict(id=id)
+        )
+
+    def get_ancestors(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM ltreetab 
+                WHERE path @> (
+                    SELECT path
+                        FROM ltreetab
+                        WHERE id = :id
+                )
+                """,
+            dict(id=id)
+        )
+
+    def get_children(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM ltreetab 
+                WHERE path ~ ((
+                    SELECT ltree2text(path) 
+                        FROM ltreetab 
+                        WHERE id = :parent
+                ) || '.*{1}')::lquery
+            """, 
+            dict(parent=id)
+        )
+
+
+    def get_descendants(self, id):
+        return self.db.run("""
+            SELECT * 
+                FROM ltreetab 
+                WHERE path <@ (
+                    SELECT path
+                        FROM ltreetab
+                        WHERE id = :parent
+                )
+            """, 
+            dict(parent=id)
         )
 
 

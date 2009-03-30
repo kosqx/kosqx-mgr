@@ -16,11 +16,20 @@
 		</node>
 	</data>
 	<testcases>
-		<case method="children">
-			1 2 3
+		<case method="roots">
+			1
 		</case>
 		<case method="parent">
-			10
+			7
+		</case>
+		<case method="ancestors">
+			7
+		</case>
+		<case method="children">
+			4
+		</case>
+		<case method="descendants">
+			4
 		</case>
 	</testcases>
 </test>
