@@ -1,7 +1,7 @@
 \section{Metoda zagnieżdzonych zbiorów}
 \index{metoda!zagnieżdzonych zbiorów|textbf}
 
-Metoda została spopularyzowana przez Joe Celko\cite{celkosql}\index{Celko Joe}.
+Metoda została spopularyzowana przez Joe Celko\cite{celko-sql}\index{Celko Joe}.
 
 
 
@@ -32,6 +32,18 @@ Wstawianie danych w tej metodzie jest jej najsłabszą stroną.
 
 \operacja{Pobieranie potomków}
 %! method-sql nested.descendants
+
+
+\subsection{Uwagi}
+
+Metoda umożliwia bardzo proste pobieranie liści drzewa. 
+Jest ono możliwe dzięki temu, że $a.right - a.left = 2 * |a.descendants()| + 1$. 
+Skoro liść nie posiada żadnych potomków to da różnica wynosi $1$, co prowadzi do zapytania: 
+\begin{verbatim}[sql]
+SELECT *
+    FROM nested_sets
+    WHERE left + 1 = right
+\end{verbatim}
 
 
 \begin{table}[h!]

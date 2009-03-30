@@ -3,7 +3,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.0
-lastDocument=main.tex
+lastDocument=tex/3_ltree.tex
 masterDocument=main.tex
 name=mgr
 pkg_extIsRegExp=false
@@ -17,10 +17,10 @@ QuickBuild=
 
 [item:main.tex]
 archive=true
-column=26
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=59
+line=219
 open=true
 order=0
 
@@ -62,19 +62,19 @@ order=4
 
 [item:tex/1_theory.tex]
 archive=true
-column=9
+column=148
 encoding=UTF-8
 highlight=LaTeX
-line=48
-open=true
+line=116
+open=false
 order=7
 
 [item:tex/2_adjacency.tex]
 archive=true
 column=0
 encoding=
-highlight=
-line=0
+highlight=LaTeX
+line=116
 open=false
 order=-1
 
@@ -89,20 +89,20 @@ order=-1
 
 [item:tex/2_nested.tex]
 archive=true
-column=3056828824
-encoding=
-highlight=
-line=0
+column=16
+encoding=UTF-8
+highlight=LaTeX
+line=15
 open=false
-order=-1
+order=11
 
 [item:tex/2_trie.tex]
 archive=true
-column=30
+column=16
 encoding=UTF-8
 highlight=LaTeX
-line=2
-open=true
+line=11
+open=false
 order=6
 
 [item:tex/3_connect_by.tex]
@@ -110,7 +110,7 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=42
 open=true
 order=5
 
@@ -119,27 +119,27 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=69
+line=121
 open=true
 order=1
 
 [item:tex/3_hierarchyid.tex]
 archive=true
 column=0
-encoding=
-highlight=
-line=0
-open=false
-order=-1
+encoding=UTF-8
+highlight=LaTeX
+line=127
+open=true
+order=6
 
 [item:tex/3_ltree.tex]
 archive=true
-column=0
-encoding=
-highlight=
-line=0
-open=false
-order=-1
+column=31
+encoding=UTF-8
+highlight=LaTeX
+line=84
+open=true
+order=7
 
 [item:tex/8_app.tex]
 archive=true
@@ -161,9 +161,9 @@ order=-1
 
 [item:tex/9_bibliography.tex]
 archive=true
-column=0
-encoding=
-highlight=
-line=0
+column=18
+encoding=UTF-8
+highlight=LaTeX
+line=21
 open=false
-order=-1
+order=8

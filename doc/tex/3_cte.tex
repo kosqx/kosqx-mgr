@@ -82,7 +82,7 @@ Bez niego konieczne było wykonywanie odzielnego zapytania podczas przechodzenia
 % \end{verbatim}
 
 \operacja{Pobieranie potomków}
-%! method-sql connectby.descendants
+%! method-sql with.descendants
 
 % \begin{verbatim}[sql]
 % WITH temptab(level, id, parent, name) AS
@@ -101,6 +101,24 @@ Bez niego konieczne było wykonywanie odzielnego zapytania podczas przechodzenia
 Warto zwrócić uwagę, że ta konstrukcja przeszukuje drzwewo wszerz. Można można to dostrzec w tym jak zapytanie jest sformuowane. 
 
 Jeśli by zaszła potrzeba pobrania całego drzewa wystarczy w zapytaniu startowym zmienić \texttt{WHERE root.id = :id} na \texttt{WHERE root.parent IS NULL}
+
+
+\operacja{Wyniki}
+
+\begin{table}[h!]
+  \caption{Wyniki \texttt{WITH}}
+  \begin{center}
+%! result-table with deep3
+  \end{center}
+\end{table}
+
+\begin{figure}[h!t]
+  \caption{Wyniki \texttt{WITH}}
+  \label{fig:img_chart_simple}
+  \begin{center}
+%! result-chart with deep3
+  \end{center}
+\end{figure}
 
 
 

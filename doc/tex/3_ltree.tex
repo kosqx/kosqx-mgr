@@ -1,2 +1,97 @@
 \section{PostgreSQL \texttt{ltree}}
-\index{metoda!ltree@\texttt{ltree}|textbf}\index{PostgreSQL}
+\index{PostgreSQL}
+\index{metoda!ltree@\texttt{ltree}|(textbf}
+
+
+\begin{description}
+    \item[etykieta] \eng{label} węzła 
+    \item[ścieżka etykieta]
+        \eng{label path} -- ciąg jednej lub więcej rozdzielonych kropkami etykiet $l_1.l_2...l_n$. 
+        Reprezentuje ścieżkę korzenia do węzła. 
+        Długość ścieżki etykiet jest ograniczony do $2^{16} - 1 = 65535 \approx 64 Kb$. 
+        \todo{Kb? KB?} \todo{2Kb zalecane} 
+
+%   \item[etykieta] \eng{label} 
+\end{description}
+
+
+\begin{description}
+    \item[\texttt{ltree}] -- typ danych
+    \item[\texttt{ltree[]}]
+    \item[\texttt{lquery}] wyrażenie ściekowe
+    \begin{description}
+        \item[\texttt{\{n\}}] asdf
+        \item[\texttt{\{n,\}}] Dopasowuje dokładnie \emph{n} poziomów
+        \item[\texttt{\{n,m\}}] Dopasowuje dokładnie \emph{n} poziomów
+        \item[\texttt{\{,m\}}] Dopasowuje dokładnie \emph{n} poziomów
+    \end{description}
+\end{description}
+
+\subsection*{Indeksy}
+
+\begin{description}
+    \item[B-tree] na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|
+    \item[GiST] na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: 
+        \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|, \verb|<@|, \verb|@|, \verb|@>|, \verb|~|, \verb|?|.
+        Indeksy GiST \eng{Generalized Search Tree} umożliwiają stosowanie różnych strategii indeksowania w zależności od potrzeb.
+        Za ich pomocą może być zaimplementowane zarówno wyszukiwanie pełnotekstowe (\texttt{tsearch2}), 
+        indeksowanie typu \texttt{hstore} (pozwalające na przechowywanie w jednym polu dowolnej ilości par klucz--wartość).
+        Oczywiście wspiera również typ \texttt{ltree}.
+\end{description}
+
+Dla przykładu można stworzyć następujące indeksy:
+\begin{verbatim}[sql]
+CREATE INDEX test_path_idx_btree ON test USING btree (path);
+CREATE INDEX test_path_idx_gist  ON test USING gost  (path);
+\end{verbatim}
+
+
+
+\subsection*{Operacje}
+
+\operacja{Reprezentacja w SQL}
+%! method-sql ltree.create
+
+\operacja{Wstawianie danych}
+%! method-sql ltree.insert
+
+\operacja{Pobranie korzeni}
+%! method-sql ltree.roots
+
+\operacja{Pobranie rodzica}
+%! method-sql ltree.parent
+
+\operacja{Pobranie dzieci}
+%! method-sql ltree.children
+
+\operacja{Pobranie przodków}
+%! method-sql ltree.ancestors
+
+\operacja{Pobieranie potomków}
+%! method-sql ltree.descendants
+
+
+
+\operacja{Wyniki}
+
+\begin{table}[h!]
+  \caption{Wyniki \texttt{ltree}}
+  \begin{center}
+%! result-table ltree deep3
+  \end{center}
+\end{table}
+
+\begin{figure}[h!t]
+  \caption{Wyniki \texttt{ltree}}
+  \label{fig:img_chart_simple}
+  \begin{center}
+%! result-chart ltree deep3
+  \end{center}
+\end{figure}
+
+
+
+
+
+
+\index{metoda!ltree@\texttt{ltree}|)}

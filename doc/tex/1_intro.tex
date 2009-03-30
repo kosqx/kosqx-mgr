@@ -5,26 +5,41 @@
 
 
 
-Hierarchie są bardzo użyteczną metodą reprezentacji danych. \todo{przepisać na polski}. 
-Nic dziwnego, że z tej idei\todo{lepsze słowo: abstrakcji, pojęcia} korzystają \emph{mapy myśli}, drzewa katalogów, itd.
+Hierarchie --- a w szczególności drzewa --- są bardzo użyteczną metodą reprezentacji danych. \todo{przepisać na polski}. 
+Nic dziwnego, że z tej abstrakcji korzystają \emph{mapy myśli}, drzewa katalogów, itd.
 
-Niestety najpopularniejsze obecnie relacyjne bazy danych nie zostały stworzone do obsługi danych hierarchicznych.
+Każda współczesna baza danych korzysta z struktur danych jakimi są drzewa. 
+Indeksy są implementowanee jako \emph{B-drzewa}, \emph{R-drzewa}, itd.
+% inne drzewa w bazach danych
+Zapytania SQL są przetwarzane do \emph{drzew składni} \eng{AST --- Abstract Syntax Tree}.
+
+Lecz --- najpopularniejsze obecnie relacyjne bazy danych --- nie zostały stworzone do obsługi danych hierarchicznych.
 Nie oznacza to bynajmniej, że jest to niemożliwe.
 Należy za to spodziewać się pewnych utrudnień.
 
-Celem tej pracy jest zaprezentowanie metod przechowywania danych w relacyjnych bazach danych. 
+% Celem tej pracy jest zaprezentowanie metod przechowywania danych w relacyjnych bazach danych. 
 
-Jest to zagadnienie stare niemal jak same relacyjne bazy danych. Już Edgar Frank Codd\index{Codd Edgar Frank} zaproponował jedno z rozwiązań.
+
+
+
+
+Celem tej pracy jest:
+\begin{itemize}
+    \item przedstawienie popularnych metod przechowywania danych hierarchicznych
+    \item porównanie tych metod pod względem łatwości użycia, dostępności, możliwości
+    \item sprawdzenie ich wydajności w najpopularniejszych bazach danych
+    \item ocena metod, wskazanie ich mocnych i słabych stron
+\end{itemize}
+
+Nie należy się spodziewać idealnej metody, raczej należy oczekiwać, że metody będą się znacznie różniły między sobą w poszczególnych operacjach.
+%najlepszed do danego zastosowania
+
+
+Jest to zagadnienie stare niemal jak same relacyjne bazy danych. 
+Już Edgar Frank Codd\index{Codd Edgar Frank} zaproponował jedno z rozwiązań.
 \todo{sprawdzić gdzie} 
-Miało być ono obroną relacyjnego modelu danych przed zarzutami, że w takich bazach nie można przechowywać danych hierarchicznych.
-
-
-
-Celem tej pracy jest \todo{wypisać}
-
-% porównanie wydajności, mocnych stron, słabych stron
-% nie należy się spodziewać idealnej metody, raczej najlepszed do danego zastosowania
-
+Miało być ono obroną relacyjnego modelu danych przed zarzutami, 
+że w takich bazach nie można przechowywać danych hierarchicznych.
 
 
 

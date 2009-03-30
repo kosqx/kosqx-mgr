@@ -1,3 +1,47 @@
-\section{Metoda drzew prefiksowych (trie)}
+\section{Metoda zmaterializowanych ścierzek}
 \index{metoda!drzew prefiksowych|textbf}\index{metoda!lineage|see{drzew prefiksowych}}
+
+Metoda ta polega na przechowywaniu ciągu identyfikatorów wszystkich węzłów pomiędzy korzeniem a danym węzłem.
+Są one przechowywane w pojedyńczym polu danego rekordu. 
+Identyfikatorem może być dowolne unikalne pole\todo{term:pole?} tabeli.
+Dobrym rozwiązaniem jest numeryczny klucz główny, lecz często bywa też stosowana unikalna nazwa węzła.
+
+
+Ten opis nie wymusza konkretnej implementacji. 
+Listę elementów można przechowywać na wiele sposobów. 
+Przykładowo ciąg identyfikatorów całkowitoliczbowych \texttt{4, 8, 15, 16, 23, 42} można przechować jako:
+\begin{itemize}
+ \item tablicę\todo{term:array} np. \verb|{4, 8, 15, 16, 23, 42}|
+ \item napis z elememtami rozdzielonymi separatorami. 
+    Przykładowo dla separatora \verb|.| będzie to napis \verb|'4.8.15.16.23.42'|. 
+    Ważne jest aby znak (lub znaki) będące separatorem nie mogły występować w identyfikatorze.
+ \item napis z elememtami przekształconymi na napis stałej długości. 
+    Przykładowo dla długości 3 będzie to \verb|'004008015016023042'|. 
+    Wadą tej metody jest konieczność jednorazowego długości napisu dla identyfikatora.
+    Dla długości $n$ można przechować tylko $10^n-1$ węzłów\footnote{zakładając, że wszystkie dopuszczalne wartości znajdą się w użyciu, a usuwanie elementow tworzy luki}.
+    Natomiast zastosowanie dużej $n$ zwiększa zużycie zasobów SZDB, oraz spowalnia działanie.
+\end{itemize}
+
+
 Metoda jest też zwana Lineage.
+
+\operacja{Reprezentacja w SQL}
+%! method-sql pathenum.create
+
+\operacja{Wstawianie danych}
+%! method-sql pathenum.insert
+
+\operacja{Pobranie korzeni}
+%! method-sql pathenum.roots
+
+\operacja{Pobranie rodzica}
+% %! method-sql pathenum.parent
+
+\operacja{Pobranie dzieci}
+% %! method-sql pathenum.children
+
+\operacja{Pobranie przodków}
+%! method-sql pathenum.ancestors
+
+\operacja{Pobieranie potomków}
+%! method-sql pathenum.descendants
