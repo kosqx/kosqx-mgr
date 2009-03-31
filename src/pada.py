@@ -461,9 +461,8 @@ class Database(object):
         else:
             return sql, values
 
-    def insert(self, table, **values):
-        return self._do_insert(table, values)
-        #raise NotImplemented
+    def insert_returning_id(self, table, values, raw={}):
+        return self._do_insert(table, values, dict(raw))
 
     def begin(self, isolation=''):
         isolations = {
@@ -600,8 +599,8 @@ class SQLite(Database):
         #print rid
         return rid
 
-    def _do_insert(self, table, values):
-        sql, data = self._insert_build(table, values)
+    def _do_insert(self, table, values, raw):
+        sql, data = self._insert_build(table, values, raw)
         self._just_execute(sql, data)
         rid = self.execute('SELECT last_insert_rowid()').list()[0][0]
         return rid
@@ -658,11 +657,11 @@ class Oracle(Database):
         rid = self.execute("SELECT %s_id_seq.curval FROM dual" % parts[2]).list()[0][0]
         return rid
     
-    def _do_insert(self, table, values):
+    def _do_insert(self, table, values, raw):
         rid = self.execute("SELECT %s_id_seq.nextval FROM dual" % table).list()[0][0]
         values = dict(values)
         values['id'] = rid
-        sql, data = self._insert_build(table, values)
+        sql, data = self._insert_build(table, values, raw)
         self._just_execute(sql, data)
         return rid
 
@@ -718,8 +717,8 @@ class DB2(Database):
     def _rowcount(self):
         return 1
     
-    def _do_insert(self, table, values):
-        sql, data = self._insert_build(table, values)
+    def _do_insert(self, table, values, raw):
+        sql, data = self._insert_build(table, values, raw)
         self._just_execute(sql, data)
         # TODO: better last_insert_id 
         rid = (self.execute('SELECT max(id) from %s' % table).list() + [[0]])[0][0]
@@ -765,8 +764,8 @@ class SQLServer(Database):
     def _rowcount(self):
         return 1
     
-    def _do_insert(self, table, values):
-        sql, data = self._insert_build(table, values)
+    def _do_insert(self, table, values, raw):
+        sql, data = self._insert_build(table, values, raw)
         self._just_execute(sql, data)
         rid = self.execute('SELECT id FROM %s WHERE id = @@IDENTITY' % table).list()[0][0]
         return rid
@@ -814,8 +813,8 @@ class MySQL(Database):
         #rid = self.execute(sql + ' RETURNING id', data).list()[0][0]
         return rid
 
-    def _do_insert(self, table, values):
-        sql, data = self._insert_build(table, values)
+    def _do_insert(self, table, values, raw):
+        sql, data = self._insert_build(table, values, raw)
         self._just_execute(sql, data)
         rid = self.execute('SELECT last_insert_id()').list()[0][0]
         return rid
@@ -863,8 +862,9 @@ class PostgreSQL(Database):
         rid = self.execute(sql + ' RETURNING id', data).list()[0][0]
         return rid
     
-    def _do_insert(self, table, values):
-        sql, data = self._insert_build(table, values, {'id': 'DEFAULT'})
+    def _do_insert(self, table, values, raw):
+        raw['id'] = raw.get('id', 'DEFAULT')
+        sql, data = self._insert_build(table, values, raw)
         rid = self._just_execute(sql + ' RETURNING id', data).list()[0][0]
         return rid
 

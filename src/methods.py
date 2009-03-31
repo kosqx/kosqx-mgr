@@ -107,7 +107,7 @@ class Simple(Tree):
             INSERT INTO simple (parent, name) 
                 VALUES (:parent, :name)
         """
-        pid = self.db.insert('simple', parent=parent, name=name)
+        pid = self.db.insert_returning_id('simple', dict(parent=parent, name=name))
         return pid
 
     def get_roots(self):
@@ -171,7 +171,7 @@ class Full(Tree):
     
     def create_table(self):
         tables = self.db.schema_list('table')
-        print tables
+        #print tables
         if 'full_data' in tables:
             self.db.ddl({
                 'oracle': ['DROP SEQUENCE full_data_id_seq', 'DROP TABLE full_data'],
@@ -210,7 +210,7 @@ class Full(Tree):
 
 
     def insert(self, parent, name):
-        pid = self.db.insert('full_data', name=name)
+        pid = self.db.insert_returning_id('full_data', dict(name=name))
 
         if parent is not None:
             for row in self.db.run('SELECT top_id, distance FROM full_tree WHERE bottom_id = :parent', dict(parent=parent)):
@@ -323,14 +323,26 @@ class NestedSets(Tree):
         if parent is None:
             right = self.db.run('SELECT max(rgt) as max_rgt FROM nested_sets')[0]['max_rgt']
             right = right or 0
-            pid = self.db.insert('nested_sets', lft=(right + 1), rgt=(right + 2), name=name)
+            pid = self.db.insert_returning_id('nested_sets', dict(lft=(right + 1), rgt=(right + 2), name=name))
         else:
-            right = self.db.run('SELECT rgt FROM nested_sets WHERE id = %s', [parent])[0]['rgt']
+            right = self.db.run('SELECT rgt FROM nested_sets WHERE id = :parent',dict(parent=parent))[0]['rgt']
             self.db.execute('UPDATE nested_sets SET lft = lft + 2 WHERE lft >  :val', dict(val=right))
-            self.db.execute('UPDATE nested_sets SET rgt = rgt + 2 WHERE rgt >= %s', dict(val=right))
-            pid = self.db.insert('nested_sets', lft=(right), rgt=(right + 1), name=name)
+            self.db.execute('UPDATE nested_sets SET rgt = rgt + 2 WHERE rgt >= :val', dict(val=right))
+            pid = self.db.insert_returning_id('nested_sets', dict(lft=(right), rgt=(right + 1), name=name))
         
         return pid
+    
+    def get_parent(self, id):
+        # TODO: napisa to z LIMIT
+        return self.db.run("""
+            SELECT d.id, d.name 
+                FROM nested_sets d 
+                WHERE 
+                    d.lft < (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
+                    AND 
+                    (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) < d.rgt 
+                ORDER BY (d.rgt - d.lft) ASC
+            """, dict(id=id))[:1]
     
     def get_ancestors(self, id):
         return self.db.run("""

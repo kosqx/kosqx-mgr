@@ -143,25 +143,29 @@ from xml.sax import make_parser
 from xml.sax.handler import ContentHandler 
  
 class TestHandler(ContentHandler): 
-    def __init__ (self, handler): 
+    def __init__ (self): 
         self._stack = []
         self._stack_id = []
-        self._cases = {}
+        self._cases = {'insert': []}
         self._case = None
-        self._dict = {}
-        self._handler = handler
 
     def startElement(self, name, attrs):
         attr = {}
         for i in attrs.keys():
             attr[str(i)] = str(attrs[i])
         
+        #if name == 'node':
+        #    idn = str(attr.pop('id'))
+        #    parent = self._stack_id[-1] if self._stack_id else None
+        #    idx = self._handler(parent=parent, **attr)
+        #    self._dict[idn] = idx
+        #    self._stack_id.append(idx)
+        
         if name == 'node':
-            idn = str(attr.pop('id'))
+            idn = str(attr['id'])
             parent = self._stack_id[-1] if self._stack_id else None
-            idx = self._handler(parent=parent, **attr)
-            self._dict[idn] = idx
-            self._stack_id.append(idx)
+            self._cases['insert'].append(dict(id=idn, parent=parent, name=attr['name']))
+            self._stack_id.append(idn)
         
         elif name == 'case':
             self._case = str(attr['method'])
@@ -178,14 +182,17 @@ class TestHandler(ContentHandler):
     def characters (self, ch):
         if self._case is not None:
             #print self._dict
-            lst = [self._dict[str(i)] for i in ch.split()]
+            lst = [str(i) for i in ch.split()]
             self._cases[self._case] = self._cases.get(self._case, []) + lst
 
-def read_tree(filename, handler):
+def read_tree(filename):
     parser = make_parser()
-    test_handler = TestHandler(handler)
+    test_handler = TestHandler()
     parser.setContentHandler(test_handler)
-    parser.parse(open(filename))
+    
+    fin = open(filename)
+    parser.parse(fin)
+    fin.close()
     
     return test_handler._cases
 

@@ -37,45 +37,54 @@ class Stopwatch():
         return '\n'.join(self.lines())
 
 
-def run_test(database, tree_class, data):
+def run_test(database, tree_class, testcases):
     def report_null(data):
         pass
     def report_print(data):
         print data
-    report = report_print
+    report = report_null
+    
+    print '## database', database, tree_class.__name__
     
     db = pada.connect(file='config/%s.cfg' % database)
     db.set_paramstyle('named')
     tree = tree_class(db)
     
-    sw = Stopwatch([tree_class.tree_name, database, data])
+    id2id = {}
+    
+    sw = Stopwatch([tree_class.tree_name, database, testcases['data']])
     
     sw.start('create')
     tree.create_table()
     
+
     sw.start('insert')
-    testcases = utils.read_tree('data/%s.xml' % data, tree.insert)
+    for node in testcases.get('insert', []):
+        id2id[node['id']] = tree.insert(parent=node['parent'], name=node['name'])
     db.commit()
     
+    
+    
+    #print repr(testcases)
     sw.start('roots')
-    for i in xrange(testcases.get('roots', [1])[0]):
+    for i in xrange(int(testcases.get('roots', ['1'])[0])):
         report(tree.get_roots())
     
     sw.start('parent')
     for idn in testcases.get('parent', []):
-        report(tree.get_parent(idn))
+        report(tree.get_parent(id2id[idn]))
     
     sw.start('children')
     for idn in testcases.get('children', []):
-        report(tree.get_children(idn))
+        report(tree.get_children(id2id[idn]))
     
     sw.start('ancestors')
     for idn in testcases.get('ancestors', []):
-        report(tree.get_ancestors(idn))
+        report(tree.get_ancestors(id2id[idn]))
     
     sw.start('descendants')
     for idn in testcases.get('descendants', []):
-        report(tree.get_descendants(idn))
+        report(tree.get_descendants(id2id[idn]))
     
     sw.stop()
     
@@ -102,11 +111,13 @@ def main():
     if args[0] == 'test':
         bases = find_methods()
         database = args[1]
+        testcases = utils.read_tree('data/%s.xml' % args[2])
+        testcases['data'] = args[2]
         if len(args) == 4:
-            print run_test(database, bases[database][args[3]], args[2])
+            print run_test(database, bases[database][args[3]], testcases)
         else:
             for i in bases[database]:
-                print run_test(database, bases[database][i], args[2])
+                print run_test(database, bases[database][i], testcases)
     
     elif args[0] == 'generate':
         utils.generate_test('data/%s.xml' % args[1], int(args[2]), int(args[3]))
