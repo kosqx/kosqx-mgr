@@ -3,7 +3,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.0
-lastDocument=tex/3_ltree.tex
+lastDocument=tex/2_trie.tex
 masterDocument=main.tex
 name=mgr
 pkg_extIsRegExp=false
@@ -53,10 +53,10 @@ order=3
 
 [item:tex/1_intro.tex]
 archive=true
-column=16
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=41
 open=true
 order=4
 
@@ -98,12 +98,12 @@ order=11
 
 [item:tex/2_trie.tex]
 archive=true
-column=16
+column=101
 encoding=UTF-8
 highlight=LaTeX
-line=11
-open=false
-order=6
+line=14
+open=true
+order=8
 
 [item:tex/3_connect_by.tex]
 archive=true
@@ -134,10 +134,10 @@ order=6
 
 [item:tex/3_ltree.tex]
 archive=true
-column=31
+column=15
 encoding=UTF-8
 highlight=LaTeX
-line=84
+line=76
 open=true
 order=7
 

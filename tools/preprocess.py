@@ -274,7 +274,7 @@ def main(args):
     os.chdir(abspath)
     
     shutil.copyfile('Makefile', os.path.join(tmpdir, 'Makefile'))
-    files = glob.glob('*.tex') + glob.glob('tex/*.tex')
+    files = glob.glob('*.tex') + glob.glob('tex/*.tex') + glob.glob('tex/*.bib')
  
     os.chdir(tmpdir)
     

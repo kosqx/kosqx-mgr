@@ -11,6 +11,7 @@ draft:
 
 full:
 	pdflatex main.tex
+	bibtex main
 	pdflatex main.tex
 	makeindex main.idx
 	pdflatex main.tex

@@ -97,6 +97,8 @@
 
 \begin{document}
 
+\bibliographystyle{alpha}
+
 \input{tex/0_titlepage}
 \input{tex/0_abstract}
 
@@ -201,7 +203,9 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 % \chapter{Program testujący}
 \input{tex/8_app}
 
-\input{tex/9_bibliography}
+%\input{tex/9_bibliography}
+\nocite{*}
+\bibliography{tex/9_bibliography}
 
 %\listoffimakegures
 %\listoftables
