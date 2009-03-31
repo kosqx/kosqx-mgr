@@ -408,22 +408,24 @@ class PathEnum(Tree):
             )
         """
         if parent is None:
-            pid = self.db.execute('''
-                INSERT INTO pathenum (path, name) VALUES (
-                    '',
-                    :name
-                ) RETURNING id
-                ''', dict(parent=parent, name=name)
-            ).list()[0][0]
+            #pid = self.db.execute('''
+            #    INSERT INTO pathenum (path, name) VALUES (
+            #        '',
+            #        :name
+            #    ) RETURNING id
+            #    ''', dict(parent=parent, name=name)
+            #).list()[0][0]
+            pid = self.db.insert_returning_id('pathenum', dict(path='', name=name))
         else:
-            pid = self.db.execute('''
-                INSERT INTO pathenum (path, name) VALUES (
-                    (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
-                    :name
-                ) RETURNING id
-                ''', dict(parent=parent, name=name)
-            ).list()[0][0]
-        
+            #pid = self.db.execute('''
+            #    INSERT INTO pathenum (path, name) VALUES (
+            #        (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
+            #        :name
+            #    ) RETURNING id
+            #    ''', dict(parent=parent, name=name)
+            #).list()[0][0]
+            pid = self.db.insert_returning_id('pathenum', dict(name=name), dict(
+                path="(SELECT path || id ||  '.' FROM pathenum WHERE id = %s)" % parent))
         return pid
     
     def get_roots(self):
