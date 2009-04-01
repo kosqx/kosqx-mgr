@@ -89,9 +89,14 @@ def process_results(results, method, testdata):
     
     for db in database_order:
         line = [db]
+        isok = False
         for op in operation_order:
-            line.append(results.get((method, db, testdata, op), None))
-        final.append(line)
+            val = results.get((method, db, testdata, op), None)
+            isok = isok or (val is not None)
+            line.append(val)
+        if isok:
+            print '-' * 1000, line
+            final.append(line)
     
     return final
 
@@ -158,29 +163,23 @@ def code_method_sql(line):
 def code_results_table(line):
     global results
     
-    
     parts = line.split()
     method = parts[-2]
     testdata = parts[-1]
     
-    operation_order = ['create', 'insert', 'roots', 'parent', 'children', 'ancestors', 'descendants']
-    database_order = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
-    
+    final = process_results(results, method, testdata)
     
     lines = [
-        '\\begin{tabular}{| r | ' + ('r ' * len(operation_order)) + '  |}',
+        '\\begin{tabular}{| r | ' + ('r ' * (len(final[0]) - 1)) + '  |}',
         '\\hline',
-        ' & ' + ' & '.join(['\\begin{sideways}' + value2desc(i) + '\\end{sideways}' for i in operation_order]) + r'\\',
+        ' & ' + ' & '.join(['\\begin{sideways}' + value2desc(i) + '\\end{sideways}' for i in final[0][1:]]) + r'\\',
         '\\hline',
     ]
     
-    ' & '.join([value2desc(i) for i in [''] + database_order]) + r'\\'
-    
-    for db in database_order:
+    for db_line in final[1:]:
         line = []
-        line.append(value2desc(db))
-        for op in operation_order:
-            line.append(value2desc(results.get((method, db, testdata, op), None)))
+        for op in db_line:
+            line.append(value2desc(op))
         lines.append(' & '.join(line) + r' \\')
         
     lines.extend([
@@ -190,7 +189,6 @@ def code_results_table(line):
     
     return '\n'.join(lines)
 
-
 def code_results_chart(line):
     global results
     
@@ -199,7 +197,7 @@ def code_results_chart(line):
     testdata = parts[-1]
     data = process_results(results, method, testdata)
     
-    print data
+    #print data
     
     filename = 'img_chart_%s.png' % method
     chart(data, filename, value2desc)

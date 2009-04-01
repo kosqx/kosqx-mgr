@@ -29,9 +29,14 @@ def chart(data, filename, value2desc=value2desc):
     }
     
     N = len(data[0]) - 1
+    M = len(data) - 1
     
     ind = np.arange(N)
     width = 1.0 / N
+    bwidth = 0.9 / M
+    
+    print '==' * 200, N, M
+
     
     plt.gca().yaxis.grid(True)
     plt.gca().xaxis.grid(False)
@@ -41,12 +46,12 @@ def chart(data, filename, value2desc=value2desc):
     
     rects = []
     for i, fordb in enumerate(data[1:]):
-        rects.append(plt.bar(ind + width * i, none2zero(fordb[1:]), width, color=colors[fordb[0]]))
+        rects.append(plt.bar(ind + bwidth * i + 0.05, none2zero(fordb[1:]), bwidth, color=colors[fordb[0]]))
     
     
     plt.ylabel(u'Przepustowość (zapytań/s).', size=16)
     plt.xticks(ind + (width * N / 2), [value2desc(i) for i in data[0][1:]], fontsize=16)
-    plt.ylim(ymax=maxval * 1.45)
+    plt.ylim(ymax=maxval * (1.06 + 0.075 * M))
     
     leg = plt.legend([i[0] for i in rects], [value2desc(i[0]) for i in data[1:]], shadow=True, borderpad=0.3)
 
@@ -59,7 +64,7 @@ def chart(data, filename, value2desc=value2desc):
     for rect in rects:
         for r in rect:
             height = r.get_height()
-            plt.text(r.get_x() + r.get_width() * 1, height + 0.02 * maxval, '%.2f\r' % height, 
+            plt.text(r.get_x() + r.get_width() * 0.6, height + 0.02 * maxval, '%.2f\r' % height, 
                     ha='center', va='bottom', rotation='vertical', size=14, lod=True
             )
     
