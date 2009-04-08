@@ -11,15 +11,74 @@
 % - trochę o historii
 % - literatura
 
+
+% prior forces reporting to be from the root out toward the leaves (if the prior column is the
+% parent) or from a leaf toward the root (if the prior column is the child).
+
+
 System zarządzania bazą danych Oracle nie posiada możliwości przetwarzania danych hierarchicznych za pomocą klauzuli \texttt{with}.
 W prawdzie jest ona dostępna od wersji \emph{Oracle 9i release 2} ale służy wyłacznie do pracy z podzapytaniami.
+% po ludzku: ma CTE ale tylko WITH, ale bez WITH RECURSIVE
 
-W to miejsce \emph{Oracle} udostępnia własne rozszerzenie.
+W to miejsce \emph{Oracle} udostępnia własne rozszerzenie \texttt{CONNECT BY}. 
+Jest ono dobrze opisane w \cite{oracle-ref11}, wiec tu zostaną przedstawione tylko podstawowe i najczęściej potrzebne jego możliwości.
+
+
+\begin{verbatim}[sql]
+SELECT expression [,expression]...
+    FROM [user.]table
+    WHERE condition
+    CONNECT BY [PRIOR] expression = [PRIOR] expression
+    START WITH expression = expression
+    ORDER BY expression
+\end{verbatim}
+
+
+Sposób działania da się w skrócie opisać regułami:
+\begin{itemize}
+    \item \texttt{START WITH} wskazuje w którym miejscu drzewa rozpocząć działanie. 
+        Klauzula może się znajdować zarówno przed jak i po \texttt{CONNECT BY}.
+    \item kierunek przechodzenia po węzłach zależny jest od tego przed którym wyrażeniem stoi \texttt{PRIOR}.
+         Nie ma różnicy \verb|CONNECT BY PRIOR a = b| a \verb|CONNECT BY b = PRIOR a|.
+    \item klauzula \texttt{WHERE} pozwala na wyeliminowanie z wyniku pojedyńczych rekordów, 
+        ale nie usuwa rekordów, które są dostępne po przejściu przez ten pominięty rekord.
+    \item zastosowanie zwykłej klauzuli \texttt{ORDER BY} niszczy hierarchiczny układ danych 
+        (więc w praktyce rzadko bywa używana).
+        Aby umożliwić kontrolowanie kolejności odwiedzania węzłów, 
+        w \emph{Oracle 9i} wprowadzono klauzulę \texttt{ORDER SIBLINGS BY}.
+\end{itemize}
+
+
+% START WITH tells where in the tree to begin. These are the rules:
+%  - The position of PRIOR with respect to the CONNECT BY expressions determines which
+%          expression identifies the root and which identifies the branches of the tree.
+%  - A WHERE clause will eliminate individuals from the tree, but not their descendants (or
+%          ancestors, depending on the location of PRIOR).
+%  - A qualification in the CONNECT BY (particularly a not equal sign instead of the equal sign)
+%          will eliminate both an individual and all of its descendants.
+% - CONNECT BY cannot be used with a table join in the WHERE clause.
+% 
+
+
+Przydatne mechanizmy:
+\begin{description}
+    \item[\texttt{LEVEL}] pseudokolumna,
+    jest równa $1$ dla korzenia (lub węzła wskazanego przez \texttt{START WITH}), 
+    dla dzieci tego węzła jest równa $2$, dla dzieci tych dzieci $3$, i tak dalej. 
+    \item[\texttt{CONNECT\_BY\_ISLEAF}] pseudokolumna o wartości $1$ jeśli rekord jest liściem, $0$ w przeciwnym wypadku
+    \item[\texttt{CONNECT\_BY\_ISCYCLE}] pseudokolumna o wartości $1$ jeśli rekord ma potomka który też jest jego przodkiem, $0$ w przeciwnym wypadku
+    \item[\texttt{SYS\_CONNECT\_BY\_PATH(kolumna\_wartości, znak\_separujacy)}] funkcja zwraca złączoną w listę wartości 
+        z kolumny \texttt{kolumna\_wartości} wchodzące w skład ścieżki pomiędzy korzeniem a aktualnym węzłem.
+        Każda wartość jest poprzedzona znakiem \texttt{znak\_separujacy}.
+        Dla przykładu \texttt{SYS\_CONNECT\_BY\_PATH(name, '/')} może zwrócić \texttt{/Bazy danych/Obiektowe/db4o}.
+
+        % It returns the path of a column value from root to node, with column values separated by char for each row returned by the CONNECT BY condition.
+\end{description}
+
 
 
 
 \operacja{Pobranie przodków}
-
 %! method-sql connectby.ancestors
 
 % \begin{verbatim}[sql]
@@ -77,7 +136,7 @@ Jedną z dostępnych funkcji jest \texttt{connectby()}, będąca odpowiednikiem 
 
 \begin{verbatim}[sql]
 connectby(
-  text relname,          -- 
+  text relname,          -- nazwa tabeli
   text keyid_fld,        -- 
   text parent_keyid_fld, -- 
   [text orderby_fld,]    -- 

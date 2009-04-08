@@ -18,6 +18,7 @@ from pygments.formatters import LatexFormatter
 from chart import chart
 from methods_sql import parse_methods
 from sql_lexer import SqlLexer
+from graph import dot2png, txt2dot
 
 #--------------------------------------------------------------------
 # Util functions
@@ -95,7 +96,6 @@ def process_results(results, method, testdata):
             isok = isok or (val is not None)
             line.append(val)
         if isok:
-            print '-' * 1000, line
             final.append(line)
     
     return final
@@ -157,8 +157,11 @@ def code_method_sql(line):
     global methods
 
     name = line.split()[-1]
-    code = ';\n\n'.join(methods[name])
-    return do_highlight(code, 'sql')
+    if name in methods:
+        code = ';\n\n'.join(methods[name])
+        return do_highlight(code, 'sql')
+    else:
+        return "\n\n\\textcolor{red}{\\textbf{[[tu brakuje kodu źródłowego]]}}\n\n"
 
 def code_results_table(line):
     global results
@@ -204,6 +207,16 @@ def code_results_chart(line):
     return r'\includegraphics[totalheight=0.4\textheight]{%s}' % filename
     #return r'\includegraphics[width=\textwidth]{%s}' % filename
 
+def code_dot(lines):
+    filename = 'img_graph_%s.png' % lines[0].split()[-1]
+    dot2png('\n'.join(lines[1:]), filename)
+    #return r'\includegraphics[width=0.8\textwidth]{%s}' % filename
+    return '{%s}' % filename
+
+def code_table(lines):
+    filename = 'img_graph_%s.png' % lines[0].split()[-1]
+    dot2png(txt2dot(lines[1:]), filename)
+    return r'\includegraphics[width=0.8\textwidth]{%s}' % filename
 
 #--------------------------------------------------------------------
 # Main functions
@@ -277,11 +290,13 @@ def main(args):
     os.chdir(tmpdir)
     
     process_files(files, abspath, [
-        (r'\\begin\{verbatim\}\[.*\]\s*', r'\\end\{verbatim\}', code_pre),
-        (r'^%! *pygments-style',        None,                 code_pre_style),
-        (r'^%! *method-sql',            None,                 code_method_sql),
-        (r'^%! *result-table',          None,                 code_results_table),
-        (r'^%! *result-chart',          None,                 code_results_chart),
+        (r'\\begin\{verbatim\}\[sql]\s*',   r'\\end\{verbatim\}', code_pre),
+        (r'\\begin\{verbatim\}\[dot]\s*',   r'\\end\{verbatim\}', code_dot),
+        (r'\\begin\{verbatim\}\[table]\s*',  r'\\end\{verbatim\}', code_table),
+        (r'^%! *pygments-style',            None,                 code_pre_style),
+        (r'^%! *method-sql',                None,                 code_method_sql),
+        (r'^%! *result-table',              None,                 code_results_table),
+        (r'^%! *result-chart',              None,                 code_results_chart),
     ])
     
     os.system('make pdf')

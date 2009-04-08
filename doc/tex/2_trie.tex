@@ -1,4 +1,4 @@
-\section{Metoda zmaterializowanych ścierzek}
+\section{Metoda zmaterializowanych ścieżek}
 \index{metoda!drzew prefiksowych|textbf}\index{metoda!lineage|see{drzew prefiksowych}}
 
 Metoda ta polega na przechowywaniu ciągu identyfikatorów wszystkich węzłów pomiędzy korzeniem a danym węzłem.
@@ -14,7 +14,7 @@ Przykładowo ciąg identyfikatorów całkowitoliczbowych \texttt{4, 8, 15, 16, 2
  \item tablicę\todo{term:array} np. \verb|{4, 8, 15, 16, 23, 42}|
 % wady: dostpne tylko w wybranych bazach danych, niedostpne dla ORM, potencjalne problemy z indeksami
  \item napis z elememtami rozdzielonymi separatorami. 
-    Przykładowo dla separatora \verb|.| będzie to napis \verb|'4.8.15.16.23.42'|. 
+    Przykładowo dla separatora~\verb|'.'| będzie to napis \verb|'4.8.15.16.23.42'|. 
     Ważne jest aby znak (lub znaki) będące separatorem nie mogły występować w identyfikatorze.
  \item napis z elememtami przekształconymi na napis stałej długości. 
     Przykładowo dla długości 3 będzie to \verb|'004008015016023042'|. 
@@ -26,6 +26,53 @@ Przykładowo ciąg identyfikatorów całkowitoliczbowych \texttt{4, 8, 15, 16, 2
 
 Metoda jest też zwana Lineage.
 
+
+\operacja{Reprezentacja}
+
+\begin{verbatim}[table] trie
+>n1 _
+id | path    | name
+1  | 1       | Bazy Danych
+
+>n2 n1
+id | path    | name
+2  | 1.2     | Obiektowe
+
+>n3 n2
+id | path    | name
+3  | 1.2.3   | db4o
+
+>n4 n1
+id | path    | name
+4  | 1.4     | Relacyjne
+
+>n5 n4
+id | path    | name
+5  | 1.4.5   | Open Source
+
+>n7 n5
+id | path    | name
+6  | 1.4.5.6 | PostgreSQL
+
+>n8 n5
+id | path    | name
+7  | 1.4.5.7 | MySQL
+
+>n9 n5
+id | path    | name
+8  | 1.4.5.8 | SQLite
+
+>n6 n4
+id | path    | name
+9  | 1.4.9   | Komercyjne
+
+>n10 n1
+id | path    | name
+10 | 1.10    | XML
+
+\end{verbatim}
+
+
 \operacja{Reprezentacja w SQL}
 %! method-sql pathenum.create
 
@@ -36,13 +83,31 @@ Metoda jest też zwana Lineage.
 %! method-sql pathenum.roots
 
 \operacja{Pobranie rodzica}
-% %! method-sql pathenum.parent
+%! method-sql pathenum.parent
 
 \operacja{Pobranie dzieci}
-% %! method-sql pathenum.children
+%! method-sql pathenum.children
 
 \operacja{Pobranie przodków}
 %! method-sql pathenum.ancestors
 
 \operacja{Pobieranie potomków}
 %! method-sql pathenum.descendants
+
+
+\temat{Wyniki}
+
+\begin{table}[h!]
+  \caption{Wyniki reprezentacji krawędziowej}
+  \begin{center}
+%! result-table pathenum deep3
+  \end{center}
+\end{table}
+
+\begin{figure}[h!t]
+  \caption{Wyniki reprezentacji krawędziowej}
+  \label{fig:img_chart_simple}
+  \begin{center}
+%! result-chart pathenum deep3
+  \end{center}
+\end{figure}

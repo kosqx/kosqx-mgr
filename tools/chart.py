@@ -33,7 +33,7 @@ def chart(data, filename, value2desc=value2desc):
     
     ind = np.arange(N)
     width = 1.0 / N
-    bwidth = 0.9 / M
+    bwidth = 1.0 / (M + 1)
     
     print '==' * 200, N, M
 
@@ -46,7 +46,7 @@ def chart(data, filename, value2desc=value2desc):
     
     rects = []
     for i, fordb in enumerate(data[1:]):
-        rects.append(plt.bar(ind + bwidth * i + 0.05, none2zero(fordb[1:]), bwidth, color=colors[fordb[0]]))
+        rects.append(plt.bar(ind + bwidth * i + (bwidth/2), none2zero(fordb[1:]), bwidth, color=colors[fordb[0]]))
     
     
     plt.ylabel(u'Przepustowość (zapytań/s).', size=16)

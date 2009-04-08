@@ -17,18 +17,106 @@ Jedynym wymogiem jest istnienie w niej klucza głównego\index{klucz!główny}.
 
 Cała informacja potrzebna do operowania na drzewie zawiera się w dodatkowej tabeli. 
 Zawiera ona informacje o odległości pomiędzy każdym elementem a wszystkimi jego potomkami.
- 
+
+\includegraphics[width=8.5cm]%
+\begin{verbatim}[dot] transclos
+digraph G {
+  rankdir=RL;
+
+  A -> B [label="1"];
+  B -> C [label="1"];
+  C -> D [label="1"];
+
+
+  A -> C [label="2"];
+  B -> D [label="2"];
+
+
+  A -> D [label="3"];
+  
+}
+\end{verbatim}
+
+
+\begin{verbatim}[table] full
+
+>n1 _
+top_id | bottom_id | distance
+NULL   | 1         | 0
+1      | 1         | 0
+
+>n2 n1
+top_id | bottom_id | distance
+NULL   | 2         | 1
+1      | 2         | 1
+2      | 2         | 0
+
+>n3 n2
+top_id | bottom_id | distance
+NULL   | 3         | 2
+1      | 3         | 2
+2      | 3         | 1
+3      | 3         | 0
+
+>n4 n1
+top_id | bottom_id | distance
+NULL   | 4         | 1
+1      | 4         | 1
+4      | 4         | 0
+
+>n5 n4
+top_id | bottom_id | distance
+NULL   | 5         | 2
+1      | 5         | 2
+4      | 5         | 1
+5      | 5         | 0
+
+
+>n6 n5
+top_id | bottom_id | distance
+NULL   | 6         | 3
+1      | 6         | 3
+4      | 6         | 2
+5      | 6         | 1
+6      | 6         | 0
+
+>n7 n5
+top_id | bottom_id | distance
+NULL   | 7         | 3
+1      | 7         | 3
+4      | 7         | 2
+5      | 7         | 1
+7      | 7         | 0
+
+>n8 n5
+top_id | bottom_id | distance
+NULL   | 8         | 3
+1      | 8         | 3
+4      | 8         | 2
+5      | 8         | 1
+8      | 8         | 0
+
+>n9 n4
+top_id | bottom_id | distance
+NULL   | 9         | 2
+1      | 9         | 2
+4      | 9         | 1
+9      | 9         | 0
+
+>n10 n1
+top_id | bottom_id | distance
+NULL   | 10        | 1
+1      | 10        | 1
+10     | 10        | 0
+
+\end{verbatim}
+
 
 \operacja{Reprezentacja w SQL}
 %! method-sql full.create
 
 \operacja{Wstawianie danych}
 % %! method-sql full.insert
-
-% \begin{verbatim}[sql]
-% INSERT INTO simple (parent, name) VALUES (:parent, :name)
-% \end{verbatim}
-
 
 \operacja{Pobranie korzeni}
 %! method-sql full.roots

@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper,oneside]{report}
+\documentclass[11pt,a4paper,oneside]{report}
 %\documentclass[10pt,a4paper,oneside]{book}
 %\documentclass[10pt,a4paper,draft]{book}
 %\documentclass[sfheadings,a4paper,11pt]{mwbk}
@@ -53,17 +53,48 @@
 
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\temat}[1]{\subsection*{#1}}
 \newcommand{\operacja}[1]{\subsubsection*{#1}}
-
 % wyświetla TODO: wrazie potrzeby zmodyfikować
 \newcommand{\todo}[1]{(\textcolor{red}{\textbf{#1}})}
 \newcommand{\eng}[1]{(ang. \textit{#1})}
+
+\newenvironment{qxtab}[2]{%
+\begin{table}[h]%
+  \caption{#2}%
+  \label{tab:#1}%
+  \begin{center}%
+}{%
+  \end{center}%
+\end{table}%
+}
+
+\newenvironment{qxfig}[2]{%
+\begin{figure}[h]%
+  \caption{#2}%
+  \label{fig:#1}%
+  \begin{center}%
+}{%
+  \end{center}%
+\end{figure}%
+}
+
+% \begin{figure}[h!t]
+%   \caption{Wyniki reprezentacji zagnieżdzonych zbiorów}
+%   \label{fig:img_chart_nested}
+%   \begin{center}
+% %! result-chart nested deep3
+%   \end{center}
+% \end{figure}
+
 
 % numery stron u góry
 \pagestyle{headings}
 
 % rotacje w nagłówku kolumny
 \usepackage{rotating}
+
+\usepackage{wrapfig}
 
 % dla pygments // \begin{Verbatim}
 \usepackage{fancyvrb}
@@ -120,6 +151,8 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 	% \section{Metoda stałej wysokości drzewa}
 	% Przenieść do sekcji o metodach, o których nie będziemy mówili. Takich jak również, Dział -- pracownik.
 	
+    \clearpage
+
 	% \section{Metoda klucza obcego do rodzica}
 	\input{tex/2_adjacency}
 	\clearpage
@@ -136,6 +169,9 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 	\input{tex/2_trie}
 	\clearpage
 
+    \input{tex/2_edgeenum}
+    \clearpage
+
 	% drzewa binarne
 	% http://commons.wikimedia.org/wiki/File:Binary_tree_in_array.svg
 	% http://en.wikipedia.org/wiki/K-ary_tree
@@ -146,6 +182,10 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 
 
 \chapter{Metody specyficzne dla bazy danych}
+    Opisane w tym rozdziale metody nie są uniwersalnymi reprezentacjami.
+
+    
+    \clearpage
 	\section{PL/SQL}
 	\clearpage
 
@@ -195,6 +235,10 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 %  \item język XPath i ścieżki w dokumencie
 % \end{itemize}
 
+
+\input{tex/7_summary}
+
+
 \appendix
 
 % \chapter{Metodyka testów}
@@ -204,6 +248,9 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 \input{tex/8_app}
 
 %\input{tex/9_bibliography}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\bibname}
 \nocite{*}
 \bibliography{tex/9_bibliography}
 

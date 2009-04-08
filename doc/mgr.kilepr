@@ -17,10 +17,10 @@ QuickBuild=
 
 [item:main.tex]
 archive=true
-column=0
+column=18
 encoding=UTF-8
 highlight=LaTeX
-line=219
+line=58
 open=true
 order=0
 
@@ -39,7 +39,7 @@ column=17
 encoding=UTF-8
 highlight=LaTeX
 line=0
-open=true
+open=false
 order=2
 
 [item:tex/0_titlepage.tex]
@@ -48,7 +48,7 @@ column=1
 encoding=UTF-8
 highlight=LaTeX
 line=0
-open=true
+open=false
 order=3
 
 [item:tex/1_intro.tex]
@@ -56,81 +56,81 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=41
+line=55
 open=true
-order=4
+order=2
 
 [item:tex/1_theory.tex]
 archive=true
-column=148
+column=32
 encoding=UTF-8
 highlight=LaTeX
-line=116
-open=false
-order=7
+line=26
+open=true
+order=8
 
 [item:tex/2_adjacency.tex]
 archive=true
 column=0
-encoding=
+encoding=UTF-8
 highlight=LaTeX
-line=116
-open=false
-order=-1
+line=165
+open=true
+order=5
 
 [item:tex/2_full.tex]
 archive=true
-column=0
-encoding=
-highlight=
-line=0
-open=false
-order=-1
+column=8
+encoding=UTF-8
+highlight=LaTeX
+line=34
+open=true
+order=7
 
 [item:tex/2_nested.tex]
 archive=true
-column=16
+column=15
 encoding=UTF-8
 highlight=LaTeX
-line=15
-open=false
-order=11
+line=102
+open=true
+order=6
 
 [item:tex/2_trie.tex]
 archive=true
-column=101
+column=31
 encoding=UTF-8
 highlight=LaTeX
-line=14
+line=85
 open=true
-order=8
+order=3
 
 [item:tex/3_connect_by.tex]
 archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=42
+line=49
 open=true
-order=5
+order=11
 
 [item:tex/3_cte.tex]
 archive=true
-column=0
+column=45
 encoding=UTF-8
 highlight=LaTeX
-line=121
+line=137
 open=true
 order=1
 
 [item:tex/3_hierarchyid.tex]
 archive=true
-column=0
+column=10
 encoding=UTF-8
 highlight=LaTeX
-line=127
+line=69
 open=true
-order=6
+order=10
 
 [item:tex/3_ltree.tex]
 archive=true
@@ -138,17 +138,17 @@ column=15
 encoding=UTF-8
 highlight=LaTeX
 line=76
-open=true
+open=false
 order=7
 
 [item:tex/8_app.tex]
 archive=true
-column=0
-encoding=
-highlight=
-line=0
-open=false
-order=-1
+column=17
+encoding=UTF-8
+highlight=LaTeX
+line=3
+open=true
+order=9
 
 [item:tex/8_test.tex]
 archive=true
@@ -159,11 +159,11 @@ line=0
 open=false
 order=-1
 
-[item:tex/9_bibliography.tex]
+[item:tex/9_bibliography.bib]
 archive=true
-column=18
+column=0
 encoding=UTF-8
-highlight=LaTeX
-line=21
-open=false
-order=8
+highlight=BibTeX
+line=0
+open=true
+order=4

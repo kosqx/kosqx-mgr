@@ -5,6 +5,60 @@ Metoda została spopularyzowana przez Joe Celko\cite{celko-sql}\index{Celko Joe}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+\begin{verbatim}[table] nested
+>n1 _
+id | lft | rgt | name
+1  | 1   | 20  | Bazy Danych
+
+>n2 n1
+id | lft | rgt | name
+2  | 2   | 5   | Obiektowe
+
+>n3 n2
+id | lft | rgt | name
+3  | 3   | 4   | db4o
+
+>n4 n1
+id | lft | rgt | name
+4  | 6   | 17  | Relacyjne
+
+>n5 n4
+id | lft | rgt | name
+5  | 7   | 14  | Open Source
+
+>n7 n5
+id | lft | rgt | name
+6  | 8   | 9   | PostgreSQL
+
+>n8 n5
+id | lft | rgt | name
+7  | 10  | 11  | MySQL
+
+>n9 n5
+id | lft | rgt | name
+8  | 12  | 13  | SQLite
+
+>n6 n4
+id | lft | rgt | name
+9  | 15  | 16  | Komercyjne
+
+>n10 n1
+id | lft | rgt | name
+10 | 18  | 19  | XML
+
+\end{verbatim}
+
 \operacja{Reprezentacja w SQL}
 %! method-sql nested.create
 
@@ -22,10 +76,10 @@ Wstawianie danych w tej metodzie jest jej najsłabszą stroną.
 %! method-sql nested.roots
 
 \operacja{Pobranie rodzica}
-% %! method-sql nested.parent
+%! method-sql nested.parent
 
 \operacja{Pobranie dzieci}
-% %! method-sql nested.children
+%! method-sql nested.children
 
 \operacja{Pobranie przodków}
 %! method-sql nested.ancestors
@@ -46,14 +100,14 @@ SELECT *
 \end{verbatim}
 
 
-\begin{table}[h!]
+\begin{table}[h]
   \caption{Wyniki reprezentacji zagnieżdzonych zbiorów}
    \begin{center}
 %! result-table nested deep3
    \end{center}
 \end{table}
 
-\begin{figure}[h!t]
+\begin{figure}[h]
   \caption{Wyniki reprezentacji zagnieżdzonych zbiorów}
   \label{fig:img_chart_nested}
   \begin{center}

@@ -46,19 +46,57 @@ Ta metoda jest na tyle popularna, że w bazach danych pojawiły się specjalne k
 Zostaną one przedstawione w rozdziale \todo{wstawić jakoś nazwę rozdziału} o metodach specyficznych dla systemu zarządzania bazą danych.
 
 
-\operacja{Reprezentacja}
+\temat{Reprezentacja}
+
+\begin{verbatim}[table] adjacency
+>n1 _
+id | parent | name
+1  | NULL   | Bazy Danych
+
+>n2 n1
+id | parent | name
+2  | 1      | Obiektowe
+
+>n3 n2
+id | parent | name
+3  | 2      | db4o
+
+>n4 n1
+id | parent | name
+4  | 1      | Relacyjne
+
+>n5 n4
+id | parent | name
+5  | 4      | Open Source
+
+>n7 n5
+id | parent | name
+6  | 5      | PostgreSQL
+
+>n8 n5
+id | parent | name
+7  | 5      | MySQL
+
+>n9 n5
+id | parent | name
+8  | 5      | SQLite
+
+>n6 n4
+id | parent | name
+9  | 4      | Komercyjne
+
+>n10 n1
+id | parent | name
+10 | 1      | XML
+
+\end{verbatim}
+
 
 \operacja{Reprezentacja w SQL}
+\vspace{-0.5cm}
 %! method-sql simple.create
 
-
-% \begin{verbatim}[sql]
-% CREATE TABLE tree (
-%   id INTEGER PRIMARY KEY,
-%   parent INTEGER REFERENCES tree(id) ON DELETE CASCADE,
-%   value VARCHAR(100)
-% );
-% \end{verbatim}
+\vspace{-0.5cm}
 
 Należy zwrócić uwagę na \todo{warunek} \texttt{ON DELETE CASCADE}. 
 Sprawia on, że w razie usunięcia węzła \todo{ustalić terminologię} 
@@ -68,70 +106,31 @@ automatycznie zostaną usunięci wszyscy jego potomkowie.
 \operacja{Wstawianie danych}
 %! method-sql simple.insert
 
-% \begin{verbatim}[sql]
-% INSERT INTO simple (parent, name) VALUES (:parent, :name)
-% \end{verbatim}
-
-
 \operacja{Pobranie korzeni}
 %! method-sql simple.roots
-
-% \begin{verbatim}[sql]
-% SELECT * FROM simple WHERE parent IS NULL
-% \end{verbatim}
-
-
-
 
 \operacja{Pobranie rodzica}
 %! method-sql simple.parent
 
-% \begin{verbatim}[sql]
-% SELECT * FROM simple WHERE id = :id
-% \end{verbatim}
-
-
-
 \operacja{Pobranie dzieci}
 %! method-sql simple.children
 
-% \begin{verbatim}[sql]
-% SELECT 
-% \end{verbatim}
-
 \operacja{Pobranie przodków}
-% %! method-sql simple.ancestors
-
-% \begin{verbatim}[sql]
-% SELECT 
-% \end{verbatim}
+%! method-sql simple.ancestors
 
 \operacja{Pobieranie potomków}
-% %! method-sql simple.descendants
-% \begin{verbatim}[sql]
-% SELECT 
-% \end{verbatim}
+%! method-sql simple.descendants
 
 Należy zwrócić uwagę na wykorzystanie operatora \emph{IN}. Bez niego wydajność metody spada znacząco. 
 
-\operacja{Wyniki}
+\temat{Wyniki}
 
-\begin{table}[h!]
-  \caption{Wyniki reprezentacji krawędziowej}
-  \begin{center}
+\begin{qxtab}{simple}{Wydajność reprezentacji krawędziowej}
 %! result-table simple deep3
-  \end{center}
-\end{table}
+\end{qxtab}
 
-\begin{figure}[h!t]
-  \caption{Wyniki reprezentacji krawędziowej}
-  \label{fig:img_chart_simple}
-  \begin{center}
+\begin{qxfig}{simple}{Wydajność reprezentacji krawędziowej}
 %! result-chart simple deep3
-  \end{center}
-\end{figure}
-
-
-
+\end{qxfig}
 
 

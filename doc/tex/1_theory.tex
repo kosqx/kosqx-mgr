@@ -1,6 +1,8 @@
 \chapter{Wprowadzenie do tematu}
 
 
+% The hierarchical data model organizes data in a tree structure. There is a hierarchy of parent and child data segments
+
 \section{Knuth}
 
 \emph{Drzewo} zdefiniujemy formalnie jako zbiór $T$ jednego lub więcej elementów zwanych \emph{węzłami}, takich że:
@@ -19,6 +21,21 @@ Poziom węzła jest zdefiniowany rekurencyjnie: poziom korzenia $root(T)$ równa
 a poziom każdego innego węzła jest o jeden wiekszy niż poziom korzenia w najmniejszym 
 \todo{w sensie ilości węzłów} zawierającym go poddrzewie.
 
+
+
+% \begin{wrapfigure}{l}{4cm}
+% \includegraphics[width=3.5cm]%
+% \begin{verbatim}[dot] asdf
+% digraph G {
+%   rankdir=TB
+%   node [fontsize=10,width=".2", height=".2", margin=0]
+%   node1 [label="A", style=filled] 
+%   node2 [style=filled, fillcolor=red] 
+%   node0 -> node1 -> node2
+% }
+% \end{verbatim}
+% \end{wrapfigure}
+
 Jeśli względny porządek poddrzew $T_{1},\ldots, T_{m}$ w części (2) definicji jest istotny,
 to mówimy, że drzewo jest \emph{uporządkowane}. \todo{...}
 Jeśli nie chcemy rozróżniać drzew, które różnią się jedynie kolejnością poddrzew, mówimy o drzewach zorientowanych
@@ -31,6 +48,8 @@ Jeśli usuniemy korzeń drzewa, otrzymamy las.
 W drugą stronę, jeśli wszystkie drzewa w lesie uczynimy poddrzewami jednego dodatkowego węzła,
 to otrzymamy drzewo.
 Z tego powodu słowa ,,drzewa'' i ,,lasy'' są przy nieformalnym omawianiu struktur danych używane niemal wymiennie.
+
+
 
 \section{Czym jest drzewo}
 \index{drzewo|textbf}
@@ -113,6 +132,14 @@ Bez problemu można dodać więcej kolumn do tabeli. Obecność wyłącznie kolu
 W opisach metod znajdują się fragmenty kodu je realizujące operacje na nich. 
 Tam gdzie to jest możliwe (czyli metoda jest dostępna ) została zaprezentowana składnia PostgreSQL\index{PostgreSQL}.
 Fragmenty kodu \todo{napisać o tym że gdzieniegdzie pojawiają się \texttt{:name}} wymagające parametrów...
+
+Część operacji nie daje się wykonać wyłącznie za pomocą jednego (lub więcej) zapytań SQL.
+W takiej sytuacji fragmenty kodu zawierają kod języka \emph{Python}\index{Python}.
+Został on wybrany do tego zadania ze względu na jego ekspresyjność, zwięzłość oraz wysoki poziom abstrakcji\todo{dobre sformuowanie?}.
+Z powodu tych cech jest często nazywany \emph{wykonywalnym pseudokodem}.
+
+Aby polepszyć zwięzłość fragmęty kodu korzystają z bibloteki PADA, stworzonej aby uprościć pisanie implementacji opisanych metod. 
+Więcej informacji o tej biblotece znajduje się w \todo{Załączniku 2}.
 
 \paragraph{Operacje z wykorzystaniem \texttt{id}} Wszystkie operacje wykorzystują sztucznie utworzony klucz główny\index{klucz!główny} \texttt{id}. 
 

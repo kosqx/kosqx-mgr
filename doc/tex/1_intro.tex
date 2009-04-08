@@ -4,14 +4,26 @@
 % W ciągu ostatnich kilkunastu lat relacyjne bazy danych opanowały świat. 
 
 
+%Put simply, this method is used to report, in order, the branches of a family tree. Such trees are
+%encountered often—the genealogy of human families, livestock, horses; corporate management,
+%company divisions, manufacturing; literature, ideas, evolution, scientific research, theory; and
+%even views built upon views.
+
+
 
 Hierarchie --- a w szczególności drzewa --- są bardzo użyteczną metodą reprezentacji danych. \todo{przepisać na polski}. 
 Nic dziwnego, że z tej abstrakcji korzystają \emph{mapy myśli}, drzewa katalogów, itd.
+
+
+
+
+
 
 Każda współczesna baza danych korzysta z struktur danych jakimi są drzewa. 
 Indeksy są implementowanee jako \emph{B-drzewa}, \emph{R-drzewa}, itd.
 % inne drzewa w bazach danych
 Zapytania SQL są przetwarzane do \emph{drzew składni} \eng{AST --- Abstract Syntax Tree}.
+Lecz to są drzewa zastosowane w implementacji, mające na celu zwiększenie szybkości działania bazy danych i nie są widoczne dla użytkownika bazy danych.
 
 Lecz --- najpopularniejsze obecnie relacyjne bazy danych --- nie zostały stworzone do obsługi danych hierarchicznych.
 Nie oznacza to bynajmniej, że jest to niemożliwe.
