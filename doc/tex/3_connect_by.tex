@@ -1,5 +1,5 @@
 \section{Oracle \texttt{connect by}}
-\index{metoda!connect by@\texttt{connect by}|textbf}\index{Oracle}
+\index{metoda!connect by@\texttt{connect by}|(textbf}\index{Oracle}
 % napisać czy to przeszukiwanie w głąb czy wszerz
 
 % http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/queries003.htm
@@ -23,6 +23,8 @@ W prawdzie jest ona dostępna od wersji \emph{Oracle 9i release 2} ale służy w
 W to miejsce \emph{Oracle} udostępnia własne rozszerzenie \texttt{CONNECT BY}. 
 Jest ono dobrze opisane w \cite{oracle-ref11}, wiec tu zostaną przedstawione tylko podstawowe i najczęściej potrzebne jego możliwości.
 
+
+\temat{Opis klauzuli \texttt{CONNECT BY}}
 
 \begin{verbatim}[sql]
 SELECT expression [,expression]...
@@ -76,7 +78,7 @@ Przydatne mechanizmy:
 \end{description}
 
 
-
+\temat{Operacje}
 
 \operacja{Pobranie przodków}
 %! method-sql connectby.ancestors
@@ -99,25 +101,17 @@ Przydatne mechanizmy:
 % \end{verbatim}
 
 
-\operacja{Wyniki}
+\temat{Wydajność}
 
-\begin{table}[h!]
-  \caption{Wyniki \texttt{CONNECT BY}}
-  \begin{center}
+\begin{qxtab}{connectby}{Wydajność metody \texttt{CONNECT BY}}
 %! result-table connectby deep3
-  \end{center}
-\end{table}
+\end{qxtab}
 
-\begin{figure}[h!t]
-  \caption{Wyniki \texttt{CONNECT BY}}
-  \label{fig:img_chart_simple}
-  \begin{center}
+\begin{qxfig}{connectby}{Wydajność metody \texttt{CONNECT BY}}
 %! result-chart connectby deep3
-  \end{center}
-\end{figure}
+\end{qxfig}
 
-
-\operacja{Uwagi}
+\temat{Uwagi}
 
 Oracle w wersjach wcześniejszych od 11g wykonując zapytanie korzystające z klauzuli \texttt{CONNECT BY}
 
@@ -126,7 +120,7 @@ Oracle w wersjach wcześniejszych od 11g wykonując zapytanie korzystające z kl
 % http://www.postgresql.org/docs/current/static/tablefunc.html
 % wajig install postgresql-contrib-8.3
 
-\subsection*{PostgreSQL \texttt{connectby()}}
+\podtemat{PostgreSQL \texttt{connectby()}}
 
 PostgreSQL dostarcza moduł \texttt{tablefunc}\index{tablefunc} zawierający różne funkcje zwracające tabele.
 % Ta funkcjonalność pojawiła się w wersji 7.4, natomiast dokumentacja dal niej dopiero w wersji 8.3.
@@ -144,6 +138,13 @@ connectby(
   int max_depth,         -- 
   [text branch_delim])   -- 
 \end{verbatim}
+
+
+
+
+\index{metoda!connect by@\texttt{connect by}|)}
+
+
 
 
 % \begin{verbatim}[sql]

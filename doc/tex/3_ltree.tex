@@ -2,9 +2,17 @@
 \index{PostgreSQL}
 \index{metoda!ltree@\texttt{ltree}|(textbf}
 
+% Oleg Bartunov, Teodor Sigaev Oleg Bartunow, Teodor Sigaew
+% Rok 2002, wersja 7.2
+\temat{Opis modułu \texttt{ltree}}
+
+\podtemat{Definicje}
 
 \begin{description}
-    \item[etykieta] \eng{label} węzła 
+    \item[etykieta] \eng{label} węzła jest ciągiem jednego lub więcej słów rozdzielonych przez znak \verb|'_'|. 
+        Słowa mogą zawierać litery i liczby.
+        Długość etykiety nie może przekraczać 256 bajtów. 
+        \todo{bajtów? znaków? czy mogą być pl-literki?}
     \item[ścieżka etykieta]
         \eng{label path} -- ciąg jednej lub więcej rozdzielonych kropkami etykiet $l_1.l_2...l_n$. 
         Reprezentuje ścieżkę korzenia do węzła. 
@@ -14,6 +22,7 @@
 %   \item[etykieta] \eng{label} 
 \end{description}
 
+\podtemat{Typy danych}
 
 \begin{description}
     \item[\texttt{ltree}] -- typ danych
@@ -27,11 +36,24 @@
     \end{description}
 \end{description}
 
-\subsection*{Indeksy}
+\podtemat{Funkcje i operatory}
 
 \begin{description}
-    \item[B-tree] na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|
-    \item[GiST] na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: 
+    \item[\texttt{ltree subltree(ltree, start, end)}]
+    \item[\texttt{ltree subpath(ltree, offset[, len])}]
+    \item[\texttt{int4 nlevel(ltree)}] zwraca poziom węzła, czyli ilość etykiet w ścieżce
+    \item[\texttt{int4 index(ltree, ltree[, offset])}]
+    \item[\texttt{text2ltree(text)}]
+    \item[\texttt{ltree2text(ltree)}]
+    \item[\texttt{lca(ltree[])}]
+\end{description}
+
+
+\podtemat{Indeksy}
+
+\begin{description}
+    \item[B-tree]\index{indeks|Btree@B-tree} na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|
+    \item[GiST]\index{indeks!GiST} na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: 
         \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|, \verb|<@|, \verb|@|, \verb|@>|, \verb|~|, \verb|?|.
         Indeksy GiST \eng{Generalized Search Tree} umożliwiają stosowanie różnych strategii indeksowania w zależności od potrzeb.
         Za ich pomocą może być zaimplementowane zarówno wyszukiwanie pełnotekstowe (\texttt{tsearch2}), 
@@ -47,7 +69,7 @@ CREATE INDEX test_path_idx_gist  ON test USING gost  (path);
 
 
 
-\subsection*{Operacje}
+\temat{Operacje}
 
 \operacja{Reprezentacja w SQL}
 %! method-sql ltree.create
@@ -71,23 +93,16 @@ CREATE INDEX test_path_idx_gist  ON test USING gost  (path);
 %! method-sql ltree.descendants
 
 
+\temat{Wydajność}
 
-\operacja{Wyniki}
-
-\begin{table}[h!]
-  \caption{Wyniki \texttt{ltree}}
-  \begin{center}
+\begin{qxtab}{ltree}{Wydajność metody \texttt{ltree}}
 %! result-table ltree deep3
-  \end{center}
-\end{table}
+\end{qxtab}
 
-\begin{figure}[h!t]
-  \caption{Wyniki \texttt{ltree}}
-  \label{fig:img_chart_simple}
-  \begin{center}
+\begin{qxfig}{ltree}{Wydajność metody \texttt{ltree}}
 %! result-chart ltree deep3
-  \end{center}
-\end{figure}
+\end{qxfig}
+
 
 
 

@@ -1,5 +1,5 @@
 \section{Metoda zmaterializowanych ścieżek}
-\index{metoda!drzew prefiksowych|textbf}\index{metoda!lineage|see{drzew prefiksowych}}
+\index{metoda!drzew prefiksowych|(textbf}\index{metoda!lineage|see{drzew prefiksowych}}
 
 Metoda ta polega na przechowywaniu ciągu identyfikatorów wszystkich węzłów pomiędzy korzeniem a danym węzłem.
 Są one przechowywane w pojedyńczym polu danego rekordu. 
@@ -72,6 +72,7 @@ id | path    | name
 
 \end{verbatim}
 
+\temat{Operacje}
 
 \operacja{Reprezentacja w SQL}
 %! method-sql pathenum.create
@@ -95,19 +96,16 @@ id | path    | name
 %! method-sql pathenum.descendants
 
 
-\temat{Wyniki}
 
-\begin{table}[h!]
-  \caption{Wyniki reprezentacji krawędziowej}
-  \begin{center}
+\temat{Wydajność}
+
+\begin{qxtab}{pathenum}{Wydajność reprezentacji zmaterializowanych ścieżek}
 %! result-table pathenum deep3
-  \end{center}
-\end{table}
+\end{qxtab}
 
-\begin{figure}[h!t]
-  \caption{Wyniki reprezentacji krawędziowej}
-  \label{fig:img_chart_simple}
-  \begin{center}
+\begin{qxfig}{pathenum}{Wydajność reprezentacji zmaterializowanych ścieżek}
 %! result-chart pathenum deep3
-  \end{center}
-\end{figure}
+\end{qxfig}
+
+
+\index{metoda!drzew prefiksowych|)}

@@ -1,5 +1,6 @@
-\section{Wspólne Wyrażenia Tabelowe}
-\index{metoda!with@\texttt{with}|textbf}\index{IBM DB2}\index{SQL Server}
+\section{Metoda Wspólnych Wyrażeń Tabelowych}
+\index{metoda!Wspolnych@Wspólnych Wyrażeń Tabelowych|(textbf}
+\index{IBM DB2}\index{SQL Server}
 % http://www.ibm.com/developerworks/data/library/techarticle/0307steinbach/0307steinbach.html
 
 
@@ -16,12 +17,14 @@
 % - napisać http://en.wikipedia.org/wiki/Common_table_expressions
 % - przerobić tytuły i opisy na CTE
 
+% rekurencyjne wyrażenie tabelowe. Wspólne wyrażenie tabelowe odwołujące się do siebie w klauzuli FROM pełnej selekcji.
+% Rekurencyjne wyrażenia tabelowe są używane do konstruowania zapytań rekurencyjnych.
 
 % Common table expressions, or CTEs, are new to DB2 as of Version 8 and they greatly expand the useability of SQL. 
 % A common table expression can be thought of as a named temporary table within a SQL statement that is retained for the duration of a SQL statement. 
 % There can be many CTEs in a single SQL statement, but each must have a unique name and be defined only once.
 
-W standardzie SQL:99\index{SQL!SQL:99} wprowadzono \emph{Wspólne Wyrażenia Tabelowe} \eng{Common Table Expressions}.
+W standardzie SQL:99\index{SQL!SQL:99} wprowadzono \emph{Wspólne Wyrażenia Tabelowe} \eng{CTEs --- Common Table Expressions}.
 Ich działanie przypomina stworzenie tymczasowego widoku\index{widok}, 
 istniejącego tylko na czas wykonania danego zapytania.
 
@@ -41,6 +44,9 @@ W chwili obecnej to rozszerzenie jest dostępne w:
  \item[Firebird]
 	wersja 2.1 
 \end{description}
+
+
+\temat{Opis Wspólnych Wyrażeń Tabelowych}
 
 Składnia \texttt{WITH} prezentuje się następująco:
 
@@ -69,6 +75,7 @@ Rozszerzenie to można wykorzystać do pracy z reprezentacją krawędziową.
 Umożliwi ono wysłanie do bazy danych tylko jednego zapytania podczas pobierania potomków i przodków. 
 Bez niego konieczne było wykonywanie odzielnego zapytania podczas przechodzenia przez każdy poziom drzewa.
 
+\temat{Operacje}
 
 \operacja{Pobranie przodków}
 %! method-sql with.ancestors
@@ -109,22 +116,21 @@ Warto zwrócić uwagę, że ta konstrukcja przeszukuje drzwewo wszerz. Można mo
 Jeśli by zaszła potrzeba pobrania całego drzewa wystarczy w zapytaniu startowym zmienić \texttt{WHERE root.id = :id} na \texttt{WHERE root.parent IS NULL}
 
 
-\operacja{Wyniki}
+\temat{Wydajność}
 
-\begin{table}[h!]
-  \caption{Wyniki \texttt{WITH}}
-  \begin{center}
+\begin{qxtab}{with}{Wydajność metody \texttt{WITH}}
 %! result-table with deep3
-  \end{center}
-\end{table}
+\end{qxtab}
 
-\begin{figure}[h!t]
-  \caption{Wyniki \texttt{WITH}}
-  \label{fig:img_chart_simple}
-  \begin{center}
+\begin{qxfig}{with}{Wydajność metody \texttt{WITH}}
 %! result-chart with deep3
-  \end{center}
-\end{figure}
+\end{qxfig}
+
+
+
+\index{metoda!Wspolnych@Wspólnych Wyrażeń Tabelowych|)}
+
+
 
 
 

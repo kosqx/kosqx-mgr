@@ -54,6 +54,7 @@
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \newcommand{\temat}[1]{\subsection*{#1}}
+\newcommand{\podtemat}[1]{\subsubsection*{#1}}
 \newcommand{\operacja}[1]{\subsubsection*{#1}}
 % wyświetla TODO: wrazie potrzeby zmodyfikować
 \newcommand{\todo}[1]{(\textcolor{red}{\textbf{#1}})}
@@ -78,15 +79,6 @@
   \end{center}%
 \end{figure}%
 }
-
-% \begin{figure}[h!t]
-%   \caption{Wyniki reprezentacji zagnieżdzonych zbiorów}
-%   \label{fig:img_chart_nested}
-%   \begin{center}
-% %! result-chart nested deep3
-%   \end{center}
-% \end{figure}
-
 
 % numery stron u góry
 \pagestyle{headings}
@@ -177,8 +169,8 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 	% http://en.wikipedia.org/wiki/K-ary_tree
 
 
-\chapter{Modyfikacje metod przechowywania danych}
-	% \section{Metoda łączona}
+% \chapter{Modyfikacje metod przechowywania danych}
+% 	% \section{Metoda łączona}
 
 
 \chapter{Metody specyficzne dla bazy danych}
@@ -186,7 +178,8 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 
     
     \clearpage
-	\section{PL/SQL}
+	% \section{PL/SQL}
+    \input{tex/3_plsql}
 	\clearpage
 
 	% \section{IBM DB2 \texttt{with}}
@@ -205,47 +198,18 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 	\input{tex/3_hierarchyid}
 	\clearpage
 
-
-
-% \chapter{Porównanie wydajności}
-% \section{Po czym porównywać?}
-% \subsection{Metodzie}
-% \subsection{Bazie danych}
-
-
-
-
-
-% \chapter{Możliwości korzystania z danych hierarchicznych w O/RM}
-% \section{Active Record}
-% \section{Hibernate}
-% \subsection{HQL}
-% Ten akapit opisuje HQL\index{HQL}.
-% Przydatność: - jeśli przy move trzeba aktualizować mnóstwo elementów to metoda będzie bardzo czasochłonna dla OR/M
-
-
-% \chapter{Zastosowania i przykłady}
-
-% \section{LDAP}
-% \section{DNS?}
-% \section{XML}
-% \subsection{Różnice pomiędzy XML a drzewami}
-% \begin{itemize}
-%  \item kolejność jest istotna
-%  \item język XPath i ścieżki w dokumencie
-% \end{itemize}
-
-
 \input{tex/7_summary}
 
 
 \appendix
 
+% \chapter{Program testujący}
+\input{tex/8_app}
+
 % \chapter{Metodyka testów}
 \input{tex/8_test}
 
-% \chapter{Program testujący}
-\input{tex/8_app}
+
 
 %\input{tex/9_bibliography}
 \clearpage
@@ -266,19 +230,3 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 \end{document}
 
 
-%% snippets
-
-% \begin{table}[h!]
-%   \caption{Wyniki rmeprezentacji zagnieżdzonych zbiorów}
-%    \begin{center}
-% %! result-table nested deep3
-%    \end{center}
-% \end{table}
-% 
-% \begin{figure}[h!t]
-%   \caption{Wyniki reprezentacji zagnieżdzonych zbiorów}
-%   \label{fig:img_chart_nested}
-%   \begin{center}
-% %! result-chart nested deep3
-%   \end{center}
-% \end{figure}

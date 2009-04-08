@@ -1,5 +1,5 @@
 \section{Metoda zagnieżdzonych zbiorów}
-\index{metoda!zagnieżdzonych zbiorów|textbf}
+\index{metoda!zagnieżdzonych zbiorów|(textbf}
 
 Metoda została spopularyzowana przez Joe Celko\cite{celko-sql}\index{Celko Joe}.
 
@@ -8,13 +8,7 @@ Metoda została spopularyzowana przez Joe Celko\cite{celko-sql}\index{Celko Joe}
 
 
 
-
-
-
-
-
-
-
+\temat{Reprezentacja}
 
 \begin{verbatim}[table] nested
 >n1 _
@@ -59,6 +53,8 @@ id | lft | rgt | name
 
 \end{verbatim}
 
+\temat{Operacje}
+
 \operacja{Reprezentacja w SQL}
 %! method-sql nested.create
 
@@ -100,18 +96,14 @@ SELECT *
 \end{verbatim}
 
 
-\begin{table}[h]
-  \caption{Wyniki reprezentacji zagnieżdzonych zbiorów}
-   \begin{center}
+\temat{Wydajność}
+
+\begin{qxtab}{nested}{Wydajność reprezentacji zagnieżdzonych zbiorów}
 %! result-table nested deep3
-   \end{center}
-\end{table}
+\end{qxtab}
 
-\begin{figure}[h]
-  \caption{Wyniki reprezentacji zagnieżdzonych zbiorów}
-  \label{fig:img_chart_nested}
-  \begin{center}
+\begin{qxfig}{nested}{Wydajność reprezentacji zagnieżdzonych zbiorów}
 %! result-chart nested deep3
-  \end{center}
-\end{figure}
+\end{qxfig}
 
+\index{metoda!zagnieżdzonych zbiorów|)}

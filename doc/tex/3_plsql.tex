@@ -1,0 +1,102 @@
+\section{PL/SQL}
+\index{metoda!PL/SQL|(textbf}
+
+\temat{Opis PL/SQL}
+
+
+
+\temat{Operacje}
+
+\operacja{Utworzenie funkcji}
+
+\begin{verbatim}[sql]
+CREATE OR REPLACE FUNCTION tree_ancestors(
+  start_id int
+) RETURNS SETOF int AS $$
+DECLARE
+  cid int := start_id;
+BEGIN
+  WHILE cid IS NOT NULL LOOP
+    RETURN NEXT cid;
+    SELECT parent INTO cid FROM tree WHERE tree.id = cid;
+  END LOOP;
+END;
+$$ LANGUAGE plpgsql strict;
+\end{verbatim}
+
+\begin{verbatim}[sql]
+CREATE OR REPLACE FUNCTION tree_descendants(
+  start_id int
+) RETURNS SETOF int AS $$ 
+DECLARE
+  rec RECORD;
+  current INT[];
+  build INT[];
+  tmp INT;
+BEGIN
+  build := ARRAY[0];
+  current := ARRAY[0, start_id];
+  WHILE current > ARRAY[0] LOOP
+    build := ARRAY[0];  
+    FOR i IN 2..array_upper(current, 1) LOOP
+      tmp := current[i];  
+      FOR rec IN SELECT * FROM tree WHERE parent = tmp LOOP
+        RETURN NEXT rec.id;
+        build := build || rec.id;
+      END LOOP;
+    END LOOP;
+    current := build;
+  END LOOP;
+END;
+$$ LANGUAGE plpgsql strict;
+\end{verbatim}
+
+
+\operacja{Pobranie przodków}
+%! method-sql plsql.ancestors
+
+\begin{verbatim}[sql]
+SELECT * FROM tree_ancestors(111);
+SELECT t FROM tree_ancestors(111) AS t;
+SELECT count(*) FROM tree_ancestors(111);
+SELECT id, parent, value
+  FROM tree_ancestors(111) AS t
+    JOIN tree ON t = tree.id;
+\end{verbatim}
+
+
+\operacja{Pobieranie potomków}
+%! method-sql plsql.descendants
+
+\begin{verbatim}[sql]
+SELECT * FROM tree_descendants(1);
+SELECT t FROM tree_descendants(1) AS t;
+SELECT count(*) FROM tree_descendants(1);
+SELECT id, parent, value
+  FROM tree_descendants(1) AS t 
+    JOIN tree ON t = tree.id;
+\end{verbatim}
+
+\begin{verbatim}[sql]
+
+\end{verbatim}
+
+\operacja{Wydajność}
+
+\begin{qxtab}{plsql}{Wydajność metody PL/SQL}
+%! result-table plsql deep3
+\end{qxtab}
+
+\begin{qxfig}{plsql}{Wydajność metody PL/SQL}
+%! result-chart plsql deep3
+\end{qxfig}
+
+\operacja{Uwagi}
+
+
+
+
+
+
+\index{metoda!PL/SQL|)}
+

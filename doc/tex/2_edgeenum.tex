@@ -8,7 +8,7 @@ Metoda ta polega na przechowywaniu ciągu numerów porządkowych wszystkich węz
 % Podobne jest też do wyboru ŧrasy w mieście gdzie mówimy najpierw w lewo, potem w prawo, prosto i wprawo i jesteśmu
 % Metoda ta ma szansę być o wiele bardziej zwięzła, 
 
-\operacja{Reprezentacja}
+\temat{Reprezentacja}
 
 \begin{verbatim}[table] edgeenum
 >n1 _
@@ -54,7 +54,9 @@ id | path     | name
 \end{verbatim}
 
 
-\operacja{Reprezentacja w SQL}
+\temat{Operacje}
+
+\operacja{Tworzenie tabeli}
 %! method-sql edgeenum.create
 
 \operacja{Wstawianie danych}
@@ -76,22 +78,16 @@ id | path     | name
 %! method-sql edgeenum.descendants
 
 
-\temat{Wyniki}
+\temat{Wydajność}
 
-% \begin{table}[h!]
-%   \caption{Wyniki reprezentacji krawędziowej}
-%   \begin{center}
-% %! result-table pathenum deep3
-%   \end{center}
-% \end{table}
-% 
-% \begin{figure}[h!t]
-%   \caption{Wyniki reprezentacji krawędziowej}
-%   \label{fig:img_chart_simple}
-%   \begin{center}
-% %! result-chart pathenum deep3
-%   \end{center}
-% \end{figure}
+\begin{qxtab}{edgeenum}{Wydajność reprezentacji zmaterializowanych krawędzi}
+%! result-table edgeenum deep3
+\end{qxtab}
+
+\begin{qxfig}{edgeenum}{Wydajność reprezentacji zmaterializowanych krawędzi}
+%! result-chart edgeenum deep3
+\end{qxfig}
+
 
 
 \index{metoda!zmaterializowanych krawędzi|)}
