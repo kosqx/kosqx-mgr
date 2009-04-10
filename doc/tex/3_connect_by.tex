@@ -16,8 +16,10 @@
 % parent) or from a leaf toward the root (if the prior column is the child).
 
 
-System zarządzania bazą danych Oracle nie posiada możliwości przetwarzania danych hierarchicznych za pomocą klauzuli \texttt{with}.
+System zarządzania bazą danych Oracle nie posiada możliwości przetwarzania danych hierarchicznych za pomocą klauzuli \texttt{WITH}.
+\index{Wspolne@Wspólne Wyrażenia Tabelowe}
 W prawdzie jest ona dostępna od wersji \emph{Oracle 9i release 2} ale służy wyłacznie do pracy z podzapytaniami.
+
 % po ludzku: ma CTE ale tylko WITH, ale bez WITH RECURSIVE
 
 W to miejsce \emph{Oracle} udostępnia własne rozszerzenie \texttt{CONNECT BY}. 
@@ -38,16 +40,16 @@ SELECT expression [,expression]...
 
 Sposób działania da się w skrócie opisać regułami:
 \begin{itemize}
-    \item \texttt{START WITH} wskazuje w którym miejscu drzewa rozpocząć działanie. 
+    \item \texttt{START WITH}\index{START WITH@\texttt{START WITH}} wskazuje w którym miejscu drzewa rozpocząć działanie. 
         Klauzula może się znajdować zarówno przed jak i po \texttt{CONNECT BY}.
-    \item kierunek przechodzenia po węzłach zależny jest od tego przed którym wyrażeniem stoi \texttt{PRIOR}.
+    \item kierunek przechodzenia po węzłach zależny jest od tego przed którym wyrażeniem stoi \texttt{PRIOR}\index{PRIOR@\texttt{PRIOR}}.
          Nie ma różnicy \verb|CONNECT BY PRIOR a = b| a \verb|CONNECT BY b = PRIOR a|.
     \item klauzula \texttt{WHERE} pozwala na wyeliminowanie z wyniku pojedyńczych rekordów, 
         ale nie usuwa rekordów, które są dostępne po przejściu przez ten pominięty rekord.
     \item zastosowanie zwykłej klauzuli \texttt{ORDER BY} niszczy hierarchiczny układ danych 
         (więc w praktyce rzadko bywa używana).
         Aby umożliwić kontrolowanie kolejności odwiedzania węzłów, 
-        w \emph{Oracle 9i} wprowadzono klauzulę \texttt{ORDER SIBLINGS BY}.
+        w \emph{Oracle 9i} wprowadzono klauzulę \texttt{ORDER SIBLINGS BY}\index{ORDER SIBLINGS BY@\texttt{ORDER SIBLINGS BY}}.
 \end{itemize}
 
 
@@ -64,12 +66,16 @@ Sposób działania da się w skrócie opisać regułami:
 
 Przydatne mechanizmy:
 \begin{description}
-    \item[\texttt{LEVEL}] pseudokolumna,
-    jest równa $1$ dla korzenia (lub węzła wskazanego przez \texttt{START WITH}), 
-    dla dzieci tego węzła jest równa $2$, dla dzieci tych dzieci $3$, i tak dalej. 
-    \item[\texttt{CONNECT\_BY\_ISLEAF}] pseudokolumna o wartości $1$ jeśli rekord jest liściem, $0$ w przeciwnym wypadku
-    \item[\texttt{CONNECT\_BY\_ISCYCLE}] pseudokolumna o wartości $1$ jeśli rekord ma potomka który też jest jego przodkiem, $0$ w przeciwnym wypadku
-    \item[\texttt{SYS\_CONNECT\_BY\_PATH(kolumna\_wartości, znak\_separujacy)}] funkcja zwraca złączoną w listę wartości 
+    \item[\texttt{LEVEL}] \index{LEVEL@\texttt{LEVEL}}
+        pseudokolumna,
+        jest równa $1$ dla korzenia (lub węzła wskazanego przez \texttt{START WITH}), 
+        dla dzieci tego węzła jest równa $2$, dla dzieci tych dzieci $3$, i tak dalej. 
+    \item[\texttt{CONNECT\_BY\_ISLEAF}] \index{CONNECTBYISLEAF@\texttt{CONNECT\_BY\_ISLEAF}}
+        pseudokolumna o wartości $1$ jeśli rekord jest liściem, $0$ w przeciwnym wypadku
+    \item[\texttt{CONNECT\_BY\_ISCYCLE}]  \index{CONNECTBYISCYCLE@\texttt{CONNECT\_BY\_ISCYCLE}}
+        pseudokolumna o wartości $1$ jeśli rekord ma potomka który też jest jego przodkiem, $0$ w przeciwnym wypadku
+    \item[\texttt{SYS\_CONNECT\_BY\_PATH(kolumna\_wartości, znak\_separujacy)}] \index{SYSCONNECTBYPATH@\texttt{SYS\_CONNECT\_BY\_PATH()}}
+        funkcja zwraca złączoną w listę wartości 
         z kolumny \texttt{kolumna\_wartości} wchodzące w skład ścieżki pomiędzy korzeniem a aktualnym węzłem.
         Każda wartość jest poprzedzona znakiem \texttt{znak\_separujacy}.
         Dla przykładu \texttt{SYS\_CONNECT\_BY\_PATH(name, '/')} może zwrócić \texttt{/Bazy danych/Obiektowe/db4o}.

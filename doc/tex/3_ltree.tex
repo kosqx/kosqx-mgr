@@ -39,20 +39,34 @@
 \podtemat{Funkcje i operatory}
 
 \begin{description}
-    \item[\texttt{ltree subltree(ltree, start, end)}]
-    \item[\texttt{ltree subpath(ltree, offset[, len])}]
-    \item[\texttt{int4 nlevel(ltree)}] zwraca poziom węzła, czyli ilość etykiet w ścieżce
-    \item[\texttt{int4 index(ltree, ltree[, offset])}]
-    \item[\texttt{text2ltree(text)}]
-    \item[\texttt{ltree2text(ltree)}]
-    \item[\texttt{lca(ltree[])}]
+    \item[\texttt{ltree subltree(ltree, start, end)}] \index{subltree@\texttt{subltree}}
+    \item[\texttt{ltree subpath(ltree, offset[, len])}] \index{subpath@\texttt{subpath}}
+    \item[\texttt{int4 nlevel(ltree)}] \index{nlevel@\texttt{nlevel}}
+        zwraca poziom węzła, czyli ilość etykiet w ścieżce
+    \item[\texttt{int4 index(ltree, ltree[, offset])}] \index{index@\texttt{index}}
+    \item[\texttt{ltree text2ltree(text)}] \index{text2ltree@\texttt{text2ltree}}
+    \item[\texttt{text ltree2text(ltree)}] \index{ltree2text@\texttt{ltree2text}}
+    \item[\texttt{ltree lca(ltree[])}] \index{lca@\texttt{lca}}
+\end{description}
+
+\begin{description}
+    \item[\texttt{<}, \texttt{>}, \texttt{<=}, \texttt{>=}, \texttt{=}, \texttt{<>}]
+        have their usual meanings. Comparison is doing in the order of direct tree traversing, children of a node are sorted lexicographic.
+    \item[\texttt{ltree @> ltree}]
+        returns TRUE if left argument is an ancestor of right argument (or equal).
+    \item[\texttt{ltree <@ ltree}]
+        returns TRUE if left argument is a descendant of right argument (or equal).
+    \item[\texttt{ltree \~{} lquery}, \texttt{lquery \~{} ltree}]
+        returns TRUE if node represented by ltree satisfies lquery.
+    \item[\texttt{ltree || ltree}, \texttt{ltree || text}, \texttt{text || ltree}]
+        return concatenated ltree.
 \end{description}
 
 
 \podtemat{Indeksy}
 
 \begin{description}
-    \item[B-tree]\index{indeks|Btree@B-tree} na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|
+    \item[B-tree]\index{indeks!Btree@B-tree} na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|
     \item[GiST]\index{indeks!GiST} na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: 
         \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|, \verb|<@|, \verb|@|, \verb|@>|, \verb|~|, \verb|?|.
         Indeksy GiST \eng{Generalized Search Tree} umożliwiają stosowanie różnych strategii indeksowania w zależności od potrzeb.

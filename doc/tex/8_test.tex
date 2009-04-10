@@ -31,7 +31,7 @@ Microsoft SQL Server\index{SQL Server} &  2008  & Express\\
 \end{tabular} 
 \end{qxtab}
 
-
+\todo{Napisać jaki typ tabelek zpstał urzyty w MySQL (MyISAM, InnoDB)}
 
 % Wybrane zostały SZDB spełniające następujące cechy:
 % \begin{itemize}
@@ -55,6 +55,28 @@ Microsoft SQL Server\index{SQL Server} &  2008  & Express\\
 Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny. 
 Program który zajmuje się tym zadaniem został dołączony do tej pracy.
 
+
+
+
+Większość testów wymaga identyfikatorów węzłów. 
+Wybranie losowego identyfikatora z istniejących w bazie danych było by najprostrzym 
+ale też niedoskonałym\todo{obarczonym błędem} rozwiązaniem.
+Wynika to z tego, że w drzewe (o stopniu większym niż 2\todo{bardzo nieprecyzyjnie napisane}) 
+liście stanowią najliczniejszą grupę węzłów.
+Natomiast węzły o niskim poziomie są małoliczne.
+Dlatego zapytanie o potomków tak wylosowanego węzła było by zadaniem prostym, natomiast przodków --- trudnym (gdyż z dużym prawdopodobieństwem wylosowany by został liść).
+
+Aby zapobiec takiej sytuacji identyfikatory dla zapytań losowane są dwuetapowo:
+\begin{enumerate}
+ \item najpierw losowany jest jeden z poziomów węzłów w drzewie
+ \item nastepnia losowany jest jeden z węzłów identyfikatorów
+\end{enumerate}
+Ta procedura powtarza się do uzyskania wymaganej ilości identyfikatorów węzłów. 
+W obu losowaniach wykorzystywany jest \emph{dyskretny rozkład jednostajny}. 
+
+
+
+
 % Aby przetestować przedstawione rozwiązania wykożystane zostały następujące zestawy danych:
 % \begin{itemize}
 %  \item mały test 100 dwupoziomowo
@@ -74,6 +96,12 @@ Program który zajmuje się tym zadaniem został dołączony do tej pracy.
 
 \section{Środowisko testowe}
 
-Aby zminimalizować potencjalne problemy wynikające z instalacji wielu baz na jednej maszynie dla potrzeb testów zostały stworzone dla nich odzielne maszyny wirtualne. Wykorzystano VirtualBox 2.1. Każdej maszynie został przyznany 10GB virtualny dysk o stałym rozmiarze oraz 512 MB RAM. Program testujący działał również na maszynie wirtualnej, więc ominięto problem przepustowości interfacu sieciowego. \todo{lepsze nazwy; wersja; usunac powtórzenia}
+Aby zminimalizować potencjalne problemy wynikające z instalacji wielu baz na 
+jednej maszynie dla potrzeb testów zostały stworzone dla nich odzielne maszyny wirtualne. 
+Wykorzystano VirtualBox 2.1. Każdej maszynie został przyznany 10GB virtualny dysk 
+o~stałym rozmiarze oraz 512 MB RAM. Program testujący działał również na maszynie wirtualnej, 
+więc ominięto problem przepustowości interfacu sieciowego. 
+\todo{lepsze nazwy; wersja; usunac powtórzenia}
 
-Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. Baza Microsoft SQL Server została zainstalowana na Windows XP Service Pack 2.
+Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. 
+Baza Microsoft SQL Server została zainstalowana na Windows XP Service Pack 2.
