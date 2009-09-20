@@ -27,3 +27,4 @@
 src/data/*.xml
 # except
 !src/data/example.xml
+src/data/*.xml.*

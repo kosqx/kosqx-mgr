@@ -119,7 +119,8 @@
 }
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% document
 
 \begin{document}
 
@@ -137,15 +138,8 @@
 % \chapter{Wprowadzenie do tematu}
 \input{tex/1_theory}
 
-\chapter{Podstawowe metody przechowywania danych}
-
-Metody wymienione w tym rozdziale są uniwersalne. Daje się je zaimplementować w każdej relacyjnej bazie danych. 
-Można również (przy odrobinie wysiłku) korzystać z nich również w \emph{mapowaniach obiektowo-relacyjnych}\index{OR/M}.
-Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych bazach danych.
-
-	% \section{Metoda stałej wysokości drzewa}
-	% Przenieść do sekcji o metodach, o których nie będziemy mówili. Takich jak również, Dział -- pracownik.
-	
+% \chapter{Podstawowe metody przechowywania danych}
+\input{tex/2_abs}
     \clearpage
 
 	% \section{Metoda klucza obcego do rodzica}
@@ -176,11 +170,10 @@ Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych 
 % 	% \section{Metoda łączona}
 
 
-\chapter{Metody specyficzne dla bazy danych}
-    Opisane w tym rozdziale metody nie są uniwersalnymi reprezentacjami.
-
-    
+% \chapter{Metody specyficzne dla bazy danych}
+\input{tex/3_abs}
     \clearpage
+
 	% \section{PL/SQL}
     \input{tex/3_plsql}
 	\clearpage

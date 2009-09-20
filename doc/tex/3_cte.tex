@@ -24,6 +24,14 @@
 % A common table expression can be thought of as a named temporary table within a SQL statement that is retained for the duration of a SQL statement. 
 % There can be many CTEs in a single SQL statement, but each must have a unique name and be defined only once.
 
+
+% PGSQL doc:
+% Tip: The recursive query evaluation algorithm produces its output in breadth-ﬁrst search order.
+% You can display the results in depth-ﬁrst search order by making the outer query ORDER BY a
+% “path” column constructed in this way.
+
+
+
 W standardzie SQL:99\index{SQL!SQL:99} wprowadzono \emph{Wspólne Wyrażenia Tabelowe} \eng{CTEs --- Common Table Expressions}.
 Ich działanie przypomina stworzenie tymczasowego widoku\index{widok}, 
 istniejącego tylko na czas wykonania danego zapytania.
@@ -79,6 +87,22 @@ while tmp:
   tmp = zapytanie_rekurencyjne(tmp)
 return widok
 \end{verbatim}
+
+Najprostrzy przykład wykorzystania zapytań rekurencyjnych to wygenerowanie ciągu liczb. 
+W tym przykładzie ciągu arytmetycznego zaczynającego się od $0$ (cu wynika z zapytania startowego \texttt{SELECT \textbf{0} AS i}), 
+różnica ciągu wynosi $1$ (\texttt{SELECT \textbf{i + 1} AS i})
+
+\begin{verbatim}[sql]
+WITH RECURSIVE a(i) AS (
+    SELECT 0 AS i
+    UNION ALL
+    SELECT i + 1 AS i FROM a WHERE i < 10
+)
+SELECT i from a;
+\end{verbatim}
+
+
+
 
 Rozszerzenie to można wykorzystać do pracy z reprezentacją krawędziową. 
 Umożliwi ono wysłanie do bazy danych tylko jednego zapytania podczas pobierania potomków i przodków. 

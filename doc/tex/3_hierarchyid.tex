@@ -32,7 +32,7 @@
 Jedną z najciekawszych nowości jakie Microsoft wprowadził w SQL Server 2008 jest nowy typ danych \texttt{hierarchyid}.
 Pozwala on na wygodne przechowywanie danych hierarchicznych.
 
-W budowie wewnętrznej przypomina reprezentację wyliczonych krawędzi, lecz jest zapisany w
+
 
 
 \temat{Opis typu \texttt{hierarchyid}}
@@ -41,8 +41,8 @@ W budowie wewnętrznej przypomina reprezentację wyliczonych krawędzi, lecz jes
 
 Typ \texttt{hierarchyid}\index{hierarchyid@\texttt{hierarchyid}} jest przechowywany wewnętrznie jako \texttt{VARBINARY}.
 
-
-Aby osiągnąć mały rozmiar pola zastosowano algorytm OrdPath\cite{ordpath,kumaran}\index{OrdPath}.
+W budowie wewnętrznej przypomina reprezentację zmaterializowanych krawędzi, 
+lecz aby osiągnąć mały rozmiar pola zastosowano algorytm OrdPath\cite{ordpath,kumaran}\index{OrdPath}.
 Pierwotnie \todo{upewnić się} skonstruowano go aby ułarwić pracę z danymi XML\index{XML} pozbawionymi schematu\todo{schematu?}.
 Nastepnie został on zastosowany w implementacji typu \texttt{hierarchyid}.
 
@@ -83,6 +83,7 @@ CREATE UNIQUE INDEX Org_Depth_First
 \begin{description}
   \item[\texttt{child.GetAncestor(n)}] \index{GetAncestor@\texttt{GetAncestor()}}
     Zwraca węzeł będący \texttt{n-tym} przodkiem danego węzła.
+    Dla $n = 0$ zwraca tem sam element, dla $n = 1$ rodzica, dla $n = 2$ dziadka, itd.
     % 0 -> ten element; 1->rodzic; 2->dziadek
 	%This method is useful to find the (nth ancestor of the given child node.
 
