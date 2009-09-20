@@ -1,6 +1,24 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
+"""
+Copyright (C) 2007  Krzysztof Kosyl <krzysztof.kosyl@gmail.com>
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+"""
+
 import re
 import time
 
@@ -510,23 +528,66 @@ class Database(object):
     def _rowcount(self):
         return self._cur.rowcount
 
+    # ---------------------------------------------------------------
+    # Fetching results
+
     def list(self):
+        """
+            Depricated: use instead  db.fetch_all()
+        """
+        return self.fetch_all()
+                
+    def fetch_all(self):
+        """
+            Return list of all rows returned by last execute 
+            ---
+            print db.execute('select a, b from tab').fetch_all()
+        """
         result = []
         try:
-            #print 'self._cur.rowcount', self._cur.rowcount
-            #if self._cur.rowcount >= 0: 
             if self._rowcount() >= 0: 
-                d = self._build_names()
-                for i in self._cur.fetchall():
-                    #print 'list ' * 10, i
-                    result.append(RowObject(i, d))
+                names = self._build_names()
+                for row in self._cur.fetchall():
+                    result.append(RowObject(row, names))
         except self._module.ProgrammingError, e:
             print 'ProgrammingError', e
         return result
+                
+    def fetch_col(self, name=0):
+        result = []
+        try:
+            if self._rowcount() >= 0: 
+                
+                if isinstance(name, basestring):
+                    names = self._build_names()
+                    name = names[name]
+                for row in self._cur.fetchall():
+                    result.append(row[name])
+        except self._module.ProgrammingError, e:
+            print 'ProgrammingError', e
+        return result
+                
+    def fetch_row(self):
+        names = self._build_names()
+        row = cur.fetchone()
+        return RowObject(row, names)
+    
+    def fetch_one(self, name=0):
+        if isinstance(name, basestring):
+            names = self._build_names()
+            name = names[name]
+        row = cur.fetchone()
+        return row[name]
 
-    def format_ascii(self):
+
+    def format_ascii(self, where='^-_<|>'):
+        sep = {
+            'left':     ('| ',  '+-' ) if '<' in where else ('', ''),
+            'center':   (' | ', '-+-') if '|' in where else (' ', '-'),
+            'right':    (' |',  '-+' ) if '>' in where else ('', ''),
+        }
         def format_one_line(data, lens):
-            return '| ' + ' | '.join(d.ljust(i) for i, d in zip(lens, data)) + ' |'
+            return sep['left'][0] + sep['center'][0].join(d.ljust(i) for i, d in zip(lens, data)) + sep['right'][0]
         def get_names(desc):
             return [d[0].lower() for d in self._cur.description]
         def get_names_len(desc):
@@ -548,15 +609,21 @@ class Database(object):
         strings, lens = get_strings_and_lens(self._cur.fetchall(), lens)
     
         result = []
-        spacer = '+-' + '-+-'.join(['-' * i for i in lens]) + '-+'
+        spacer = sep['left'][1] + sep['center'][1].join(['-' * i for i in lens]) + sep['right'][1]
         
-        result.append(spacer)
+        if '^' in where:
+            result.append(spacer)
+        
         result.append(format_one_line(get_names(self._cur.description), lens))
-        result.append(spacer)
+        
+        if '-' in where:
+            result.append(spacer)
         
         for data in strings:
             result.append(format_one_line(data, lens))
-        result.append(spacer)
+        
+        if '_' in where:
+            result.append(spacer)
         
         return '\n'.join(result)
 
@@ -895,7 +962,7 @@ def rewrite_query(query, mode):
         
     print result
 
-def connect(file=None, dsn=None, **kw):
+def connect(file=None, dsn=None, rename={}, **kw):
     """ Create connection to database.
         
         Read connection params from:
@@ -903,15 +970,22 @@ def connect(file=None, dsn=None, **kw):
          2) DSN string
          3) keyword params
         Parameters from next source can overwrite previous 
+        
+        Known params:
+         - host
+         - port
+         - dbname
+         - user
+         - password
     """
     def param(data):
         parts = [i.strip() for i in data.split('=', 1)]
         assert len(parts) == 2
         name, value = parts[0], parts[1]
+        name = rename.get(name, name)
         if (value[0] == value[-1]) and (value[0] in ['"', "'"]):
-            return {name: value[1:-1]}
-        else:
-            return {name: value}
+            value = value[1:-1]
+        return {name: value}
 
     params = {}
     
@@ -939,9 +1013,11 @@ def connect(file=None, dsn=None, **kw):
 
 def main():
     #db = Database.connect(dialect='postgresql', dbname='test_pada', user='kosqx', host='localhost', password='kos144')
-    db = Database.connect(dialect='sqlite', dbname='abc.db')
+    #db = Database.connect(dialect='sqlite', dbname='abc.db')
     #db = Database.connect(dialect='oracle', dbname='xe', user='kosqx', password='kos144')
     #db = Database.connect(dialect='mysql', dbname='test_mvcc', user='kosqx', password='kos144')
+
+    db = connect(dsn="dialect='sqlite' dbname='abc.db'")
 
     db.set_paramstyle('numeric')
 

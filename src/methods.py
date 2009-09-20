@@ -87,18 +87,18 @@ class Simple(Tree):
             })
         
         self.db.ddl({
-                'sqlite': "CREATE TABLE simple(id INTEGER PRIMARY KEY AUTOINCREMENT, parent int, name varchar(50))",
+                'sqlite': "CREATE TABLE simple(id INTEGER PRIMARY KEY AUTOINCREMENT, parent int, name varchar(100))",
                 'oracle': [
                     'CREATE SEQUENCE simple_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
-                    'CREATE TABLE simple(id int, parent int, name varchar(50))',
+                    'CREATE TABLE simple(id int, parent int, name varchar(100))',
                     ],
-                'db2':    "CREATE TABLE simple(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), parent int, name varchar(50))", 
-                'mssql':  "CREATE TABLE simple(id int IDENTITY PRIMARY KEY, parent int, name varchar(50))",
+                'db2':    "CREATE TABLE simple(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), parent int, name varchar(100))", 
+                'mssql':  "CREATE TABLE simple(id int IDENTITY PRIMARY KEY, parent int, name varchar(100))",
                 '*':      """
                     CREATE TABLE simple(
                         id serial PRIMARY KEY, 
                         parent int REFERENCES simple(id) ON DELETE CASCADE, 
-                        name varchar(50)
+                        name varchar(100)
                     )""",
         })
 
@@ -181,17 +181,17 @@ class Full(Tree):
             self.db.execute('DROP TABLE full_tree')
         
         self.db.ddl({
-                'sqlite': "CREATE TABLE full_data(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(50))",
+                'sqlite': "CREATE TABLE full_data(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(100))",
                 'oracle': [
                     'CREATE SEQUENCE full_data_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
-                    'CREATE TABLE full_data(id int, name varchar(50))',
+                    'CREATE TABLE full_data(id int, name varchar(100))',
                     ],
-                'db2':    "CREATE TABLE full_data(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), name varchar(50))", 
-                'mssql':  "CREATE TABLE full_data(id int IDENTITY PRIMARY KEY, name varchar(50))",
+                'db2':    "CREATE TABLE full_data(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), name varchar(100))", 
+                'mssql':  "CREATE TABLE full_data(id int IDENTITY PRIMARY KEY, name varchar(100))",
                 '*':      """
                     CREATE TABLE full_data(
                         id serial PRIMARY KEY, 
-                        name varchar(50)
+                        name varchar(100)
                     )""",
         })
         
@@ -303,19 +303,19 @@ class NestedSets(Tree):
             })
 
         self.db.ddl({
-            'sqlite': "CREATE TABLE nested_sets(id integer PRIMARY KEY AUTOINCREMENT, lft int, rgt int, name varchar(50))",
+            'sqlite': "CREATE TABLE nested_sets(id integer PRIMARY KEY AUTOINCREMENT, lft int, rgt int, name varchar(100))",
             'oracle': [
                     'CREATE SEQUENCE nested_sets_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
-                    'CREATE TABLE nested_sets(id int, lft int, rgt int, name varchar(50))',
+                    'CREATE TABLE nested_sets(id int, lft int, rgt int, name varchar(100))',
                 ],
-            'db2': "CREATE TABLE nested_sets(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), lft int, rgt int, name varchar(50))",
-            'mssql': "CREATE TABLE nested_sets(id int IDENTITY PRIMARY KEY, lft int, rgt int, name varchar(50))",
+            'db2': "CREATE TABLE nested_sets(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), lft int, rgt int, name varchar(100))",
+            'mssql': "CREATE TABLE nested_sets(id int IDENTITY PRIMARY KEY, lft int, rgt int, name varchar(100))",
             '*':     """
                 CREATE TABLE nested_sets(
                     id serial PRIMARY KEY, 
                     lft int, 
                     rgt int, 
-                    name varchar(50)
+                    name varchar(100)
                 )""",
         })
         
@@ -396,7 +396,7 @@ class PathEnum(Tree):
                 CREATE TABLE pathenum(
                     id serial PRIMARY KEY, 
                     path varchar(100), 
-                    name varchar(50)
+                    name varchar(100)
                 )"""
         )
         
@@ -446,11 +446,15 @@ class PathEnum(Tree):
         )
 
     def get_ancestors(self, id):
+                #    SELECT p2.*
+                #FROM pathenum p1, pathenum p2
+                #WHERE p1.id = :id AND
+                #    position(p2.path || p2.id IN p1.path) = 1
         return self.db.run("""
             SELECT p2.*
                 FROM pathenum p1, pathenum p2
                 WHERE p1.id = :id AND
-                    position(p2.path || p2.id IN p1.path) = 1
+                    p1.path LIKE (p2.path || p2.id || '%')
                 """,
             dict(id=id)
         )
@@ -562,7 +566,7 @@ class Ltree(Tree):
                 CREATE TABLE ltreetab(
                     id serial PRIMARY KEY, 
                     path ltree, 
-                    name varchar(50)
+                    name varchar(100)
                 )"""
         )
         
@@ -665,7 +669,7 @@ class HierarchyId(Tree):
             CREATE TABLE herid (
                 id int IDENTITY PRIMARY KEY,
                 node hierarchyid,
-                name varchar(50)
+                name varchar(100)
             )
         """)
         

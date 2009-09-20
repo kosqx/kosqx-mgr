@@ -18,7 +18,7 @@ class Stopwatch():
         self._name = ''
     
     def start(self, name):
-        #print '-------------', name
+        print '#', name
         self.stop()
         self._name = '%s:%s' % (self._prefix, name)
         self._time = time.time()
@@ -59,31 +59,38 @@ def run_test(database, tree_class, testcases):
     
 
     sw.start('insert')
-    for node in testcases.get('insert', []):
-        id2id[node['id']] = tree.insert(parent=node['parent'], name=node['name'])
+    for i, node in enumerate(testcases.get('insert', [])):
+        id2id[node['id']] = tree.insert(parent=node['parent'], name=node['name'][:48])
+        if i % 10000 == 0:
+            print '#', i
     db.commit()
     
     
     
     #print repr(testcases)
+    case = int(testcases.get('roots', ['1'])[0])
     sw.start('roots')
-    for i in xrange(int(testcases.get('roots', ['1'])[0])):
+    for i in xrange(case):
         report(tree.get_roots())
     
+    case = testcases.get('parent', [])
     sw.start('parent')
-    for idn in testcases.get('parent', []):
+    for idn in case:
         report(tree.get_parent(id2id[idn]))
     
+    case = testcases.get('children', [])
     sw.start('children')
-    for idn in testcases.get('children', []):
+    for idn in case:
         report(tree.get_children(id2id[idn]))
     
+    case = testcases.get('ancestors', [])
     sw.start('ancestors')
-    for idn in testcases.get('ancestors', []):
+    for idn in case:
         report(tree.get_ancestors(id2id[idn]))
     
+    case = testcases.get('descendants', [])
     sw.start('descendants')
-    for idn in testcases.get('descendants', []):
+    for idn in case:
         report(tree.get_descendants(id2id[idn]))
     
     sw.stop()

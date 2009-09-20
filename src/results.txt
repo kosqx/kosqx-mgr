@@ -297,8 +297,23 @@ pathenum:sqlserver:deep3:descendants 1.00000
 pathenum:sqlserver:deep3:total       1.00000
 
 
+edgeenum:postgresql:deep3:create      1.00000
+edgeenum:postgresql:deep3:insert      1.00000
+edgeenum:postgresql:deep3:roots       1.00000
+edgeenum:postgresql:deep3:parent      1.00000
+edgeenum:postgresql:deep3:children    1.00000
+edgeenum:postgresql:deep3:ancestors   1.00000
+edgeenum:postgresql:deep3:descendants 1.00000
+edgeenum:postgresql:deep3:total       1.00000
 
-
+plsql:postgresql:deep3:create      1.00000
+plsql:postgresql:deep3:insert      1.00000
+plsql:postgresql:deep3:roots       1.00000
+plsql:postgresql:deep3:parent      1.00000
+plsql:postgresql:deep3:children    1.00000
+plsql:postgresql:deep3:ancestors   1.00000
+plsql:postgresql:deep3:descendants 1.00000
+plsql:postgresql:deep3:total       1.00000
 
 ltree:postgresql:deep3:create      1.00000
 ltree:postgresql:deep3:insert      1.00000
@@ -345,3 +360,10 @@ hierarchyid:sqlserver:deep3:children    1.00000
 hierarchyid:sqlserver:deep3:ancestors   1.00000
 hierarchyid:sqlserver:deep3:descendants 1.00000
 hierarchyid:sqlserver:deep3:total       1.00000
+
+
+# end of fake data
+
+
+
+
