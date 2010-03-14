@@ -367,3 +367,238 @@ hierarchyid:sqlserver:deep3:total       1.00000
 
 
 
+## database postgresql Simple
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+simple:postgresql:deep3:create      0.273
+simple:postgresql:deep3:insert      1.047
+simple:postgresql:deep3:roots       0.001
+simple:postgresql:deep3:parent      0.138
+simple:postgresql:deep3:children    0.427
+simple:postgresql:deep3:ancestors   0.685
+simple:postgresql:deep3:descendants 0.972
+simple:postgresql:deep3:total       3.544
+## database postgresql Ltree
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+ltree:postgresql:deep3:create      0.404
+ltree:postgresql:deep3:insert      1.752
+ltree:postgresql:deep3:roots       0.003
+ltree:postgresql:deep3:parent      0.783
+ltree:postgresql:deep3:children    3.093
+ltree:postgresql:deep3:ancestors   0.607
+ltree:postgresql:deep3:descendants 0.536
+ltree:postgresql:deep3:total       7.178
+## database postgresql PathEnum
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+## database mysql Simple
+## database sqlite Simple
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+simple:sqlite:deep3:create      0.053
+simple:sqlite:deep3:insert      0.285
+simple:sqlite:deep3:roots       0.001
+simple:sqlite:deep3:parent      0.038
+simple:sqlite:deep3:children    0.303
+simple:sqlite:deep3:ancestors   0.283
+simple:sqlite:deep3:descendants 1.512
+simple:sqlite:deep3:total       2.474
+## database sqlite PathEnum
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+pathenum:sqlite:deep3:create      0.016
+pathenum:sqlite:deep3:insert      0.452
+pathenum:sqlite:deep3:roots       0.001
+pathenum:sqlite:deep3:parent      0.044
+pathenum:sqlite:deep3:children    0.371
+pathenum:sqlite:deep3:ancestors   0.031
+pathenum:sqlite:deep3:descendants 0.580
+pathenum:sqlite:deep3:total       1.494
+## database sqlite Full
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+full:sqlite:deep3:create      0.096
+full:sqlite:deep3:insert      4.429
+full:sqlite:deep3:roots       0.005
+full:sqlite:deep3:parent      0.027
+full:sqlite:deep3:children    0.028
+full:sqlite:deep3:ancestors   0.027
+full:sqlite:deep3:descendants 0.027
+full:sqlite:deep3:total       4.639
+## database sqlite NestedSets
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+nested:sqlite:deep3:create      0.007
+nested:sqlite:deep3:insert      3.515
+nested:sqlite:deep3:roots       0.002
+nested:sqlite:deep3:parent      0.540
+nested:sqlite:deep3:children    0.000
+nested:sqlite:deep3:ancestors   0.550
+nested:sqlite:deep3:descendants 0.549
+nested:sqlite:deep3:total       5.164
+## database oracle Simple
+## database db2 Simple
+## database postgresql Simple
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+simple:postgresql:deep3:create      0.014
+simple:postgresql:deep3:insert      0.923
+simple:postgresql:deep3:roots       0.001
+simple:postgresql:deep3:parent      0.081
+simple:postgresql:deep3:children    0.253
+simple:postgresql:deep3:ancestors   0.798
+simple:postgresql:deep3:descendants 0.957
+simple:postgresql:deep3:total       3.027
+## database postgresql Ltree
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+ltree:postgresql:deep3:create      0.024
+ltree:postgresql:deep3:insert      1.441
+ltree:postgresql:deep3:roots       0.002
+ltree:postgresql:deep3:parent      0.539
+ltree:postgresql:deep3:children    2.804
+ltree:postgresql:deep3:ancestors   0.602
+ltree:postgresql:deep3:descendants 0.772
+ltree:postgresql:deep3:total       6.184
+## database postgresql Full
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+full:postgresql:deep3:create      0.031
+full:postgresql:deep3:insert      8.512
+full:postgresql:deep3:roots       0.002
+full:postgresql:deep3:parent      0.113
+full:postgresql:deep3:children    0.141
+full:postgresql:deep3:ancestors   0.100
+full:postgresql:deep3:descendants 0.116
+full:postgresql:deep3:total       9.016
+## database postgresql NestedSets
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+nested:postgresql:deep3:create      0.021
+nested:postgresql:deep3:insert      9.788
+nested:postgresql:deep3:roots       0.010
+nested:postgresql:deep3:parent      0.514
+nested:postgresql:deep3:children    0.000
+nested:postgresql:deep3:ancestors   0.453
+nested:postgresql:deep3:descendants 0.457
+nested:postgresql:deep3:total       11.243
+## database mysql Simple
+## database sqlite Simple
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+simple:sqlite:deep3:create      0.014
+simple:sqlite:deep3:insert      0.301
+simple:sqlite:deep3:roots       0.001
+simple:sqlite:deep3:parent      0.051
+simple:sqlite:deep3:children    0.373
+simple:sqlite:deep3:ancestors   0.293
+simple:sqlite:deep3:descendants 1.557
+simple:sqlite:deep3:total       2.590
+## database sqlite Full
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+full:sqlite:deep3:create      0.036
+full:sqlite:deep3:insert      3.914
+full:sqlite:deep3:roots       0.005
+full:sqlite:deep3:parent      0.029
+full:sqlite:deep3:children    0.029
+full:sqlite:deep3:ancestors   0.029
+full:sqlite:deep3:descendants 0.033
+full:sqlite:deep3:total       4.074
+## database sqlite NestedSets
+# create
+# insert
+# 0
+# roots
+# parent
+# children
+# ancestors
+# descendants
+nested:sqlite:deep3:create      0.015
+nested:sqlite:deep3:insert      3.610
+nested:sqlite:deep3:roots       0.003
+nested:sqlite:deep3:parent      0.668
+nested:sqlite:deep3:children    0.000
+nested:sqlite:deep3:ancestors   0.828
+nested:sqlite:deep3:descendants 0.770
+nested:sqlite:deep3:total       5.894
+## database oracle Simple
+## database db2 Simple

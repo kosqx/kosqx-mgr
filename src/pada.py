@@ -431,7 +431,7 @@ class Database(object):
 
         if data is not None:
             dr = self._get_rewriter(asql)
-            #print 'execute.rewrite', repr(dr.sql), dr.rewrite_data(data)
+            print 'execute.rewrite', repr(dr.sql), dr.rewrite_data(data)
             self._cur.execute(dr.sql, dr.rewrite_data(data))
         else:
             if isinstance(asql, (list, tuple)):
@@ -733,7 +733,12 @@ class Oracle(Database):
         return rid
 
 class DB2(Database):
-    """ easy_install ibm_db
+	
+	
+    """ 
+    export IBM_DB_DIR=/home/db2inst1/sqllib
+    export IBM_DB_LIB=/home/db2inst1/sqllib/lib
+    easy_install ibm_db
     
     1) install DB2 9 Express-C
 

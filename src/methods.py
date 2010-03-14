@@ -382,108 +382,108 @@ class NestedSets(Tree):
         return roots
 
 
-class PathEnum(Tree):
-    tree_name = 'pathenum'
-    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
+#class PathEnum(Tree):
+    #tree_name = 'pathenum'
+    #tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
    
-    def create_table(self):
-        tables = self.db.schema_list('table')
-        if 'pathenum' in tables:
-            self.db.ddl("DROP TABLE pathenum")
+    #def create_table(self):
+        #tables = self.db.schema_list('table')
+        #if 'pathenum' in tables:
+            #self.db.ddl("DROP TABLE pathenum")
 
-        self.db.ddl("""
-                CREATE TABLE pathenum(
-                    id serial PRIMARY KEY, 
-                    path varchar(100), 
-                    name varchar(100)
-                )"""
-        )
+        #self.db.ddl("""
+                #CREATE TABLE pathenum(
+                    #id serial PRIMARY KEY, 
+                    #path varchar(100), 
+                    #name varchar(100)
+                #)"""
+        #)
         
-    def insert(self, parent, name):
-        """
-            INSERT INTO pathenum (path, name) VALUES (
-                (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
-                :name
-            )
-        """
-        if parent is None:
-            #pid = self.db.execute('''
-            #    INSERT INTO pathenum (path, name) VALUES (
-            #        '',
-            #        :name
-            #    ) RETURNING id
-            #    ''', dict(parent=parent, name=name)
-            #).list()[0][0]
-            pid = self.db.insert_returning_id('pathenum', dict(path='', name=name))
-        else:
-            #pid = self.db.execute('''
-            #    INSERT INTO pathenum (path, name) VALUES (
-            #        (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
-            #        :name
-            #    ) RETURNING id
-            #    ''', dict(parent=parent, name=name)
-            #).list()[0][0]
-            pid = self.db.insert_returning_id('pathenum', dict(name=name), dict(
-                path="(SELECT path || id ||  '.' FROM pathenum WHERE id = %s)" % parent))
-        return pid
+    #def insert(self, parent, name):
+        #"""
+            #INSERT INTO pathenum (path, name) VALUES (
+                #(SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
+                #:name
+            #)
+        #"""
+        #if parent is None:
+            ##pid = self.db.execute('''
+            ##    INSERT INTO pathenum (path, name) VALUES (
+            ##        '',
+            ##        :name
+            ##    ) RETURNING id
+            ##    ''', dict(parent=parent, name=name)
+            ##).list()[0][0]
+            #pid = self.db.insert_returning_id('pathenum', dict(path='', name=name))
+        #else:
+            ##pid = self.db.execute('''
+            ##    INSERT INTO pathenum (path, name) VALUES (
+            ##        (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
+            ##        :name
+            ##    ) RETURNING id
+            ##    ''', dict(parent=parent, name=name)
+            ##).list()[0][0]
+            #pid = self.db.insert_returning_id('pathenum', dict(name=name), dict(
+                #path="(SELECT path || id ||  '.' FROM pathenum WHERE id = %s)" % parent))
+        #return pid
     
-    def get_roots(self):
-        return self.db.run("""
-            SELECT *  
-                FROM pathenum 
-                WHERE path = ''
-            """)
+    #def get_roots(self):
+        #return self.db.run("""
+            #SELECT *  
+                #FROM pathenum 
+                #WHERE path = ''
+            #""")
 
-    def get_parent(self, id):
-        return self.db.run("""
-            SELECT p2.*
-                FROM pathenum p1, pathenum p2
-                WHERE p1.id = :id AND
-                    (p2.path || p2.id || '.') = p1.path
-                """,
-            dict(id=id)
-        )
-
-    def get_ancestors(self, id):
-                #    SELECT p2.*
+    #def get_parent(self, id):
+        #return self.db.run("""
+            #SELECT p2.*
                 #FROM pathenum p1, pathenum p2
                 #WHERE p1.id = :id AND
-                #    position(p2.path || p2.id IN p1.path) = 1
-        return self.db.run("""
-            SELECT p2.*
-                FROM pathenum p1, pathenum p2
-                WHERE p1.id = :id AND
-                    p1.path LIKE (p2.path || p2.id || '%')
-                """,
-            dict(id=id)
-        )
-    
-    def get_children(self, id):
-        return self.db.run("""
-            SELECT * 
-                FROM pathenum 
-                WHERE path = (
-                    SELECT path || id ||  '.'
-                        FROM pathenum 
-                        WHERE id = :parent
-                )
-            """, 
-            dict(parent=id)
-        )
+                    #(p2.path || p2.id || '.') = p1.path
+                #""",
+            #dict(id=id)
+        #)
 
-    def get_descendants(self, id):
-        return self.db.run("""
-            SELECT * 
-                FROM pathenum 
-                WHERE path LIKE (
-                    SELECT path || id || '.' || '%%'
-                        FROM pathenum
-                        WHERE id = :parent
-                )
-            """, 
-            dict(parent=id)
-        )
+    #def get_ancestors(self, id):
+                ##    SELECT p2.*
+                ##FROM pathenum p1, pathenum p2
+                ##WHERE p1.id = :id AND
+                ##    position(p2.path || p2.id IN p1.path) = 1
+        #return self.db.run("""
+            #SELECT p2.*
+                #FROM pathenum p1, pathenum p2
+                #WHERE p1.id = :id AND
+                    #p1.path LIKE (p2.path || p2.id || '%')
+                #""",
+            #dict(id=id)
+        #)
+    
+    #def get_children(self, id):
+        #return self.db.run("""
+            #SELECT * 
+                #FROM pathenum 
+                #WHERE path = (
+                    #SELECT path || id ||  '.'
+                        #FROM pathenum 
+                        #WHERE id = :parent
+                #)
+            #""", 
+            #dict(parent=id)
+        #)
+
+    #def get_descendants(self, id):
+        #return self.db.run("""
+            #SELECT * 
+                #FROM pathenum 
+                #WHERE path LIKE (
+                    #SELECT path || id || '.' || '%%'
+                        #FROM pathenum
+                        #WHERE id = :parent
+                #)
+            #""", 
+            #dict(parent=id)
+        #)
         
 #class EdgeEnum(Tree):
 #    tree_name = 'edgeenum'
@@ -734,13 +734,22 @@ class HierarchyId(Tree):
             dict(id=id)
         )
 
+    #def get_ancestors(self, id):
+        #return self.db.run("""
+            #SELECT *
+                #FROM herid
+                #WHERE (
+                    #SELECT node n1 FROM herid WHERE id = :id
+                #).IsDescendant(node)
+                #""",
+            #dict(id=id)
+        #)
+
     def get_ancestors(self, id):
         return self.db.run("""
-            SELECT * 
-                FROM herid 
-                WHERE (
-                    SELECT node FROM herid WHERE id = :id
-                ).IsDescendant(node)
+            SELECT *
+                FROM herid
+                WHERE node.IsDescendantOf(SELECT node n1 FROM herid WHERE id = :id)
                 """,
             dict(id=id)
         )

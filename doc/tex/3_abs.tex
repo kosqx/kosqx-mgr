@@ -1,16 +1,25 @@
-\chapter{Metody specyficzne dla bazy danych}
-    Opisane w tym rozdziale metody nie są uniwersalnymi reprezentacjami.
+\chapter{Metody specyficzne dla bazy danych - konstrukcje języka}
+%     Opisane w tym rozdziale metody nie są uniwersalnymi reprezentacjami.
 
-\todo{Przepisać, bo stylistycznie to masakra}
+% \todo{Przepisać, bo stylistycznie to masakra}
+% 
+% Metody PL/SQL, CTEs, connect by korzystają z reprezentacji krawędziowej.
+% Metoda krawędziowa posiada wiele zalet lecz ma też znaczącą wadę - 
+% SQL (sciślej piszącL te jego dialetaki jaki są dostępny w wszystkich bazach danych)
+% nie pozwala na pobranie potomków w jednym zapytaniu. 
+% Podobnnie jest z przodkami. 
+% Natomiast niektre bazy danych posiadają mechanizmy umożliwjące na wygodne wykonywanie zapytań rekurencyjnych.
+% 
+% 
+% Pozostałe metody też korzystają z omówionych poprzednio reprezentacji.
+% Oferują za to mechanizmy ułatwiające operowanie tymi reprezentacjami, 
+% jak też optymalizacje zwiększające wydajność i zmniejszające zrozmiar pola.
 
-Metody PL/SQL, CTEs, connect by korzystają z reprezentacji krawędziowej.
-Metoda krawędziowa posiada wiele zalet lecz ma też znaczącą wadę - 
-SQL (sciślej piszącL te jego dialetaki jaki są dostępny w wszystkich bazach danych)
-nie pozwala na pobranie potomków w jednym zapytaniu. 
-Podobnnie jest z przodkami. 
-Natomiast niektre bazy danych posiadają mechanizmy umożliwjące na wygodne wykonywanie zapytań rekurencyjnych.
+Opisana w poprzednim rozdziale metoda krawędziowa ma szereg zalet. 
+Niestety ma też powarzną wadę - aby pobrać przodków lub potomków należy wykonać wiele zapytań.
+W praktyce oznacza to większą czasochłonność takiej operacji. 
+Ponadto wymaga bardziej skomplikowanego kodu.
 
+Obejściem tego problemu jest pełniejsze wykorzystanie moliwości dawanych przez bazy danych.
+Nie są ona zwykłymi składami danych, lecz udostępniają coraz większe możliwości operowania na danych.
 
-Pozostałe metody też korzystają z omówionych poprzednio reprezentacji.
-Oferują za to mechanizmy ułatwiające operowanie tymi reprezentacjami, 
-jak też optymalizacje zwiększające wydajność i zmniejszające zrozmiar pola.
