@@ -3,7 +3,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.0
-lastDocument=main.tex
+lastDocument=tex/0_abstract.tex
 masterDocument=main.tex
 name=mgr
 pkg_extIsRegExp=false
@@ -39,8 +39,8 @@ column=0
 encoding=UTF-8
 highlight=LaTeX
 line=4
-open=false
-order=2
+open=true
+order=8
 
 [item:tex/0_titlepage.tex]
 archive=true
@@ -181,10 +181,10 @@ order=10
 archive=true
 column=0
 encoding=
-highlight=
+highlight=LaTeX
 line=0
-open=false
-order=-1
+open=true
+order=7
 
 [item:tex/7_summary.tex]
 archive=true
@@ -192,8 +192,8 @@ column=22
 encoding=UTF-8
 highlight=LaTeX
 line=0
-open=false
-order=-1
+open=true
+order=4
 
 [item:tex/8_app.tex]
 archive=true
@@ -201,17 +201,17 @@ column=17
 encoding=UTF-8
 highlight=LaTeX
 line=3
-open=false
-order=7
+open=true
+order=6
 
 [item:tex/8_test.tex]
 archive=true
-column=32
+column=69
 encoding=UTF-8
 highlight=LaTeX
-line=92
-open=false
-order=9
+line=79
+open=true
+order=5
 
 [item:tex/9_bibliography.bib]
 archive=true

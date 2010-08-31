@@ -431,7 +431,7 @@ class Database(object):
 
         if data is not None:
             dr = self._get_rewriter(asql)
-            print 'execute.rewrite', repr(dr.sql), dr.rewrite_data(data)
+            #print 'execute.rewrite', repr(dr.sql), dr.rewrite_data(data)
             self._cur.execute(dr.sql, dr.rewrite_data(data))
         else:
             if isinstance(asql, (list, tuple)):
@@ -845,11 +845,13 @@ class SQLServer(Database):
 
 class MySQL(Database):
     """
-        mysql --user=root --password=kos144 mysql
+        wajig install mysql-server python-mysqldb
+        
+        mysql --user=root --password=kos144 
         CREATE USER 'kosqx'@'localhost' IDENTIFIED BY 'kos144';
-        mysql --user=kosqx --password=kos144 mysql
         GRANT ALL PRIVILEGES ON *.* TO 'kosqx'@'localhost' WITH GRANT OPTION;
-        CREATE DATABASE kosqxmgr;
+        mysql --user=kosqx --password=kos144
+        CREATE DATABASE kosqx;
     """
     
     _short_names = ['my', 'mysql']
@@ -894,11 +896,15 @@ class MySQL(Database):
 
 class PostgreSQL(Database):
     """
+        wajig install postgresql-8.4 postgresql-contrib-8.4 python-psycopg2
+        
         su postgres
         createuser kosqx
         psql
         > ALTER USER kosqx WITH PASSWORD 'kos144'
-        createdb kosqxmgr
+        createdb kosqx
+        
+        psql kosqx kosqx < /usr/share/postgresql/8.4/contrib/ltree.sql
     """
     
     _short_names = ['pg', 'psql', 'postgres', 'postgresql']
@@ -965,7 +971,7 @@ def rewrite_query(query, mode):
                 tmp.append(c)
         last = c
         
-    print result
+    #print result
 
 def connect(file=None, dsn=None, rename={}, **kw):
     """ Create connection to database.

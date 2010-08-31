@@ -108,7 +108,9 @@ def do_highlight(code, lexer_name):
         lexer = get_lexer_by_name(lexer_name, stripall=True)
     
     #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=single,xleftmargin=5mm')
-    formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=lines,xleftmargin=5mm')
+    #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=lines,xleftmargin=5mm')
+    #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=leftline,xleftmargin=5mm')
+    formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='xleftmargin=5mm')
     
     result = highlight(code, lexer, formatter)
     

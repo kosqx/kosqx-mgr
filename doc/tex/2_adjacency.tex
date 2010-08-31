@@ -22,7 +22,7 @@
 
 
 
-Najprostszą, najbardziej intuicyjną i zapewne najpopularniejszą metodą jest metoda krawędziowa.
+Najprostszą, najbardziej intuicyjną i zapewne najpopularniejszą metodą jest metoda krawędziowa \eng{adjacency}\index{adjacency}.
 Została ona spopularyzowana przez Edgara Franka Codda\index{Codd Edgar Frank}. 
 %On też nadał im nazwę, która odnosi się do tego, że informacja o rodzicu elementu znajduje się w tej samej krotce\todo{krotka?} co dane.
 Nadał też jej nazwę. Wynika ona z tego, że każdy rekord zawiera własny identyfikator oraz identyfikator rodzica. Takie dane są wystarczające aby w drzewie opisać krawędz.
@@ -100,7 +100,7 @@ id | parent | name
 
 \vspace{-0.5cm}
 
-Należy zwrócić uwagę na \todo{warunek} \texttt{ON DELETE CASCADE}. 
+Należy zwrócić uwagę na \todo{term}warunek \texttt{ON DELETE CASCADE}. 
 Sprawia on, że w razie usunięcia węzła \todo{ustalić terminologię} 
 automatycznie zostaną usunięci wszyscy jego potomkowie.
 
@@ -109,9 +109,11 @@ automatycznie zostaną usunięci wszyscy jego potomkowie.
 %! method-sql simple.insert
 
 \operacja{Pobranie korzeni}
+Cechą charakterystyczną korzenia jest to, że jego rodzic jest ustawiony na \texttt{NULL}. Więc wybranie rodziców sprowadza się do tego zapytania:
 %! method-sql simple.roots
 
 \operacja{Pobranie rodzica}
+\todo{a może by zrobić to złączeniem?}
 %! method-sql simple.parent
 
 \operacja{Pobranie dzieci}
@@ -123,7 +125,7 @@ automatycznie zostaną usunięci wszyscy jego potomkowie.
 \operacja{Pobieranie potomków}
 %! method-sql simple.descendants
 
-Należy zwrócić uwagę na wykorzystanie operatora \emph{IN}. Bez niego wydajność metody spada znacząco. 
+Należy zwrócić uwagę na wykorzystanie operatora \texttt{IN}. Bez niego wydajność metody spada znacząco. 
 
 \temat{Wydajność}
 

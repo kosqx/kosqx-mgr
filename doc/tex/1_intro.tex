@@ -12,7 +12,15 @@
 
 
 Hierarchie --- a w szczególności drzewa --- są bardzo użyteczną metodą reprezentacji danych. \todo{przepisać na polski}. 
+W szczególności są bardzo intuicyjne dla ludzi.
 Nic dziwnego, że z tej abstrakcji korzystają \emph{mapy myśli}, drzewa katalogów, itd.
+
+Dlatego programista baz danych bardzo często ma potrzebę by zapisać drzewo do bazy danych.
+Przykładowo drzewo kategorii produktów w sklepie, katalog książek w bibliotece, stukturę szef--podwładny w firmie, itd.
+
+Jego zadanie jest utrudnione gdyż --- obecnie dominujący --- relacyjny model danych nie został stworzony z myślą o takich zastosowaniach.
+Oczywiście nie oznacza to, że jest to niemożliwe.
+Wymaga jednak więcej pracy i wiedzy.
 
 
 
@@ -22,18 +30,19 @@ Nic dziwnego, że z tej abstrakcji korzystają \emph{mapy myśli}, drzewa katalo
 Każda współczesna baza danych korzysta z struktur danych jakimi są drzewa. 
 Indeksy są implementowanee jako \emph{B-drzewa}, \emph{R-drzewa}, itd.
 % inne drzewa w bazach danych
-Zapytania SQL są przetwarzane do \emph{drzew składni} \eng{AST --- Abstract Syntax Tree}.
+Zapytania SQL są przetwarzane do \emph{drzew składniowych} \eng{AST --- Abstract Syntax Tree}.
 Lecz to są drzewa zastosowane w implementacji, mające na celu zwiększenie szybkości działania bazy danych i nie są widoczne dla użytkownika bazy danych.
+Dlatego nie będą omawiane w tej pracy.
 
-Lecz --- najpopularniejsze obecnie relacyjne bazy danych --- nie zostały stworzone do obsługi danych hierarchicznych.
-Nie oznacza to bynajmniej, że jest to niemożliwe.
-Należy za to spodziewać się pewnych utrudnień.
-% Największych probleµow należy się spodziewać w 
+%Lecz --- najpopularniejsze obecnie relacyjne bazy danych --- nie zostały stworzone do obsługi danych hierarchicznych.
+%Nie oznacza to bynajmniej, że jest to niemożliwe.
+%Należy za to spodziewać się pewnych utrudnień.
+%Największych probleµow należy się spodziewać w 
 
 % Celem tej pracy jest zaprezentowanie metod przechowywania danych w relacyjnych bazach danych. 
 
 
-\todo{Sprawę dodatkowo komplikuje dążenie do przechowywani danych w 3 postaci normalnej. Niektóre metody nie są nawet w 1 postaci normalnej. }
+{Sprawę dodatkowo komplikuje dążenie do przechowywani danych w 3 postaci normalnej. Niektóre metody nie są nawet w 1 postaci normalnej. \ask{Prawda? Pisać o tym?}
 
 
 Celem tej pracy jest:

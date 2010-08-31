@@ -517,11 +517,11 @@ class ConnectBy(Simple):
 
 class With(Simple):
     tree_name = 'with'
-    tree_base = ['db2', 'sqlserver']
+    tree_base = ['db2', 'sqlserver', 'postgresql']
 
     def get_ancestors(self, id):
         return self.db.run("""
-            WITH temptab(node_level, id, parent, name) AS
+            WITH RECURSIVE temptab(node_level, id, parent, name) AS
             (
                 SELECT 0, root.id, root.parent, root.name
                     FROM simple root
@@ -537,7 +537,7 @@ class With(Simple):
 
     def get_descendants(self, id):
         return self.db.run("""
-            WITH temptab(level, id, parent, name) AS
+            WITH RECURSIVE temptab(level, id, parent, name) AS
             (
                 SELECT 0, root.id, root.parent, root.name
                     FROM simple root

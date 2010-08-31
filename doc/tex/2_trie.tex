@@ -3,7 +3,7 @@
 
 Metoda ta polega na przechowywaniu ciągu identyfikatorów wszystkich węzłów pomiędzy korzeniem a danym węzłem.
 Są one przechowywane w pojedyńczym polu danego rekordu. 
-Identyfikatorem może być dowolne unikalne pole\todo{term:pole?} tabeli.
+Identyfikatorem może być dowolne unikalne pole \todo{term:pole?} tabeli.
 Dobrym rozwiązaniem jest numeryczny klucz główny, lecz często bywa też stosowana unikalna nazwa węzła.
 
 
@@ -11,7 +11,7 @@ Ten opis nie wymusza konkretnej implementacji.
 Listę elementów można przechowywać na wiele sposobów. 
 Przykładowo ciąg identyfikatorów całkowitoliczbowych \texttt{4, 8, 15, 16, 23, 42} można przechować jako:
 \begin{itemize}
- \item tablicę\todo{term:array} np. \verb|{4, 8, 15, 16, 23, 42}|
+ \item tablicę \todo{term:array} np. \verb|{4, 8, 15, 16, 23, 42}|
 % wady: dostpne tylko w wybranych bazach danych, niedostpne dla ORM, potencjalne problemy z indeksami
  \item napis z elememtami rozdzielonymi separatorami. 
     Przykładowo dla separatora~\verb|'.'| będzie to napis \verb|'4.8.15.16.23.42'|. 

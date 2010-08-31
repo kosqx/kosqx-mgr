@@ -31,7 +31,7 @@ Microsoft SQL Server\index{SQL Server} &  2008  & Express\\
 \end{tabular} 
 \end{qxtab}
 
-\todo{Napisać jaki typ tabelek zpstał urzyty w MySQL (MyISAM, InnoDB)}
+\todo{Napisać jaki typ tabelek został użyty w MySQL (MyISAM, InnoDB)}
 
 % Wybrane zostały SZDB spełniające następujące cechy:
 % \begin{itemize}
@@ -52,8 +52,10 @@ Microsoft SQL Server\index{SQL Server} &  2008  & Express\\
 
 \section{Dane testowe}
 
-Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny. 
-Program który zajmuje się tym zadaniem został dołączony do tej pracy.
+% Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny. 
+% Program który zajmuje się tym zadaniem został dołączony do tej pracy.
+
+Dane użyte podczas testów pochodzą to drzewo kategorii \url{http://www.dmoz.org/}.
 
 
 %\begin{qxtab}{dmozdist}{Liczebność węzłów na poszczegółnych poziomach w danych testowych}\end{qxfig}
@@ -69,7 +71,7 @@ Liczebność & 21     & 539   & 6259  & 25834 & 50654 & 41752 & 31325 & 21573 & 
 
 Większość testów wymaga identyfikatorów węzłów. 
 Wybranie losowego identyfikatora z istniejących w bazie danych było by najprostrzym 
-ale też niedoskonałym\todo{obarczonym błędem} rozwiązaniem.
+ale też niedoskonałym \todo{obarczonym błędem} rozwiązaniem.
 Wynika to z tego, że w drzewe (o stopniu większym niż 2\todo{bardzo nieprecyzyjnie napisane}) 
 liście stanowią najliczniejszą grupę węzłów.
 Natomiast węzły o niskim poziomie są małoliczne.
@@ -114,3 +116,5 @@ więc ominięto problem przepustowości interfacu sieciowego.
 
 Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. 
 Baza Microsoft SQL Server została zainstalowana na Windows XP Service Pack 2.
+
+Bazy nie były w żaden sposób dostrajane \eng{tuning}, czyli pracują z domyślnymi ustawieniami. 
