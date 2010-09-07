@@ -432,6 +432,8 @@ class Database(object):
         if data is not None:
             dr = self._get_rewriter(asql)
             #print 'execute.rewrite', repr(dr.sql), dr.rewrite_data(data)
+            #print 'execute.rewrite', dr.sql, dr.rewrite_data(data)
+            #print dr.sql
             self._cur.execute(dr.sql, dr.rewrite_data(data))
         else:
             if isinstance(asql, (list, tuple)):
@@ -472,7 +474,7 @@ class Database(object):
             
         sql = 'INSERT INTO %s(%s) VALUES(%s)' % (table, ', '.join(names), ', '.join(params))
         
-        #print sql, data, values
+        #print sql,  '    => ', data, values
         
         if paramstyle['type'] in ('pos', 'num'):
             return sql, data
@@ -687,6 +689,10 @@ class Oracle(Database):
         self._module = cx_Oracle
         ## TODO: lepsze budowanie napisu
         ## cx_Oracle.connect('kosqx/kos144@localhost:1521/xe')
+        ## {'host': 'host', 'dbname': 'database', 'user': 'user', 'password': 'password'}
+        cfg = {'host': 'localhost', 'port': 1521}
+        cfg.update(config)
+        #dsn = '%(user)s/%(password)s@%(host)s:%(port)i/%(dbname)s' % cfg
         dsn = '%(user)s/%(password)s@%(dbname)s' % config
         self._db = self._module.connect(dsn)
         self._cur = self._db.cursor()
@@ -740,6 +746,8 @@ class DB2(Database):
     export IBM_DB_LIB=/home/db2inst1/sqllib/lib
     easy_install ibm_db
     
+    
+    
     1) install DB2 9 Express-C
 
     2) download PyDB2-1.1.0-2.tar.gz
@@ -755,6 +763,15 @@ class DB2(Database):
 
     7) sudo python setup.py install
     
+    
+    wajig install python-dev
+    
+    -----
+    export IBM_DB_DIR=/home/db2inst1/sqllib
+    export IBM_DB_LIB=/home/db2inst1/sqllib/lib
+
+    #pip install ibm_db
+    pip install ibm_db_sa
     """
     _short_names = ['db2']
     _short_name  = 'db2'
@@ -763,14 +780,20 @@ class DB2(Database):
     def __init__(self,  **config):
         Database.__init__(self, **config)
 
-        if 'driver' not in config or config['driver'] in ['pydb2', None]:
+        if 'driver' not in config or config['driver'] in ['ibm_db', 'ibmdb', None]:
+            import ibm_db
+            import ibm_db_dbi
+            self._module = ibm_db_dbi
+            
+            ibm_db_conn = ibm_db.connect(config['dbname'], config['user'], config['password'])
+            self._db = ibm_db_dbi.Connection(ibm_db_conn)
+            
+        elif config['driver'] in ['pydb2ibm_db', 'ibmdb']:
             import DB2
             self._module = DB2
             # TODO: host and port
             args = Database._dict_copy(config, {'dbname': 'dsn', 'user': 'uid', 'password': 'pwd'})
             self._db = self._module.connect(**args)
-        elif config['driver'] in ['ibm_db', 'ibmdb']:
-            pass
         else:
             raise "Unknow driver %r" % driver
 

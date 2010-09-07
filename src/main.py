@@ -43,12 +43,16 @@ def run_test(database, tree_class, testcases):
     def report_print(data):
         print data
     report = report_null
+    #report = report_print
     
     print '## database', database, tree_class.__name__
     
-    db = pada.connect(file='config/%s.cfg' % database)
-    db.set_paramstyle('named')
-    tree = tree_class(db)
+    if database in ('memory', 'mem'):
+        tree = methods.Memory()
+    else:
+        db = pada.connect(file='config/%s.cfg' % database)
+        db.set_paramstyle('named')
+        tree = tree_class(db)
     
     id2id = {}
     
@@ -63,7 +67,7 @@ def run_test(database, tree_class, testcases):
         id2id[node['id']] = tree.insert(parent=node['parent'], name=node['name'][:48])
         if i % 10000 == 0:
             print '#', i
-    db.commit()
+    #db.commit()
     
     
     
@@ -99,7 +103,7 @@ def run_test(database, tree_class, testcases):
 
 
 def find_methods():
-    bases = {'postgresql': {}, 'mysql': {}, 'sqlite': {}, 'oracle': {}, 'db2': {}, 'sqlserver': {}}
+    bases = {'postgresql': {}, 'mysql': {}, 'sqlite': {}, 'oracle': {}, 'db2': {}, 'sqlserver': {}, 'memory': {}}
     
     for name in dir(methods):
         obj = getattr(methods, name)
@@ -107,7 +111,7 @@ def find_methods():
             tree_name = getattr(obj, 'tree_name')
             tree_base = getattr(obj, 'tree_base', ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver'])
             
-            for i in tree_base:
+            for i in (tree_base + ['memory']):
                 bases[i][tree_name] = obj
     
     return bases
@@ -127,6 +131,9 @@ def main():
                 print run_test(database, bases[database][i], testcases)
     
     elif args[0] == 'generate':
+        utils.generate_test('data/%s.xml' % args[1], int(args[2]), int(args[3]))
+        
+    elif args[0] == 'check':
         utils.generate_test('data/%s.xml' % args[1], int(args[2]), int(args[3]))
     
     elif args[0] == 'sql':

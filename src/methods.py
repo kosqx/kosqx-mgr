@@ -50,30 +50,104 @@ class Tree:
 
 
 #class Memory(Tree):
-    #def __init__(self, db):
-        #self._d = {}
+#    def __init__(self):
+#        self._d = []
+#    
+#    def _by_ids(self,  ids):
+#        return [self._value(i) for i in self._d if self._d[i][0] in ids]
+#    
+#    def _value(self, key):
+#        return key
+#    
+#    def create_table(self):
+#        pass
+#    
+#    def insert(self, parent, name):
+#        if parent is None:
+#            self._d.append((None, name))
+#        else:
+#            self._d.append((int(parent), name))
+#        return len(self._d) - 1
+#    
+#    def get_roots(self):
+#        print self._d
+#        #return [self._value(i) for i in self._d if self._d[i][0] == None]
+#        return [(i, d) for i, d in enumerate(self._d[1:]) if d[0] == None]
+#
+#    def get_parent(self, id):
+#        i = self._d[int(id)][0]
+#        return (i, self._d[i])
+#
+#    def get_ancestors(self, id):
+#        result = []
+#        i = id
+#        cnt = 0
+#        while i is not None and cnt < 10:
+#            print i
+#            i = self._d[i][0]
+#            result.append((i, self._d[i]))
+#            cnt+=1
+#        return result
+#
+#    def get_children(self, id):
+#        pass
+#
+#    def get_descendants(self, id):
+#        pass
+
+
+class Memory(Tree):
+    def __init__(self):
+        self._d = {}
     
-    #def _by_ids(self,  ids):
-        #return [self._value(i) for i in self._d if self._d[i][0] in ids]
+    def create_table(self):
+        pass
     
-    #def _value(self, key):
-        #return key
+    def _get(self, i):
+        return i, self._d[i]
     
-    #def get_roots(self):
+    def insert(self, parent, name):
+        l = len(self._d) + 1
+        if parent is None:
+            self._d[l] = (None, name)
+        else:
+            self._d[l] = (int(parent), name)
+        return l
+    
+    def get_roots(self):
+        #print self._d
         #return [self._value(i) for i in self._d if self._d[i][0] == None]
+        return [self._get(i) for i in self._d if self._d[i] == None]
 
-    #def get_parent(self, id):
-        #pass
+    def get_parent(self, id):
+        i = self._d[int(id)][0]
+        return (i, self._d[i])
 
-    #def get_ancestors(self, id):
-        #pass
+    def get_ancestors(self, id):
+        result = []
+        i = id
+        cnt = 0
+        while i is not None and cnt < 10:
+            result.append((i, self._d[i]))
+            i = self._d[i][0]
+            
+            
+            cnt+=1
+        return result
 
-    #def get_children(self, id):
-        #pass
+    def get_children(self, id):
+        return [self._get(i) for i in self._d if self._d[i][0] == id]
+        
 
-    #def get_descendants(self, id):
-        #pass
-
+    def get_descendants(self, id):
+        keys = set([id])
+        result = [self._get(i) for i in keys]
+        while keys:
+            tmp = [i for i in self._d if self._d[i][0] in keys]
+            result.extend([self._get(i) for i in tmp])
+            keys = set(tmp)
+        
+        return result
 
 class Simple(Tree):
     tree_name = 'simple'
@@ -308,7 +382,13 @@ class NestedSets(Tree):
                     'CREATE SEQUENCE nested_sets_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
                     'CREATE TABLE nested_sets(id int, lft int, rgt int, name varchar(100))',
                 ],
-            'db2': "CREATE TABLE nested_sets(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), lft int, rgt int, name varchar(100))",
+            'db2': '''
+                CREATE TABLE nested_sets(
+                    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+                    lft int,
+                    rgt int,
+                    name varchar(100)
+                )''',
             'mssql': "CREATE TABLE nested_sets(id int IDENTITY PRIMARY KEY, lft int, rgt int, name varchar(100))",
             '*':     """
                 CREATE TABLE nested_sets(
@@ -382,109 +462,205 @@ class NestedSets(Tree):
         return roots
 
 
-#class PathEnum(Tree):
-    #tree_name = 'pathenum'
-    #tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
+class PathEnum(Tree):
+    tree_name = 'pathenum'
+    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
    
-    #def create_table(self):
-        #tables = self.db.schema_list('table')
-        #if 'pathenum' in tables:
-            #self.db.ddl("DROP TABLE pathenum")
-
-        #self.db.ddl("""
-                #CREATE TABLE pathenum(
-                    #id serial PRIMARY KEY, 
-                    #path varchar(100), 
-                    #name varchar(100)
-                #)"""
-        #)
+    def create_table(self):
+        tables = self.db.schema_list('table')
+        if 'pathenum' in tables:
+            self.db.ddl({
+                'oracle': ['DROP TABLE pathenum', 'DROP SEQUENCE pathenum_id_seq'],
+                '*':      "DROP TABLE pathenum",
+            })
+            
+        self.db.ddl({
+            '*': """
+                CREATE TABLE pathenum(
+                    id serial PRIMARY KEY, 
+                    path varchar(100), 
+                    name varchar(100)
+                )""",
+            'oracle': [
+                    'CREATE SEQUENCE pathenum_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
+                    'CREATE TABLE pathenum(id int, path varchar(100), name varchar(100))',
+                ],
+            'db2': '''
+                CREATE TABLE pathenum(
+                    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), 
+                    path varchar(100), 
+                    name varchar(100)
+                )
+                '''
+        })
         
-    #def insert(self, parent, name):
-        #"""
-            #INSERT INTO pathenum (path, name) VALUES (
-                #(SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
-                #:name
+    def insert(self, parent, name):
+        """
+            INSERT INTO pathenum (path, name) VALUES (
+                (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
+                :name
+            )
+        """
+        if parent is None:
+            #pid = self.db.execute("""
+            #    INSERT INTO pathenum (path, name) VALUES (
+            #        '',
+            #        :name
+            #    ) RETURNING id
+            #    """, dict(parent=parent, name=name)
+            #).list()[0][0]
+            pid = self.db.insert_returning_id('pathenum', dict(path='', name=name))
+        else:
+            #pid = self.db.execute("""
+            #    INSERT INTO pathenum (path, name) VALUES (
+            #        (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
+            #        :name
+            #    ) RETURNING id
+            #    """, dict(parent=parent, name=name)
+            #).list()[0][0]
+            if self.db.is_dialect('mysql'):
+                # FIXME: bardzo brzydki kod
+                path = self.db.run('''SELECT concat(path, id, '.') AS path FROM pathenum WHERE id = %s''' % parent)[0].path
+                #print path
+                pid = self.db.insert_returning_id('pathenum', dict(name=name, path=path))
+                #pid = self.db.insert_returning_id('pathenum', dict(name=name), dict(
+                #    path="(SELECT concat(path, id,  '.') FROM pathenum WHERE id = %s)" % parent)
+                #)
+            else:
+                
+                pid = self.db.insert_returning_id('pathenum', dict(name=name), dict(
+                    path="(SELECT path || id ||  '.' FROM pathenum WHERE id = %s)" % parent)
+                )
+        return pid
+    
+    def get_roots(self):
+        return self.db.run("""
+            SELECT *  
+                FROM pathenum 
+                WHERE path = ''
+            """)
+
+    def get_parent(self, id):
+        return self.db.run({
+            '*': """
+                    SELECT p2.*
+                        FROM pathenum p1, pathenum p2
+                        WHERE p1.id = :id AND
+                            (p2.path || p2.id || '.') = p1.path
+                """,
+            'mysql': '''
+                    SELECT p2.*
+                        FROM pathenum p1, pathenum p2
+                        WHERE p1.id = :id AND
+                            concat(p2.path, p2.id, '.') = p1.path
+                '''
+            },
+            dict(id=id)
+        )
+
+    def get_ancestors(self, id):
+                #    SELECT p2.*
+                #FROM pathenum p1, pathenum p2
+                #WHERE p1.id = :id AND
+                #    position(p2.path || p2.id IN p1.path) = 1
+        
+        if self.db.is_dialect('db2'):
+            row = self.db.run('''SELECT path, id FROM pathenum WHERE id = :id''', dict(id=id))[0]
+            print row
+            return self.db.run('''
+                SELECT *
+                    FROM pathenum
+                    WHERE path LIKE '%s'
+                ''' % (row.path + str(row.id) + '%')
+            )
+            #return self.db.run('''
+            #    SELECT *
+            #        FROM pathenum
+            #        WHERE path LIKE :pattern
+            #    ''',
+            #    dict(pattern=(row.path + str(row.id) + '%'))
             #)
-        #"""
-        #if parent is None:
-            ##pid = self.db.execute('''
-            ##    INSERT INTO pathenum (path, name) VALUES (
-            ##        '',
-            ##        :name
-            ##    ) RETURNING id
-            ##    ''', dict(parent=parent, name=name)
-            ##).list()[0][0]
-            #pid = self.db.insert_returning_id('pathenum', dict(path='', name=name))
-        #else:
-            ##pid = self.db.execute('''
-            ##    INSERT INTO pathenum (path, name) VALUES (
-            ##        (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
-            ##        :name
-            ##    ) RETURNING id
-            ##    ''', dict(parent=parent, name=name)
-            ##).list()[0][0]
-            #pid = self.db.insert_returning_id('pathenum', dict(name=name), dict(
-                #path="(SELECT path || id ||  '.' FROM pathenum WHERE id = %s)" % parent))
-        #return pid
-    
-    #def get_roots(self):
-        #return self.db.run("""
-            #SELECT *  
-                #FROM pathenum 
-                #WHERE path = ''
-            #""")
-
-    #def get_parent(self, id):
-        #return self.db.run("""
-            #SELECT p2.*
-                #FROM pathenum p1, pathenum p2
-                #WHERE p1.id = :id AND
-                    #(p2.path || p2.id || '.') = p1.path
-                #""",
-            #dict(id=id)
-        #)
-
-    #def get_ancestors(self, id):
-                ##    SELECT p2.*
-                ##FROM pathenum p1, pathenum p2
-                ##WHERE p1.id = :id AND
-                ##    position(p2.path || p2.id IN p1.path) = 1
-        #return self.db.run("""
-            #SELECT p2.*
-                #FROM pathenum p1, pathenum p2
-                #WHERE p1.id = :id AND
-                    #p1.path LIKE (p2.path || p2.id || '%')
-                #""",
-            #dict(id=id)
-        #)
-    
-    #def get_children(self, id):
-        #return self.db.run("""
-            #SELECT * 
-                #FROM pathenum 
-                #WHERE path = (
-                    #SELECT path || id ||  '.'
-                        #FROM pathenum 
-                        #WHERE id = :parent
-                #)
-            #""", 
-            #dict(parent=id)
-        #)
-
-    #def get_descendants(self, id):
-        #return self.db.run("""
-            #SELECT * 
-                #FROM pathenum 
-                #WHERE path LIKE (
-                    #SELECT path || id || '.' || '%%'
-                        #FROM pathenum
-                        #WHERE id = :parent
-                #)
-            #""", 
-            #dict(parent=id)
-        #)
         
+        return self.db.run({
+            '*': """
+                SELECT p2.*
+                    FROM pathenum p1, pathenum p2
+                    WHERE p1.id = :id AND
+                        p1.path LIKE (p2.path || p2.id || '%')
+                """,
+            # tutaj '%%' jest gdyz mysqldb uzywa domyslnie formatu %s
+            'mysql': '''
+                    SELECT p2.*
+                        FROM pathenum p1, pathenum p2
+                        WHERE p1.id = :id AND
+                            p1.path LIKE concat(p2.path, p2.id, '%%')
+                '''
+            },
+            dict(id=id)
+        )
+    
+    def get_children(self, id):
+        return self.db.run({
+            '*': """
+                SELECT * 
+                    FROM pathenum 
+                    WHERE path = (
+                        SELECT path || id ||  '.'
+                            FROM pathenum 
+                            WHERE id = :parent
+                    )
+                """,
+            'mysql': '''
+                SELECT * 
+                    FROM pathenum 
+                    WHERE path = (
+                        SELECT concat(path, id, '.')
+                            FROM pathenum 
+                            WHERE id = :parent
+                    )
+                '''
+            }, 
+            dict(parent=id)
+        )
+
+    def get_descendants(self, id):
+        
+        if self.db.is_dialect('db2'):
+            row = self.db.run('''SELECT path, id FROM pathenum WHERE id = :id''', dict(id=id))[0]
+            print row
+            return self.db.run('''
+                SELECT *
+                    FROM pathenum
+                    WHERE path LIKE '%s'
+                ''' % (row.path + str(row.id) + '%')
+            )
+        
+        return self.db.run({
+            '*': """
+                SELECT * 
+                    FROM pathenum 
+                    WHERE path LIKE (
+                        SELECT path || id || '.' || '%%'
+                            FROM pathenum
+                            WHERE id = :parent
+                    )
+                """,
+            'mysql': '''
+                SELECT * 
+                    FROM pathenum 
+                    WHERE path LIKE (
+                        SELECT concat(path, id, '.', '%%')
+                            FROM pathenum
+                            WHERE id = :parent
+                    )
+                '''                
+            }, 
+            dict(parent=id)
+        )
+
+
+
 #class EdgeEnum(Tree):
 #    tree_name = 'edgeenum'
 #    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
@@ -520,8 +696,9 @@ class With(Simple):
     tree_base = ['db2', 'sqlserver', 'postgresql']
 
     def get_ancestors(self, id):
+        # WITH RECURSIVE temptab(node_level, id, parent, name) AS
         return self.db.run("""
-            WITH RECURSIVE temptab(node_level, id, parent, name) AS
+            WITH temptab(node_level, id, parent, name) AS
             (
                 SELECT 0, root.id, root.parent, root.name
                     FROM simple root
@@ -536,8 +713,9 @@ class With(Simple):
         )
 
     def get_descendants(self, id):
+        # WITH RECURSIVE temptab(level, id, parent, name) AS
         return self.db.run("""
-            WITH RECURSIVE temptab(level, id, parent, name) AS
+            WITH temptab(level, id, parent, name) AS
             (
                 SELECT 0, root.id, root.parent, root.name
                     FROM simple root
