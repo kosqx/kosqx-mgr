@@ -60,7 +60,8 @@
 
 % wyświetla TODO: wrazie potrzeby zmodyfikować
 \newcounter{kosqxtodo}
-\newcommand{\todo}[1]{\addtocounter{kosqxtodo}{1}(\textcolor{red}{\arabic{kosqxtodo}: \textbf{#1}})}
+%\newcommand{\todo}[1]{\addtocounter{kosqxtodo}{1}(\textcolor{red}{\arabic{kosqxtodo}: \textbf{#1}})}
+\newcommand{\todo}[1]{}
 \newcounter{kosqxask}
 \newcommand{\ask}[1]{\addtocounter{kosqxask}{1}(\textcolor{blue}{\arabic{kosqxask}: \textbf{#1}})}
 
@@ -165,8 +166,8 @@
 	\input{tex/2_trie}
 	\clearpage
 
-    \input{tex/2_edgeenum}
-    \clearpage
+    % \input{tex/2_edgeenum}
+    % \clearpage
 
 	% drzewa binarne
 	% http://commons.wikimedia.org/wiki/File:Binary_tree_in_array.svg
@@ -225,10 +226,10 @@
 %\listoffimakegures
 %\listoftables
 
-\clearpage
-\phantomsection
-\addcontentsline{toc}{chapter}{\indexname}
-\printindex
+%\clearpage
+%\phantomsection
+%\addcontentsline{toc}{chapter}{\indexname}
+%\printindex
 
 
 \end{document}

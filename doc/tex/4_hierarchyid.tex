@@ -29,8 +29,26 @@
 % - http://www.cs.umb.edu/~poneil/ordpath.pdf google:ORDPATH
 % - http://msdn.microsoft.com/en-us/library/bb677173.aspx
 
+
+%  Traceback (most recent call last):
+%   File "main.py", line 147, in <module>
+%     main()
+%   File "main.py", line 131, in main
+%     print run_test(database, bases[database][i], testcases)
+%   File "main.py", line 62, in run_test
+%     tree.create_table()
+%   File "Q:\src\methods.py", line 963, in create_table
+%     """
+%   File "Q:\src\pada.py", line 443, in execute
+%     self._cur.execute(asql)
+%   File "C:\Python26\lib\site-packages\pymssql.py", line 196, in execute
+%     raise OperationalError, e[0]
+% pymssql.OperationalError: SQL Server message 6510, severity 16, state 11, line 3:
+% This functionality requires .NET Framework 3.5 SP1. Please install .NET Framework 3.5 SP1 to use this functionality.
+
 Jedną z najciekawszych nowości jakie Microsoft wprowadził w SQL Server 2008 jest nowy typ danych \texttt{hierarchyid}.
 Pozwala on na wygodne przechowywanie danych hierarchicznych.
+
 
 
 
@@ -52,6 +70,7 @@ Nastepnie został on zastosowany w implementacji typu \texttt{hierarchyid}.
 % W przypadku danych testowych najdłuższe hierarchyid zajmuje tylko ___ gdy w implementacjii 'ręcznej' korzystającej z varchar jest to ___ 
 
 
+% Jest to 
 
 \podtemat{Indeksowanie}
 

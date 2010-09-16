@@ -23,24 +23,30 @@
 
 
 Najprostszą, najbardziej intuicyjną i zapewne najpopularniejszą metodą jest metoda krawędziowa \eng{adjacency}\index{adjacency}.
-Została ona spopularyzowana przez Edgara Franka Codda\index{Codd Edgar Frank}. 
+Została ona pierwszy raz zaprezentowana przez Edgara Franka Codda\index{Codd Edgar Frank}.
 %On też nadał im nazwę, która odnosi się do tego, że informacja o rodzicu elementu znajduje się w tej samej krotce\todo{krotka?} co dane.
 Nadał też jej nazwę. Wynika ona z tego, że każdy rekord zawiera własny identyfikator oraz identyfikator rodzica. Takie dane są wystarczające aby w drzewie opisać krawędz.
 
 
 Zasługa spopularyzowania tej metody przypada Oracle.
 Dołączył on do swojego produktu przykładową bazę danych, nazywaną ,,Scott/Tiger'' 
-korzystającą z tej metody.
 \footnote{
     Nazwa tej bazy danych pochodzi od metody autoryzacji w bazie Oracle (login/hasło).
     Login pochodził z nazwiska jednego z pierwszych pracowników 
     Software Development Laboratories (przekształconych ostatecznie w Oracle) Bruce'a Scott'a. 
     Natomiast hasło to imię jego kota.
 }
+korzystającą z tej metody.
 
 Na popularność metody przekłada się również jej znaczące podobieństwo do 
 używanego między innymi w~językach C i~C++ sposobu przechowywania list i drzew.
 Mianowicie każdy węzeł zawiera wskaźnik na rodzica. 
+\begin{verbatim}[c]
+typedef struct item {
+    struct item *parent;
+    char * name;
+} treeitem;
+\end{verbatim}
 W relacyjnych bazach danych odpowiednikiem wskaźnika jest klucz obcy\index{klucz!obcy}. 
 
 
@@ -125,7 +131,9 @@ Cechą charakterystyczną korzenia jest to, że jego rodzic jest ustawiony na \t
 \operacja{Pobieranie potomków}
 %! method-sql simple.descendants
 
-Należy zwrócić uwagę na wykorzystanie operatora \texttt{IN}. Bez niego wydajność metody spada znacząco. 
+%Należy zwrócić uwagę na wykorzystanie operatora \texttt{IN}. Bez niego wydajność metody spada znacząco.
+
+Należy zwrócić uwagę na równoczesne pobieranie wszystkich węzłów na danym poziomie. Bez niego wydajność metody spada znacząco. 
 
 \temat{Wydajność}
 

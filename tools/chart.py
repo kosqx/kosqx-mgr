@@ -49,7 +49,8 @@ def chart(data, filename, value2desc=value2desc):
         rects.append(plt.bar(ind + bwidth * i + (bwidth/2), none2zero(fordb[1:]), bwidth, color=colors[fordb[0]]))
     
     
-    plt.ylabel(u'Przepustowość (zapytań/s).', size=16)
+    #plt.ylabel(u'Przepustowość (zapytań/s).', size=16)
+    plt.ylabel(u'Czas (s).', size=16)
     plt.xticks(ind + (width * N / 2), [value2desc(i) for i in data[0][1:]], fontsize=16)
     plt.ylim(ymax=maxval * (1.06 + 0.075 * M))
     

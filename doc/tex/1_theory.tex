@@ -1,9 +1,19 @@
-\chapter{Wprowadzenie do tematu}
+%\chapter{Wprowadzenie do tematu}
 
 
 % The hierarchical data model organizes data in a tree structure. There is a hierarchy of parent and child data segments
 
-\section{Knuth}
+\section{Podstawowe definicje}
+
+Drzewa można traktować i definiować na wiele równowarznych sposobów.
+Przykładowo w~teorii grafów jest to acykliczny i spójny graf.
+W informatyce częściej stosuje się definicję rekurencyjną
+\footnote{
+    Wynika to z częstego w informatyce wymogu by drzewo było uporządkowane.
+    Taki twór formalnie nie jest grafem.
+}.
+
+\begin{quote}
 
 \emph{Drzewo} zdefiniujemy formalnie jako zbiór $T$ jednego lub więcej elementów zwanych \emph{węzłami}, takich że:
 
@@ -49,65 +59,67 @@ W drugą stronę, jeśli wszystkie drzewa w lesie uczynimy poddrzewami jednego d
 to otrzymamy drzewo.
 Z tego powodu słowa ,,drzewa'' i ,,lasy'' są przy nieformalnym omawianiu struktur danych używane niemal wymiennie.
 
+\end{quote}
 
-
-\section{Czym jest drzewo}
-\index{drzewo|textbf}
-Drzewo to bardzo powszechnie używane w informatyce pojęcie. W zależności od zastosowania może być różnie zdefiniowane.
-
-\paragraph{Drzewo jako graf}
-\index{graf}
-\paragraph{Drzewo jako struktura rekurencyjna}
-\index{rekurencja}
-
-
-Tu: matematyczny opis drzew, ich podstawowe własności, omówienie terminów:
-\begin{description}
-    \item
-    \item[drzewo]
-    \item[las]
-    \item[rodzic]
-    \item[przodek]
-    \item[korzeń]
-    \item[dziecko]
-    \item[potomek]
-    \item[głębokość, mini]
-\end{description}
-
-\section{Podział drzew}
-\subsection{Jednorodność}
-Warto by dodać o drzewach jednorodnych oraz niejednorodnych.
-
-\subsection{Kolejność}
-
-
-\section{Podstawowe algorytmy dla drzew}
-\subsection{Wyszukiwanie w głąb}
-\index{drzewo!wyszukiwanie!w głąb}
-\subsection{Wyszukiwanie wszerz}
-\index{drzewo!wyszukiwanie!wszerz}
-
-
-\section{Różnice pomiędzy drzewami w algorytmice a w bazach danych}
-
-Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach danych chodzi o strukturę a nie o optymalizację czasu dostępu.
-
-\section{Tematy porównania - operacje}
-
-
-
-\subsection{Operacje}
-\subsection{Pobranie korzeni}
-\index{drzewo!korzeń}
-\subsection{Pobranie przodków}
-\index{drzewo!przodekowie}
-\subsection{Pobranie rodzica}
-\index{drzewo!rodzic}
-\subsection{Pobranie dzieci}
-\index{drzewo!dzieci}
-\subsection{Pobranie potomków}
-\index{drzewo!potomkowie}
-\subsection{Pobranie (najmłodszego) wspólnego przodka}
+%
+%
+%\section{Czym jest drzewo}
+%\index{drzewo|textbf}
+%Drzewo to bardzo powszechnie używane w informatyce pojęcie. W zależności od zastosowania może być różnie zdefiniowane.
+%
+%\paragraph{Drzewo jako graf}
+%\index{graf}
+%\paragraph{Drzewo jako struktura rekurencyjna}
+%\index{rekurencja}
+%
+%
+%Tu: matematyczny opis drzew, ich podstawowe własności, omówienie terminów:
+%\begin{description}
+%    \item
+%    \item[drzewo]
+%    \item[las]
+%    \item[rodzic]
+%    \item[przodek]
+%    \item[korzeń]
+%    \item[dziecko]
+%    \item[potomek]
+%    \item[głębokość, mini]
+%\end{description}
+%
+%\section{Podział drzew}
+%\subsection{Jednorodność}
+%Warto by dodać o drzewach jednorodnych oraz niejednorodnych.
+%
+%\subsection{Kolejność}
+%
+%
+%\section{Podstawowe algorytmy dla drzew}
+%\subsection{Wyszukiwanie w głąb}
+%\index{drzewo!wyszukiwanie!w głąb}
+%\subsection{Wyszukiwanie wszerz}
+%\index{drzewo!wyszukiwanie!wszerz}
+%
+%
+%\section{Różnice pomiędzy drzewami w algorytmice a w bazach danych}
+%
+%Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach danych chodzi o strukturę a nie o optymalizację czasu dostępu.
+%
+%\section{Tematy porównania - operacje}
+%
+%
+%
+%\subsection{Operacje}
+%\subsection{Pobranie korzeni}
+%\index{drzewo!korzeń}
+%\subsection{Pobranie przodków}
+%\index{drzewo!przodekowie}
+%\subsection{Pobranie rodzica}
+%\index{drzewo!rodzic}
+%\subsection{Pobranie dzieci}
+%\index{drzewo!dzieci}
+%\subsection{Pobranie potomków}
+%\index{drzewo!potomkowie}
+%\subsection{Pobranie (najmłodszego) wspólnego przodka}
 
 
 
@@ -116,10 +128,10 @@ Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach d
 %   \item[pobranie przodków] polega na pobraniu rodzica, rodzica rodzica aż do korzenia elementów
 % \end{description}
 
-\section{Dostępność}
-\subsection{Mapowanie relacyjno-obiektowe}
-\subsection{W zależności od bazy danych}
-
+%\section{Dostępność}
+%\subsection{Mapowanie relacyjno-obiektowe}
+%\subsection{W zależności od bazy danych}
+%
 
 \section{Przyjęte założenia}
 \todo{więcej wypisać, zastanowić się co z tym zrobić}

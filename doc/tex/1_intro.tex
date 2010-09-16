@@ -1,5 +1,5 @@
-\chapter*{Wstęp}
-\addcontentsline{toc}{chapter}{Wstęp}
+\chapter{Wstęp}
+%\addcontentsline{toc}{chapter}{Wstęp}
 
 % W ciągu ostatnich kilkunastu lat relacyjne bazy danych opanowały świat. 
 
@@ -10,39 +10,50 @@
 %even views built upon views.
 
 
-
-Hierarchie --- a w szczególności drzewa --- są bardzo użyteczną metodą reprezentacji danych. \todo{przepisać na polski}. 
-W szczególności są bardzo intuicyjne dla ludzi.
-Nic dziwnego, że z tej abstrakcji korzystają \emph{mapy myśli}, drzewa katalogów, itd.
-
-Dlatego programista baz danych bardzo często ma potrzebę by zapisać drzewo do bazy danych.
-Przykładowo drzewo kategorii produktów w sklepie, katalog książek w bibliotece, stukturę szef--podwładny w firmie, itd.
-
-Jego zadanie jest utrudnione gdyż --- obecnie dominujący --- relacyjny model danych nie został stworzony z myślą o takich zastosowaniach.
-Oczywiście nie oznacza to, że jest to niemożliwe.
-Wymaga jednak więcej pracy i wiedzy.
+% hierarchie
+% drzewo jako hierarchia
+% o jakich drzewach nie mówimy
+% cele pracy
+% 
 
 
+Hierarchie są bardzo użyteczną metodą reprezentacji danych, w~szczególności są bardzo intuicyjne dla ludzi.
+Nic dziwnego, że z~tej abstrakcji korzystają \emph{mapy myśli}, systemy plików, kategorie produktów w sklepach czy katalogi książek w biblotece.
+Używane są również do repezentacji struktór organizacyjnych, przykładowo odziałów firm czy wydziałów na uniwersytetach.
+Nawet układy prac dyplomowych są hierarchiczne.
+
+
+% Dlatego programista baz danych bardzo często ma potrzebę by zapisać drzewo do bazy danych.
+% Przykładowo drzewo kategorii produktów w sklepie, katalog książek w bibliotece, stukturę szef--podwładny w firmie, itd.
+
+Strukturą danych najlepiej nadającą się do przechowywania danych hierarchicznych są drzewa.
+
+%Jego zadanie jest utrudnione gdyż --- obecnie dominujący --- relacyjny model danych nie został stworzony z myślą o takich zastosowaniach.
+%Oczywiście nie oznacza to, że jest to niemożliwe.
+%Wymaga jednak więcej pracy i wiedzy.
 
 
 
-
-Każda współczesna baza danych korzysta z struktur danych jakimi są drzewa. 
+Każda współczesna baza danych korzysta z drzew. 
 Indeksy są implementowanee jako \emph{B-drzewa}, \emph{R-drzewa}, itd.
 % inne drzewa w bazach danych
-Zapytania SQL są przetwarzane do \emph{drzew składniowych} \eng{AST --- Abstract Syntax Tree}.
-Lecz to są drzewa zastosowane w implementacji, mające na celu zwiększenie szybkości działania bazy danych i nie są widoczne dla użytkownika bazy danych.
-Dlatego nie będą omawiane w tej pracy.
+Zapytania SQL są przetwarzane do \emph{drzew składniowych} \eng{AST --- Abstract Syntax Tree}. Następnie są przetwarzane do postaci planu zapytania który również jest drzewem.
+Lecz to są drzewa zastosowane w implementacji, mające na celu zwiększenie szybkości działania bazy danych i nie są bezpośrednio widoczne dla użytkownika bazy danych.
+Z tego powodu nie będą tu omawiane.
+
+%Dlatego nie będą omawiane w tej pracy.
 
 %Lecz --- najpopularniejsze obecnie relacyjne bazy danych --- nie zostały stworzone do obsługi danych hierarchicznych.
 %Nie oznacza to bynajmniej, że jest to niemożliwe.
 %Należy za to spodziewać się pewnych utrudnień.
-%Największych probleµow należy się spodziewać w 
+%Największych problemow należy się spodziewać w
+
+
 
 % Celem tej pracy jest zaprezentowanie metod przechowywania danych w relacyjnych bazach danych. 
 
 
-{Sprawę dodatkowo komplikuje dążenie do przechowywani danych w 3 postaci normalnej. Niektóre metody nie są nawet w 1 postaci normalnej. \ask{Prawda? Pisać o tym?}
+%{Sprawę dodatkowo komplikuje dążenie do przechowywani danych w 3 postaci normalnej. Niektóre metody nie są nawet w 1 postaci normalnej. \ask{Prawda? Pisać o tym?}
 
 
 Celem tej pracy jest:

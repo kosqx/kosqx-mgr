@@ -7,8 +7,9 @@ Identyfikatorem może być dowolne unikalne pole \todo{term:pole?} tabeli.
 Dobrym rozwiązaniem jest numeryczny klucz główny, lecz często bywa też stosowana unikalna nazwa węzła.
 
 
-Ten opis nie wymusza konkretnej implementacji. 
-Listę elementów można przechowywać na wiele sposobów. 
+Ten opis nie wymusza konkretnej implementacji.
+Listę elementów można przechowywać na wiele sposobów.
+Jedynym wymogiem jest to by można było dokonać prostego pobrania identyfikatorów poszczególnych węzłów.
 Przykładowo ciąg identyfikatorów całkowitoliczbowych \texttt{4, 8, 15, 16, 23, 42} można przechować jako:
 \begin{itemize}
  \item tablicę \todo{term:array} np. \verb|{4, 8, 15, 16, 23, 42}|
@@ -17,12 +18,20 @@ Przykładowo ciąg identyfikatorów całkowitoliczbowych \texttt{4, 8, 15, 16, 2
     Przykładowo dla separatora~\verb|'.'| będzie to napis \verb|'4.8.15.16.23.42'|. 
     Ważne jest aby znak (lub znaki) będące separatorem nie mogły występować w identyfikatorze.
  \item napis z elememtami przekształconymi na napis stałej długości. 
-    Przykładowo dla długości 3 będzie to \verb|'004008015016023042'|. 
+    Przykładowo dla długości 3 będzie to \verb|'004008015016023042'|.
     Wadą tej metody jest konieczność jednorazowego długości napisu dla identyfikatora.
     Dla długości $n$ można przechować tylko $10^n-1$ węzłów\footnote{zakładając, że wszystkie dopuszczalne wartości znajdą się w użyciu, a usuwanie elementow tworzy luki}.
     Natomiast zastosowanie dużej $n$ zwiększa zużycie zasobów SZDB, oraz spowalnia działanie.
 \end{itemize}
 
+
+
+
+% TODO:
+% - nie jest nawet w pierwszej postaci normmalnej
+% - można zamiast sztucznych (primary key) identyfikatorów stosować unikalne nazwy
+%   - przykładem tego są ścierzki plików, przykładowo /usr/bin/foo
+%   - tak sugeruje się używać ltree
 
 Metoda jest też zwana Lineage.
 
@@ -96,6 +105,23 @@ id | path    | name
 %! method-sql pathenum.descendants
 
 
+
+\temat{Uwagi}
+
+Dostosowania metody do przyjętego interfacu zmniejsza jej wydajność.
+Praktycznie wszystkie zapytania zawierają podzapytanie które dla danego identyfikatora węzła \todo{term} pobierają jego ścieżkę.
+Ta operacja jest w prawdzie bardzo szybka (kolumna \texttt{id} jest kluczem głównym) ale mimo wszystko mają wpływ na ogólną wydajność.
+W razie stosowania tej metody warto sie zastanowić nad używaniem ścieżki (\texttt{path}) jako parametrów metod. 
+
+Dodatkowo odwoływanie się do węzłów za pomocą ścieżek a nie identyfikatorów daje większe możliwości.
+W takiej sytuacji można wykonać dodatkowe operacje bez konieczności wykonywania zapytań w bazie danych.
+Są to:
+\begin{itemize}
+    \item
+        Pobranie głebokości węzła w drzewie (wystarczy policzyć ilość elementów w ścieżce, zero oznacza korzeń\todo{dopisać})
+    \item
+        Wyznaczenie pierwszego wspólnego potomka
+\end{itemize}
 
 \temat{Wydajność}
 

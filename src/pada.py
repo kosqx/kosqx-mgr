@@ -448,9 +448,9 @@ class Database(object):
         dr = self._get_rewriter(self._get_sql(sql))
         self._cur.executemany(dr.sql, dr.rewrite_data_seq(data))
    
-    def run(self, sql, data=None):
-        "TODO: this is depricated?"
-        return self.execute(sql, data).list()
+    #def run(self, sql, data=None):
+    #    "TODO: this is depricated?"
+    #    return self.execute(sql, data).list()
 
     def insert_id(self, sql, data):
         raise NotImplemented
@@ -538,6 +538,9 @@ class Database(object):
             Depricated: use instead  db.fetch_all()
         """
         return self.fetch_all()
+        
+    def execute_and_fetch(self, sql, data=None):
+        return self.execute(sql, data).fetch_all()
                 
     def fetch_all(self):
         """
@@ -569,16 +572,16 @@ class Database(object):
             print 'ProgrammingError', e
         return result
                 
-    def fetch_row(self):
+    def fetch_one(self):
         names = self._build_names()
-        row = cur.fetchone()
+        row = self._cur.fetchone()
         return RowObject(row, names)
     
-    def fetch_one(self, name=0):
+    def fetch_single(self, name=0):
         if isinstance(name, basestring):
             names = self._build_names()
             name = names[name]
-        row = cur.fetchone()
+        row = self._cur.fetchone()
         return row[name]
 
 

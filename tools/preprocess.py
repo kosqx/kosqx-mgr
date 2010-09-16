@@ -131,6 +131,8 @@ def code_pre(lines):
     
     if lines[0].endswith('[python]'):
         lexer_name = "python"
+    elif lines[0].endswith('[c]'):
+        lexer_name = "c"
     else:
         lexer_name = "sql"
         

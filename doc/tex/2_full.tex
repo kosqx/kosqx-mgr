@@ -7,6 +7,10 @@
 
 % Domknięcie_przechodnie Cormen:644
 
+% Reprezentacja ta opiera się na
+
+% Ta metoda 
+
 Metoda został spopularyzowana w Polskim Internecie przez \emph{Huberta Lubaczewskiego}\index{Lubaczewski Hubert} lepiej znanego pod pseudonimem \emph{depesz}\index{depesz|see{Lubaczewski Hubert}}.
 
 \todo{napisać czym moja implementacja różni się od implementacji Depesza}
@@ -19,25 +23,26 @@ Jedynym wymogiem jest istnienie w niej klucza głównego\index{klucz!główny}.
 
 Cała informacja potrzebna do operowania na drzewie zawiera się w dodatkowej tabeli. 
 Zawiera ona informacje o odległości pomiędzy każdym elementem a wszystkimi jego potomkami.
+Czyli 
 
-\includegraphics[width=8.5cm]%
-\begin{verbatim}[dot] transclos
-digraph G {
-  rankdir=RL;
-
-  A -> B [label="1"];
-  B -> C [label="1"];
-  C -> D [label="1"];
-
-
-  A -> C [label="2"];
-  B -> D [label="2"];
-
-
-  A -> D [label="3"];
-  
-}
-\end{verbatim}
+%\includegraphics[width=8.5cm]%
+%\begin{verbatim}[dot] transclos
+%digraph G {
+%  rankdir=RL;
+%
+%  A -> B [label="1"];
+%  B -> C [label="1"];
+%  C -> D [label="1"];
+%
+%
+%  A -> C [label="2"];
+%  B -> D [label="2"];
+%
+%
+%  A -> D [label="3"];
+%  
+%}
+%\end{verbatim}
 
 
 \temat{Reprezentacja}
