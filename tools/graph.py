@@ -3,7 +3,6 @@ import sys
 import subprocess
 
 class Data:
-    pass
     def __str__(self):
         return str(self.__dict__)
 
@@ -61,13 +60,14 @@ def txt2dot(file):
     
     return '\n'.join(out)
 
+
 def dot2png(data, name):
     p = subprocess.Popen('dot -Tpng -o' + name, shell=True, close_fds=True, stdin=subprocess.PIPE).communicate(data)[0]
-    
+
 
 if __name__ == '__main__':
     fin = open(sys.argv[1])
     lines = fin.readlines()
     dot2png(txt2dot(lines), sys.argv[2])
     fin.close()
-    
+

@@ -5,77 +5,95 @@
 
 
 
-\temat{Operacje}
+\temat{Operacje w PostgreSQL}
 
-\operacja{Utworzenie funkcji}
+\operacja{Utworzenie funkcji pobierającej przodków}
 
-\begin{verbatim}[sql]
-CREATE OR REPLACE FUNCTION tree_ancestors(
-  start_id int
-) RETURNS SETOF int AS $$
-DECLARE
-  cid int := start_id;
-BEGIN
-  WHILE cid IS NOT NULL LOOP
-    RETURN NEXT cid;
-    SELECT parent INTO cid FROM tree WHERE tree.id = cid;
-  END LOOP;
-END;
-$$ LANGUAGE plpgsql strict;
-\end{verbatim}
+%! method-sql plsql.postgresql_ancestors_create
 
-\begin{verbatim}[sql]
-CREATE OR REPLACE FUNCTION tree_descendants(
-  start_id int
-) RETURNS SETOF int AS $$ 
-DECLARE
-  rec RECORD;
-  current INT[];
-  build INT[];
-  tmp INT;
-BEGIN
-  build := ARRAY[0];
-  current := ARRAY[0, start_id];
-  WHILE current > ARRAY[0] LOOP
-    build := ARRAY[0];  
-    FOR i IN 2..array_upper(current, 1) LOOP
-      tmp := current[i];  
-      FOR rec IN SELECT * FROM tree WHERE parent = tmp LOOP
-        RETURN NEXT rec.id;
-        build := build || rec.id;
-      END LOOP;
-    END LOOP;
-    current := build;
-  END LOOP;
-END;
-$$ LANGUAGE plpgsql strict;
-\end{verbatim}
+\operacja{Utworzenie funkcji pobierającej potomków}
 
+%! method-sql plsql.postgresql_descendants_create
 
 \operacja{Pobranie przodków}
-%! method-sql plsql.ancestors
-
-\begin{verbatim}[sql]
-SELECT * FROM tree_ancestors(111);
-SELECT t FROM tree_ancestors(111) AS t;
-SELECT count(*) FROM tree_ancestors(111);
-SELECT id, parent, value
-  FROM tree_ancestors(111) AS t
-    JOIN tree ON t = tree.id;
-\end{verbatim}
-
+%! method-sql plsql.postgresql_ancestors
 
 \operacja{Pobieranie potomków}
-%! method-sql plsql.descendants
+%! method-sql plsql.postgresql_descendants
 
-\begin{verbatim}[sql]
-SELECT * FROM tree_descendants(1);
-SELECT t FROM tree_descendants(1) AS t;
-SELECT count(*) FROM tree_descendants(1);
-SELECT id, parent, value
-  FROM tree_descendants(1) AS t 
-    JOIN tree ON t = tree.id;
-\end{verbatim}
+
+
+
+\temat{Operacje w Oracle}
+
+\operacja{Utworzenie funkcji pobierającej przodków}
+
+%! method-sql plsql.oracle_ancestors_create
+
+\operacja{Utworzenie funkcji pobierającej potomków}
+
+%! method-sql plsql.oracle_descendants_create
+
+\operacja{Pobranie przodków}
+%! method-sql plsql.oracle_ancestors
+
+\operacja{Pobieranie potomków}
+%! method-sql plsql.oracle_descendants
+
+
+
+
+\temat{Operacje w SQLServer}
+
+\operacja{Utworzenie funkcji pobierającej przodków}
+
+%! method-sql plsql.sqlserver_ancestors_create
+
+\operacja{Utworzenie funkcji pobierającej potomków}
+
+%! method-sql plsql.sqlserver_descendants_create
+
+\operacja{Pobranie przodków}
+%! method-sql plsql.sqlserver_ancestors
+
+\operacja{Pobieranie potomków}
+%! method-sql plsql.sqlserver_descendants
+
+
+
+
+
+%\operacja{Utworzenie funkcji}
+
+
+
+
+
+
+%\operacja{Pobranie przodków}
+%%! method-sql plsql.ancestors
+
+%\begin{verbatim}[sql]
+%SELECT * FROM tree_ancestors(111);
+%SELECT t FROM tree_ancestors(111) AS t;
+%SELECT count(*) FROM tree_ancestors(111);
+%SELECT id, parent, value
+%  FROM tree_ancestors(111) AS t
+%    JOIN tree ON t = tree.id;
+%\end{verbatim}
+
+
+%\operacja{Pobieranie potomków}
+%%! method-sql plsql.descendants
+
+%\begin{verbatim}[sql]
+%SELECT * FROM tree_descendants(1);
+%SELECT t FROM tree_descendants(1) AS t;
+%SELECT count(*) FROM tree_descendants(1);
+%SELECT id, parent, value
+%  FROM tree_descendants(1) AS t 
+%    JOIN tree ON t = tree.id;
+%\end{verbatim}
 
 
 \temat{Wydajność}

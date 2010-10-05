@@ -16,11 +16,14 @@
 % jak też optymalizacje zwiększające wydajność i zmniejszające zrozmiar pola.
 
 
-Opisana w poprzednim rozdziale metoda krawędziowa ma szereg zalet. 
+Opisana w poprzednim rozdziale metoda krawędziowa ma szereg zalet.
 Niestety ma też powarzną wadę - aby pobrać przodków lub potomków należy wykonać wiele zapytań.
 W praktyce oznacza to większą czasochłonność takiej operacji. 
 Ponadto wymaga bardziej skomplikowanego kodu.
 
-Obejściem tego problemu jest pełniejsze wykorzystanie moliwości dawanych przez bazy danych.
-Nie są ona zwykłymi składami danych, lecz udostępniają coraz większe możliwości operowania na danych.
+Obejściem tego problemu jest pełniejsze wykorzystanie możliwości dawanych przez bazy danych.
+Nie są ona zwykłymi składami danych, lecz udostępniają coraz większe możliwości operowania na nich.
+
+
+Wystarczy więc przepisać te powolne metody tak by wykonywane były jako pojedyńcze zapytanie w bazie danych.
 

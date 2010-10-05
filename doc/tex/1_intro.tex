@@ -1,4 +1,5 @@
 \chapter{Wstęp}
+%\chapter*{Wstęp}
 %\addcontentsline{toc}{chapter}{Wstęp}
 
 % W ciągu ostatnich kilkunastu lat relacyjne bazy danych opanowały świat. 
@@ -14,13 +15,23 @@
 % drzewo jako hierarchia
 % o jakich drzewach nie mówimy
 % cele pracy
-% 
 
+% hierarchiczne bazy danych
+% - w historii
+% - LDAP (ale dane przechowyje w zwyklej bazie, http://en.wikipedia.org/wiki/OpenLDAP - Available Backends)
+% - XML
+% - rejestr windows
 
-Hierarchie są bardzo użyteczną metodą reprezentacji danych, w~szczególności są bardzo intuicyjne dla ludzi.
-Nic dziwnego, że z~tej abstrakcji korzystają \emph{mapy myśli}, systemy plików, kategorie produktów w sklepach czy katalogi książek w biblotece.
+% Parodoksalnie stary, hierarchiczny model zaczyna powracać w bazach NoSQL. Przykładowo MongoDB czy CouchDB.
+% Dane są w nich przechowywane jako \todo{sformuowanie} JSON, YAML lub inny rekurencyjny format danych.
+
+%Hierarchie są bardzo użyteczną metodą reprezentacji danych, w~szczególności są bardzo intuicyjne dla ludzi.
+
+Hierarchie są bardzo użyteczną metodą reprezentacji danych.
+Zawdzięczają to głównie temu, że są bardzo intuicyjne, naturalne dla ludzi.
+Nic dziwnego, że z~tej abstrakcji korzystają mapy myśli, systemy plików, kategorie produktów w sklepach czy katalogi książek w biblotece.
 Używane są również do repezentacji struktór organizacyjnych, przykładowo odziałów firm czy wydziałów na uniwersytetach.
-Nawet układy prac dyplomowych są hierarchiczne.
+Nawet układy prac naukowych są hierarchiczne.
 
 
 % Dlatego programista baz danych bardzo często ma potrzebę by zapisać drzewo do bazy danych.
@@ -41,9 +52,34 @@ Zapytania SQL są przetwarzane do \emph{drzew składniowych} \eng{AST --- Abstra
 Lecz to są drzewa zastosowane w implementacji, mające na celu zwiększenie szybkości działania bazy danych i nie są bezpośrednio widoczne dla użytkownika bazy danych.
 Z tego powodu nie będą tu omawiane.
 
+Warto wspomnieć, że istnieją modele danych wspierające przechowywanie danych hierarchicznych.
+Oczywistym przykładem jest \emph{hierarchiczny model danych}.
+\todo{Paul Beynon-Davies}
+Korzysta on z dwóch struktur danych: rekordów oraz związków nadrzędny\dywiz{}podrzędny.
+Najważniejszym jego reprezentantem jest \emph{IMS} \eng{Information Management System} firmy IBM.
+Innymi bazami danych przechowywójącymi dane hierarchiczne są LDAP \eng{Lightweight Directory Access Protocol} oraz rejestr systemu operacyjnego Windows.
+
+Alternatywnym podejciem do przechowywania danych hierarchicznych jest umieszczenie ich w wnętrzu pojedyńczego rekordu.
+Można do tego zastosować różne formaty danych.
+Obecnie najpopularniejszym używanym w tym celu jest XML.
+Korzystają z niego zarówno \emph{natywne bazy danych XML} \eng{NXD --- Native XML databases} jak i relacyjne bazy danych z stosownymi rozszerzeniami.
+Innym formatem jest JSON stosowany w obecnie zdobywających popularność bazach \emph{NoSQL}, takich jak \emph{CouchDB} czy \emph{MongoDB}. 
+% formatem używanym do tego jest XML.
+
+
+
+
+%Takie podejście jest całkiem popularne. Jako przykład naj
+
+
+%
+
+
+
+
 %Dlatego nie będą omawiane w tej pracy.
 
-%Lecz --- najpopularniejsze obecnie relacyjne bazy danych --- nie zostały stworzone do obsługi danych hierarchicznych.
+%Lecz --- najpopularniejsze obecnie --- relacyjne bazy danych nie zostały stworzone z myślą o obsłudze danych hierarchicznych.
 %Nie oznacza to bynajmniej, że jest to niemożliwe.
 %Należy za to spodziewać się pewnych utrudnień.
 %Największych problemow należy się spodziewać w
@@ -56,23 +92,39 @@ Z tego powodu nie będą tu omawiane.
 %{Sprawę dodatkowo komplikuje dążenie do przechowywani danych w 3 postaci normalnej. Niektóre metody nie są nawet w 1 postaci normalnej. \ask{Prawda? Pisać o tym?}
 
 
+Dominujące obecnie relacyjne bazy danych nie zostały stworzone z myślą o obsłudze danych hierarchicznych.
+Nie oznacza to bynajmniej, że jest to niemożliwe.
+Już Edgar Frank Codd\index{Codd Edgar Frank} zaproponował jedno z rozwiązań.
+\todo{sprawdzić gdzie} 
+Miało być ono obroną relacyjnego modelu danych przed zarzutami,
+że w takich bazach nie można przechowywać danych hierarchicznych.
+
+
+
+\section{Cel pracy}
+
+
+
+
+
+%Nie oznacza to bynajmniej, że jest to niemożliwe.
+%Należy za to spodziewać się pewnych utrudnień.
+%Największych problemow należy się spodziewać w
+
 Celem tej pracy jest:
-\begin{itemize}
-    \item przedstawienie popularnych metod przechowywania danych hierarchicznych
+\begin{itemize*}
+    \item przedstawienie popularnych lub godnych zainteresowania metod przechowywania danych hierarchicznych
     \item porównanie tych metod pod względem łatwości użycia, dostępności, możliwości
     \item sprawdzenie ich wydajności w najpopularniejszych bazach danych
     \item ocena metod, wskazanie ich mocnych i słabych stron
-\end{itemize}
+\end{itemize*}
 
-Nie należy się spodziewać idealnej metody, raczej należy oczekiwać, że metody będą się znacznie różniły między sobą w poszczególnych operacjach.
+
+
+
+% relatywnie populanne - ale brakuje naprawdę kompleksowych porównań
+
+%Nie należy się spodziewać idealnej metody, raczej należy oczekiwać, że metody będą się znacznie różniły między sobą w poszczególnych operacjach.
 %najlepszed do danego zastosowania
-
-
-Jest to zagadnienie stare niemal jak same relacyjne bazy danych. 
-Już Edgar Frank Codd\index{Codd Edgar Frank} zaproponował jedno z rozwiązań.
-\todo{sprawdzić gdzie} 
-Miało być ono obroną relacyjnego modelu danych przed zarzutami, 
-że w takich bazach nie można przechowywać danych hierarchicznych.
-
 
 

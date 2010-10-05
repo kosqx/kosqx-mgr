@@ -59,17 +59,42 @@ id | lft | rgt | name
 %! method-sql nested.create
 
 \operacja{Wstawianie danych}
-% %! method-sql nested.insert
+%! method-python nested.insert
+
+
 
 % \begin{verbatim}[sql]
 % INSERT INTO simple (parent, name) VALUES (:parent, :name)
 % \end{verbatim}
 
 Wstawianie danych w tej metodzie jest jej najsłabszą stroną.
+\todo{terminologia}
+Wymaga ono zmiany wartości lft i rgt wielu rekordów.
 
+W powyższym przypadku
+--- jako że wstawiamy dane w kolejności \emph{in depth} ---
+wymagana jest modyfikacja tylko tylu rekordów na jakim poziomie\todo{?} aktualnie wstawiamy nowy węzeł.
+Lecz należy sie liczyć z przypadkiem pesymistycznym --- dodaniem do korzenia potomka jako pierwszego elementu\todo{las}.
+W takiej sytuacji wymagane jest zmodyfikowanie wszystkich istniejących rekordów.
+
+\textbf{Uwaga:} Jeśli chce się jednorazowo załadować cały las do bazy danych można postąpić bardziej optymalnie\footnote{
+    Powyższy kod tego nie robi gdyż ma być ogólny.
+}.
+Mianowicie przed załadowaniem danych do bazy danych wstępnie przetworzyć dane.
+W takiej sytuacji należy sie posłużyć algorytmem \emph{wyszukiwania w głąb}
+i~kolejno numerować wartości \texttt{lft} węzła po wejściu do niego oraz \texttt{rgt} przed jego opuszczeniem.
+Przykładowa implementacja tego algorytmu:
+
+\begin{verbatim}[sql]
+def preprocess(node):
+  node.lft = get_next_int()
+  for n in children(node):
+    preprocess(n)
+  node.rgt = get_next_int()
+\end{verbatim}
 
 \operacja{Pobranie korzeni}
-%! method-sql nested.roots
+%! method-python nested.roots
 
 \operacja{Pobranie rodzica}
 %! method-sql nested.parent
@@ -91,8 +116,8 @@ Jest ono możliwe dzięki temu, że $a.right - a.left = 2 * |a.descendants()| + 
 Skoro liść nie posiada żadnych potomków to da różnica wynosi $1$, co prowadzi do zapytania: 
 \begin{verbatim}[sql]
 SELECT *
-    FROM nested_sets
-    WHERE left + 1 = right
+  FROM nested_sets
+  WHERE lft + 1 = rgt
 \end{verbatim}
 
 

@@ -67,7 +67,7 @@ def run_test(database, tree_class, testcases):
         id2id[node['id']] = tree.insert(parent=node['parent'], name=node['name'][:48])
         if i % 10000 == 0:
             print '#', i
-    #db.commit()
+    db.commit()
     
     
     

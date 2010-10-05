@@ -1,4 +1,4 @@
-\section{Metoda Wspólnych Wyrażeń Tabelowych}
+\section{Wspólne Wyrażenia Tabelowe}
 \index{metoda!Wspolnych@Wspólnych Wyrażeń Tabelowych|(textbf}
 \index{IBM DB2}\index{SQL Server}
 % http://www.ibm.com/developerworks/data/library/techarticle/0307steinbach/0307steinbach.html
@@ -98,10 +98,8 @@ WITH RECURSIVE a(i) AS (
     UNION ALL
     SELECT i + 1 AS i FROM a WHERE i < 10
 )
-SELECT i from a;
+SELECT i FROM a;
 \end{verbatim}
-
-
 
 
 Rozszerzenie to można wykorzystać do pracy z reprezentacją krawędziową. 

@@ -129,9 +129,9 @@ def code_pre(lines):
 
     head = lines[0].strip()
     
-    if lines[0].endswith('[python]'):
+    if head.endswith('[python]'):
         lexer_name = "python"
-    elif lines[0].endswith('[c]'):
+    elif head.endswith('[c]'):
         lexer_name = "c"
     else:
         lexer_name = "sql"
@@ -166,6 +166,16 @@ def code_method_sql(line):
         return do_highlight(code, 'sql')
     else:
         return "\n\n\\textcolor{red}{\\textbf{[[tu brakuje kodu źródłowego]]}}\n\n"
+    
+def code_method_python(line):
+    global methods
+
+    name = line.split()[-1]
+    if name in methods:
+        code = '\n\n'.join(methods[name])
+        return do_highlight(code, 'python')
+    else:
+        return "\n\n\\textcolor{red}{\\textbf{[[tu brakuje kodu źródłowego: Python]]}}\n\n"
 
 def code_results_table(line):
     global results
@@ -294,11 +304,17 @@ def main(args):
     os.chdir(tmpdir)
     
     process_files(files, abspath, [
-        (r'\\begin\{verbatim\}\[sql]\s*',   r'\\end\{verbatim\}', code_pre),
-        (r'\\begin\{verbatim\}\[dot]\s*',   r'\\end\{verbatim\}', code_dot),
-        (r'\\begin\{verbatim\}\[table]\s*',  r'\\end\{verbatim\}', code_table),
+        #(r'\\begin\{verbatim\}\[sql]\s*',   r'\\end\{verbatim\}', code_pre),
+        #(r'\\begin\{verbatim\}\[sql]\s*',   r'\\end\{verbatim\}', code_pre),
+        #(r'\\begin\{verbatim\}\[(?:sql|c|python|pythonsql)]\s*',   r'\\end\{verbatim\}', code_pre),
+        (r'\\begin\{verbatim\}\[sql]\s*',     r'\\end\{verbatim\}', code_pre),
+        (r'\\begin\{verbatim\}\[c]\s*',       r'\\end\{verbatim\}', code_pre),
+        (r'\\begin\{verbatim\}\[python]\s*',  r'\\end\{verbatim\}', code_pre),
+        (r'\\begin\{verbatim\}\[dot]\s*',     r'\\end\{verbatim\}', code_dot),
+        (r'\\begin\{verbatim\}\[table]\s*',   r'\\end\{verbatim\}', code_table),
         (r'^%! *pygments-style',            None,                 code_pre_style),
         (r'^%! *method-sql',                None,                 code_method_sql),
+        (r'^%! *method-python',             None,                 code_method_python),
         (r'^%! *result-table',              None,                 code_results_table),
         (r'^%! *result-chart',              None,                 code_results_chart),
     ])

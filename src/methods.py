@@ -21,10 +21,6 @@ class Tree:
     def get_descendants(self, id):
         pass
     
-    # TODO
-    #def get_descendants_level(self, id, level):
-        #pass
-
     def get_roots_count(self):
         return len(self.get_roots())
     def get_ancestors_count(self, id):
@@ -170,9 +166,9 @@ class Simple(Tree):
                 'mssql':  "CREATE TABLE simple(id int IDENTITY PRIMARY KEY, parent int, name varchar(100))",
                 '*':      """
                     CREATE TABLE simple(
-                        id serial PRIMARY KEY, 
+                        id     serial PRIMARY KEY, 
                         parent int REFERENCES simple(id) ON DELETE CASCADE, 
-                        name varchar(100)
+                        name   varchar(100)
                     )""",
         })
 
@@ -206,32 +202,20 @@ class Simple(Tree):
         )
 
     def get_ancestors(self, id):
-        """
+        # """
         result = []
         while id is not None:
-            a = self.db.execute('''
+            row = self.db.execute('''
                 SELECT id, parent, name
                     FROM simple
                     WHERE id = :id
                 ''',
                 dict(id=id)
             ).fetch_one()
-            result.append(a)
-            id = a.parent
+            result.append(row)
+            id = row.parent
         return result
-        """
-        result = []
-        while id is not None:
-            a = self.db.execute('''
-                SELECT id, parent, name
-                    FROM simple
-                    WHERE id = :id
-                ''',
-                dict(id=id)
-            ).fetch_one()
-            result.append(a)
-            id = a.parent
-        return result
+        # """
 
     def get_children(self, id):
         return self.db.execute_and_fetch("""
@@ -242,53 +226,22 @@ class Simple(Tree):
             dict(parent=id)
         )
 
-
     def get_descendants(self, id):
-        """
+        # """
         result = []
         ids = [id]
-
+        
         while ids:
-            rows = self.db.execute_and_fetch('''
+            rows = self.db.execute('''
                 SELECT id, parent, name
                     FROM simple
                     WHERE (%s)''' % ' OR '.join(['parent = %d' % i for i in ids])
-            )
+            ).fetch_all()
             result.extend(rows)
             ids = [row.id for row in rows]
         
         return result
-        """
-
-        result = []
-        ids = [id]
-
-        while ids:
-            rows = self.db.execute_and_fetch('''
-                SELECT id, parent, name
-                    FROM simple
-                    WHERE (%s)''' % ' OR '.join(['parent = %d' % i for i in ids])
-            )
-            result.extend(rows)
-            ids = [row.id for row in rows]
-        
-        return result
-        
-        #result = []
-        #ids = [id]
-        #
-        #while True:
-        #    rows = self.db.execute_and_fetch('''
-        #        SELECT id, parent, name
-        #            FROM simple
-        #            WHERE (%s)''' % ' OR '.join(['parent = %d' % i for i in ids])
-        #    )
-        #    result.extend(rows)
-        #    ids = [row.id for row in rows]
-        #    if not ids:
-        #        break
-        #
-        #return result
+        # """
 
 
 class Full(Tree):
@@ -316,16 +269,16 @@ class Full(Tree):
                 'mssql':  "CREATE TABLE full_data(id int IDENTITY PRIMARY KEY, name varchar(100))",
                 '*':      """
                     CREATE TABLE full_data(
-                        id serial PRIMARY KEY, 
+                        id   serial PRIMARY KEY, 
                         name varchar(100)
                     )""",
         })
         
         self.db.ddl("""
             CREATE TABLE full_tree(
-                top_id int, 
-                bottom_id int, 
-                distance int
+                top_id    int,
+                bottom_id int,
+                distance  int
             )"""
         )
         
@@ -419,7 +372,7 @@ class NestedSets(Tree):
     tree_name = 'nested'
     tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
     
-   
+    
     def create_table(self):
         tables = self.db.schema_list('table')
         if 'nested_sets' in tables:
@@ -444,25 +397,63 @@ class NestedSets(Tree):
             'mssql': "CREATE TABLE nested_sets(id int IDENTITY PRIMARY KEY, lft int, rgt int, name varchar(100))",
             '*':     """
                 CREATE TABLE nested_sets(
-                    id serial PRIMARY KEY, 
-                    lft int, 
-                    rgt int, 
+                    id   serial PRIMARY KEY, 
+                    lft  int, 
+                    rgt  int, 
                     name varchar(100)
                 )""",
         })
         
     def insert(self, parent, name):
+        # """
         if parent is None:
-            right = self.db.execute('SELECT max(rgt) as max_rgt FROM nested_sets').fetch_single('max_rgt')
+            right = self.db.execute('''
+                SELECT max(rgt) AS max_rgt
+                    FROM nested_sets
+                '''
+            ).fetch_single('max_rgt')
             right = right or 0
-            pid = self.db.insert_returning_id('nested_sets', dict(lft=(right + 1), rgt=(right + 2), name=name))
+            pid = self.db.insert_returning_id(
+                'nested_sets',
+                dict(
+                    lft=(right + 1),
+                    rgt=(right + 2),
+                    name=name
+                )
+            )
         else:
-            right = self.db.execute('SELECT rgt FROM nested_sets WHERE id = :parent', dict(parent=parent)).fetch_single('rgt')
-            self.db.execute('UPDATE nested_sets SET lft = lft + 2 WHERE lft >  :val', dict(val=right))
-            self.db.execute('UPDATE nested_sets SET rgt = rgt + 2 WHERE rgt >= :val', dict(val=right))
-            pid = self.db.insert_returning_id('nested_sets', dict(lft=(right), rgt=(right + 1), name=name))
+            right = self.db.execute('''
+                SELECT rgt
+                    FROM nested_sets
+                    WHERE id = :parent
+                ''',
+                dict(parent=parent)
+            ).fetch_single('rgt')
+            self.db.execute('''
+                UPDATE nested_sets
+                    SET lft = lft + 2
+                    WHERE lft >  :val
+                ''',
+                dict(val=right)
+            )
+            self.db.execute('''
+                UPDATE nested_sets
+                    SET rgt = rgt + 2
+                    WHERE rgt >= :val
+                ''',
+                dict(val=right)
+            )
+            pid = self.db.insert_returning_id(
+                'nested_sets',
+                dict(
+                    lft=(right),
+                    rgt=(right + 1),
+                    name=name
+                )
+            )
         
         return pid
+        # """
     
     def get_parent(self, id):
         # TODO: napisa to z LIMIT
@@ -541,7 +532,7 @@ class PathEnum(Tree):
         self.db.ddl({
             '*': """
                 CREATE TABLE pathenum(
-                    id serial PRIMARY KEY, 
+                    id   serial PRIMARY KEY, 
                     path varchar(100), 
                     name varchar(100)
                 )""",
@@ -558,7 +549,7 @@ class PathEnum(Tree):
                 ''',
             'db2': '''
                 CREATE TABLE pathenum(
-                    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), 
+                    id   integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), 
                     path varchar(100),
                     name varchar(100)
                 )
@@ -573,21 +564,21 @@ class PathEnum(Tree):
             )
         """
         if parent is None:
-            #pid = self.db.execute("""
+            #pid = self.db.execute('''
             #    INSERT INTO pathenum (path, name) VALUES (
             #        '',
             #        :name
             #    ) RETURNING id
-            #    """, dict(parent=parent, name=name)
+            #    ''', dict(parent=parent, name=name)
             #).list()[0][0]
             pid = self.db.insert_returning_id('pathenum', dict(path='', name=name))
         else:
-            #pid = self.db.execute("""
+            #pid = self.db.execute('''
             #    INSERT INTO pathenum (path, name) VALUES (
             #        (SELECT path || id ||  '.' FROM pathenum WHERE id = :parent),
             #        :name
             #    ) RETURNING id
-            #    """, dict(parent=parent, name=name)
+            #    ''', dict(parent=parent, name=name)
             #).list()[0][0]
             if self.db.is_dialect('mysql'):
                 # FIXME: bardzo brzydki kod
@@ -731,65 +722,305 @@ class PathEnum(Tree):
         )
 
 
-
-#class EdgeEnum(Tree):
-#    tree_name = 'edgeenum'
-#    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
-
-#class Trie(Tree):
-    #pass
-    
-    
 class PlSql(Simple):
-    #tree_name = 'plsql'
-    #tree_base = ['postgresql']
+    tree_name = 'plsql'
+    tree_base = ['postgresql']
     
+    
+    '''
+    
+    CREATE TYPE tree_item  IS object (id integer, parent integer, name varchar2(100));
+    CREATE TYPE tree_items IS table OF tree_item;
+    
+    
+    
+    CREATE OR REPLACE FUNCTION tree_ancestors(start_id integer) RETURN
+        tree_items
+    IS
+        tree_items_list tree_items := tree_items();
+        cid integer := start_id;
+        tmp simple%ROWTYPE;
+    BEGIN
+        WHILE cid IS NOT NULL LOOP
+            SELECT id, parent, name
+                INTO tmp FROM simple WHERE simple.id = cid;
+            
+            cid := tmp.parent;
+            tree_items_list.extend;
+            tree_items_list(tree_items_list.last) := tree_item(tmp.id, tmp.parent, tmp.name);
+        END LOOP;
+        RETURN tree_items_list;
+    END;
+    
+    SELECT * FROM table (tree_ancestors(8));
+    
+
+#########################################################
+
+
+IF EXISTS (
+    SELECT 1
+    FROM INFORMATION_SCHEMA.ROUTINES
+    WHERE
+        ROUTINE_NAME = 'tree_ancestors' AND
+        ROUTINE_SCHEMA = 'dbo' AND
+        ROUTINE_TYPE = 'FUNCTION'
+)
+BEGIN
+    DROP FUNCTION dbo.tree_ancestors
+END
+GO
+
+CREATE FUNCTION tree_ancestors (@start_id Int)
+RETURNS @TreeItemsList TABLE(id Int)
+AS
+BEGIN
+    DECLARE @cid Int = @start_id;
+    
+    WHILE @cid IS NOT NULL
+    BEGIN
+        INSERT INTO @TreeItemsList (id)
+            SELECT @cid;
+        
+        SELECT @cid = parent
+            FROM simple
+            WHERE id = @cid
+    END
+    RETURN
+END
+GO
+
+
+select * from dbo.tree_ancestors(8);
+
+
+
+
+
+
+
+
+
+IF EXISTS (
+    SELECT 1
+    FROM INFORMATION_SCHEMA.ROUTINES
+    WHERE
+        ROUTINE_NAME = 'tree_ancestors' AND
+        ROUTINE_SCHEMA = 'dbo' AND
+        ROUTINE_TYPE = 'FUNCTION'
+)
+BEGIN
+    DROP FUNCTION dbo.tree_ancestors
+END
+GO
+
+CREATE FUNCTION tree_ancestors (@start_id Int)
+RETURNS @TreeItemsList TABLE(id Int)
+AS
+  BEGIN
+    DECLARE @cid Int = @start_id;
+    
+    INSERT INTO @TreeItemsList (ID)
+     SELECT @cid;
+    
+    SELECT @cid = parent
+     FROM simple
+     WHERE id = @start_id
+     
+    INSERT INTO @TreeItemsList (ID)
+     SELECT @cid;
+     
+    INSERT INTO @TreeItemsList (ID)
+     SELECT parent
+     FROM simple
+     WHERE id = @start_id
+   RETURN
+  END
+GO
+
+
+CREATE FUNCTION fnProductListBySubCategory (@SubID Int)
+RETURNS @ProdList Table
+  (  ID Int
+  ,  Name nVarChar(50)
+  ,  ListPrice Money
+  )
+AS
+  BEGIN
+   IF @SubID IS NULL
+    BEGIN
+     INSERT INTO @ProdList (ID, Name)
+     SELECT ID, First_Name
+     FROM Employee
+    END
+   ELSE
+    BEGIN
+     INSERT INTO @ProdList (ID, Name)
+     SELECT ID, First_Name
+     FROM Employee
+     WHERE ID = @SubID
+    END
+   RETURN
+  END
+GO
+
+    
+    '''
+    
+    
+    
+    def get_postgresql_ancestors_create(self):
+        return """
+            CREATE OR REPLACE FUNCTION tree_ancestors(
+                start_id int
+            ) RETURNS SETOF int AS $$
+            DECLARE
+                cid int := start_id;
+            BEGIN
+                WHILE cid IS NOT NULL LOOP
+                    RETURN NEXT cid;
+                    SELECT parent INTO cid FROM tree WHERE tree.id = cid;
+                END LOOP;
+            END;
+            $$ LANGUAGE plpgsql strict;
+        """
+        
+    def get_postgresql_descendants_create(self):
+        return """
+            CREATE OR REPLACE FUNCTION tree_descendants(
+                start_id int
+            ) RETURNS SETOF int AS $$
+            DECLARE
+                rec RECORD;
+                current INT[];
+                build INT[];
+                tmp INT;
+            BEGIN
+                build := ARRAY[0];
+                current := ARRAY[0, start_id];
+                WHILE current > ARRAY[0] LOOP
+                    build := ARRAY[0];
+                    FOR i IN 2..array_upper(current, 1) LOOP
+                        tmp := current[i];
+                        FOR rec IN SELECT * FROM tree WHERE parent = tmp LOOP
+                            RETURN NEXT rec.id;
+                            build := build || rec.id;
+                        END LOOP;
+                    END LOOP;
+                    current := build;
+                END LOOP;
+            END;
+            $$ LANGUAGE plpgsql strict;
+        """
+        
+    def get_postgresql_ancestors(self):
+        return """
+            SELECT id, parent, value
+                FROM tree_ancestors(:id) AS t
+                    JOIN tree ON t = tree.id;
+        """
+        
+    def get_postgresql_descendants(self):
+        return """
+            SELECT id, parent, value
+                FROM tree_descendants(:id) AS t 
+                    JOIN tree ON t = tree.id;
+        """
+        
+    
+    def get_oracle_ancestors_create(self):
+        return """
+            CREATE TYPE tree_item  IS object (id integer, parent integer, name varchar2(100));
+            CREATE TYPE tree_items IS table OF tree_item;
+            
+            CREATE OR REPLACE FUNCTION tree_ancestors(start_id integer) RETURN
+                tree_items
+            IS
+                tree_items_list tree_items := tree_items();
+                cid integer := start_id;
+                tmp simple%ROWTYPE;
+            BEGIN
+                WHILE cid IS NOT NULL LOOP
+                    SELECT id, parent, name
+                        INTO tmp FROM simple WHERE simple.id = cid;
+                    
+                    cid := tmp.parent;
+                    tree_items_list.extend;
+                    tree_items_list(tree_items_list.last) := tree_item(tmp.id, tmp.parent, tmp.name);
+                END LOOP;
+                RETURN tree_items_list;
+            END;
+        """
+        
+    def get_oracle_descendants_create(self):
+        return """
+            SELECT 1 FROM dual;
+        """
+        
+    def get_oracle_ancestors(self):
+        return """
+            SELECT * FROM table(tree_ancestors(:id));
+        """
+        
+    def get_oracle_descendants(self):
+        return """
+            SELECT * FROM table(tree_descendants(:id));
+        """
+    
+    
+    def get_sqlserver_ancestors_create(self):
+        return """
+            CREATE FUNCTION tree_ancestors (@start_id Int)
+            RETURNS @TreeItemsList TABLE(id Int)
+            AS
+            BEGIN
+                DECLARE @cid Int = @start_id;
+                
+                WHILE @cid IS NOT NULL
+                BEGIN
+                    INSERT INTO @TreeItemsList (id)
+                        SELECT @cid;
+                    
+                    SELECT @cid = parent
+                        FROM simple
+                        WHERE id = @cid
+                END
+                RETURN
+            END
+            GO
+        """
+        
+    def get_sqlserver_descendants_create(self):
+        return """
+            SELECT 1;
+        """
+        
+    def get_sqlserver_ancestors(self):
+        return """
+            SELECT * FROM tree_ancestors(:id);
+        """
+        
+    def get_sqlserver_descendants(self):
+        return """
+            SELECT * FROM tree_descendants(:id);
+        """
     
     def __init__(self, db):
         super(PlSql, self).__init__(db)
         
         self.db.ddl({
-            'postgresql': ["""
-                CREATE OR REPLACE FUNCTION tree_ancestors(
-                    start_id int
-                ) RETURNS SETOF int AS $$
-                DECLARE
-                    cid int := start_id;
-                BEGIN
-                    WHILE cid IS NOT NULL LOOP
-                        RETURN NEXT cid;
-                        SELECT parent INTO cid FROM tree WHERE tree.id = cid;
-                    END LOOP;
-                END;
-                $$ LANGUAGE plpgsql strict;
-                """,
-                """
-                    CREATE OR REPLACE FUNCTION tree_descendants(
-                        start_id int
-                    ) RETURNS SETOF int AS $$
-                    DECLARE
-                        rec RECORD;
-                        current INT[];
-                        build INT[];
-                        tmp INT;
-                    BEGIN
-                        build := ARRAY[0];
-                        current := ARRAY[0, start_id];
-                        WHILE current > ARRAY[0] LOOP
-                            build := ARRAY[0];
-                            FOR i IN 2..array_upper(current, 1) LOOP
-                                tmp := current[i];
-                                FOR rec IN SELECT * FROM tree WHERE parent = tmp LOOP
-                                    RETURN NEXT rec.id;
-                                    build := build || rec.id;
-                                END LOOP;
-                            END LOOP;
-                            current := build;
-                        END LOOP;
-                    END;
-                    $$ LANGUAGE plpgsql strict;
-                """
-                ],
+            'postgresql': [
+                self.get_postgresql_ancestors_create(),
+                self.get_postgresql_descendants_create(),
+            ],
+            'oracle': [
+                self.get_oracle_ancestors_create(),
+                self.get_oracle_descendants_create(),
+            ],
+            'sqlserver': [
+                self.get_sqlserver_ancestors_create(),
+                self.get_sqlserver_descendants_create(),
+            ],
         })
         
     '''
@@ -832,7 +1063,8 @@ class ConnectBy(Simple):
             SELECT level, id, parent, name 
                 FROM simple 
                 START WITH id = :id 
-                CONNECT BY id = PRIOR parent""", 
+                CONNECT BY id = PRIOR parent
+            """, 
             dict(id=id)
         )
 
@@ -841,7 +1073,8 @@ class ConnectBy(Simple):
             SELECT level, id, parent, name 
                 FROM simple 
                 START WITH id = :id 
-                CONNECT BY parent = PRIOR id""", 
+                CONNECT BY parent = PRIOR id
+            """, 
             dict(id=id)
         )
 
@@ -919,7 +1152,8 @@ class With(Simple):
 
 
 class Ltree(Tree):
-    #tree_name = 'ltree'
+    tree_name = 'ltree'
+    tree_base = []
     #tree_base = ['postgresql']
     
    
@@ -930,7 +1164,7 @@ class Ltree(Tree):
 
         self.db.ddl("""
             CREATE TABLE ltreetab(
-                id serial PRIMARY KEY, 
+                id   serial PRIMARY KEY, 
                 path ltree, 
                 name varchar(100)
             )
@@ -1029,7 +1263,8 @@ class Ltree(Tree):
 
 
 class HierarchyId(Tree):
-    #tree_name = 'hierarchyid'
+    tree_name = 'hierarchyid'
+    tree_base = []
     #tree_base = ['sqlserver']
     
     def create_table(self):
@@ -1038,7 +1273,7 @@ class HierarchyId(Tree):
         
         self.db.ddl("""
             CREATE TABLE herid (
-                id int IDENTITY PRIMARY KEY,
+                id   int IDENTITY PRIMARY KEY,
                 node hierarchyid,
                 name varchar(100)
             )
@@ -1101,13 +1336,13 @@ class HierarchyId(Tree):
         )
 
     #def get_ancestors(self, id):
-        #return self.db.execute_and_fetch("""
+        #return self.db.execute_and_fetch('''
             #SELECT *
                 #FROM herid
                 #WHERE (
                     #SELECT node n1 FROM herid WHERE id = :id
                 #).IsDescendant(node)
-                #""",
+                #''',
             #dict(id=id)
         #)
 

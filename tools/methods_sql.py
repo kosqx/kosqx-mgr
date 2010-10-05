@@ -8,6 +8,9 @@ def code_strip(data):
     lines[0] = lines[0].split('"""', 1)[1]
     lines[-1] = lines[-1].rsplit('"""', 1)[0]
     
+    if lines[-1].strip() == '#':
+        lines.pop()
+    
     lines = [i.rstrip() for i in lines]
     
     while lines[0] == '':
@@ -57,11 +60,11 @@ def parse_methods(filename):
         else:
             if '"""' in line and len(data) == 0:
                 data.append(line)
-
-        # tree_name = 'simple'
-    
     
     fin.close()
+    
+    for key in sorted(result.keys()):
+        print '%20s %s' % (key, repr(result[key])[:50])
     
     return result
 

@@ -25,7 +25,8 @@
 Najprostszą, najbardziej intuicyjną i zapewne najpopularniejszą metodą jest metoda krawędziowa \eng{adjacency}\index{adjacency}.
 Została ona pierwszy raz zaprezentowana przez Edgara Franka Codda\index{Codd Edgar Frank}.
 %On też nadał im nazwę, która odnosi się do tego, że informacja o rodzicu elementu znajduje się w tej samej krotce\todo{krotka?} co dane.
-Nadał też jej nazwę. Wynika ona z tego, że każdy rekord zawiera własny identyfikator oraz identyfikator rodzica. Takie dane są wystarczające aby w drzewie opisać krawędz.
+Nadał też jej nazwę. Wynika ona z tego, że każdy rekord zawiera własny identyfikator oraz identyfikator rodzica.
+Takie dane są wystarczające aby w drzewie opisać krawędz.
 
 
 Zasługa spopularyzowania tej metody przypada Oracle.
@@ -40,18 +41,22 @@ korzystającą z tej metody.
 
 Na popularność metody przekłada się również jej znaczące podobieństwo do 
 używanego między innymi w~językach C i~C++ sposobu przechowywania list i drzew.
-Mianowicie każdy węzeł zawiera wskaźnik na rodzica. 
+Mianowicie każdy węzeł zawiera wskaźnik na rodzica.
+
 \begin{verbatim}[c]
 typedef struct item {
-    struct item *parent;
-    char * name;
+    struct item* parent;
+    char*        name;
 } treeitem;
 \end{verbatim}
-W relacyjnych bazach danych odpowiednikiem wskaźnika jest klucz obcy\index{klucz!obcy}. 
+
+W relacyjnych bazach danych odpowiednikiem wskaźnika jest klucz obcy%
+%\index{klucz!obcy}%
+. 
 
 
 Ta metoda jest na tyle popularna, że w bazach danych pojawiły się specjalne konstrukcje do jej obsługi. 
-Zostaną one przedstawione w rozdziale \todo{wstawić jakoś nazwę rozdziału} o metodach specyficznych dla systemu zarządzania bazą danych.
+Zostaną one przedstawione w rozdziale \todo{wstawić jakoś nazwę rozdziału} o konstrukcjach języka specyficznych dla systemu zarządzania bazą danych.
 
 
 \temat{Reprezentacja}
@@ -101,10 +106,8 @@ id | parent | name
 
 
 \operacja{Reprezentacja w SQL}
-\vspace{-0.5cm}
+%\vspace{-0.5cm}
 %! method-sql simple.create
-
-\vspace{-0.5cm}
 
 Należy zwrócić uwagę na \todo{term}warunek \texttt{ON DELETE CASCADE}. 
 Sprawia on, że w razie usunięcia węzła \todo{ustalić terminologię} 
@@ -115,25 +118,74 @@ automatycznie zostaną usunięci wszyscy jego potomkowie.
 %! method-sql simple.insert
 
 \operacja{Pobranie korzeni}
-Cechą charakterystyczną korzenia jest to, że jego rodzic jest ustawiony na \texttt{NULL}. Więc wybranie rodziców sprowadza się do tego zapytania:
+Cechą charakterystyczną korzenia jest to, że jego rodzic jest ustawiony na \texttt{NULL}.
+Więc pobranie rodziców sprowadza się do tego zapytania:
 %! method-sql simple.roots
+
 
 \operacja{Pobranie rodzica}
 \todo{a może by zrobić to złączeniem?}
+
+Identyfikator rodzica znajduje się w każdym węźle.
+%Ponieważ przyjęty interface 
+Więc zapytanie musi pobrać najpierw rekord o podanym jako parametr identyfikatorze a następnie
+--- korzystając z tego identyfikatora rodzica --- wynikowy rekord.
+Użyte został SQL z podzapytaniem, lecz równie dobrze można by było zastosować złączenie. 
+
 %! method-sql simple.parent
 
+
 \operacja{Pobranie dzieci}
+
+Pobieranie dzieci jest bardzo prostą i szybką operacją
+--- każdy rekord zawiera identyfikator rodzica.
+
 %! method-sql simple.children
 
+
 \operacja{Pobranie przodków}
-%! method-sql simple.ancestors
+Tu pojawia się po raz pierwszy największa wada tej reprezentacji --- 
+dla kilku operacji wymaga wykonania wielu zapytań w bazie danych.
+
+W tym przypadku widać, że pobranie przodków sprowadza się do pobrania aktualnego węzła,
+a następnie w kolejnym zapytaniu jego rodzica,
+potem rodzica jego rodzica\ldots
+aż dotrze się do korzenia drzewa.
+
+%! method-python simple.ancestors
+
+
 
 \operacja{Pobieranie potomków}
-%! method-sql simple.descendants
+
+%! method-python simple.descendants
+
+Należy zwrócić uwagę na równoczesne pobieranie wszystkich węzłów na danym poziomie.
+Wybrany algorytm wymaga wykonania tylko tylu zapytań ile wynosi wysokość poddrzewa,
+którego korzeniem jest dany element.
+%Bez niego wydajność metody spada znacząco.
+
+Gdyby zastosować naiwny algorytm pobierania dzieci jednego węzła,
+a następnie, rekurencyjnie, dzieci jego dzieci
+%to wymagał by on wykonania w sumie tylu zapytań ile potomków ma dany element plus jeden.
+to wymagał by on wykonania w sumie tylu zapytań ile węzłów ma poddrzewo,
+którego korzeniem jest dany element.
+
+
 
 %Należy zwrócić uwagę na wykorzystanie operatora \texttt{IN}. Bez niego wydajność metody spada znacząco.
 
-Należy zwrócić uwagę na równoczesne pobieranie wszystkich węzłów na danym poziomie. Bez niego wydajność metody spada znacząco. 
+%Należy zwrócić uwagę na równoczesne pobieranie wszystkich węzłów na danym poziomie.
+%Bez niego wydajność metody spada znacząco.
+%
+%Gdyby zastosować naiwny algorytm pobierania dzieci jednego węzła,
+%a następnie, rekurencyjnie, dzieci jego dzieci
+%%to wymagał by on wykonania w sumie tylu zapytań ile potomków ma dany element plus jeden.
+%to wymagał by on wykonania w sumie tylu zapytań ile węzłów ma poddrzewo,
+%którego korzeniem jest dany element.
+%
+%Wybrany algorytm wymaga wykonania tylko tylu zapytań ile wynosi wysokość poddrzewa,
+%którego korzeniem jest dany element.
 
 \temat{Wydajność}
 
