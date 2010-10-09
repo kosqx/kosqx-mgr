@@ -11,10 +11,12 @@
 
 % Ta metoda
 
-Ta reprezentacja jest najmniej znana spośród zaprezentowanych w tym rozdziale.
+Ta reprezentacja jest najmniej rozpowszechniona spośród zaprezentowanych w tym rozdziale.
 Przy czym w Polsce jest bardziej znana niż w reście świata.
 Jest to zasługa \emph{Huberta Lubaczewskiego}\index{Lubaczewski Hubert} lepiej znanego pod pseudonimem \emph{depesz}\index{depesz|see{Lubaczewski Hubert}}.
 Stąd w polskim internecie często można spotkać się z tą metodą pod nazwą \emph{metoda depesza}.
+On sam nazywa tę reprezentację \emph{metodą pełnych ścieżek}.
+% na świecie można się spotkać z nazwami odwołującymi się do Domknięcie_przechodnie \emg{Transitive closure}
 
 %Metoda został spopularyzowana w Polskim Internecie przez \emph{Huberta Lubaczewskiego}\index{Lubaczewski Hubert} lepiej znanego pod pseudonimem \emph{depesz}\index{depesz|see{Lubaczewski Hubert}}.
 
@@ -28,27 +30,6 @@ Jedynym wymogiem jest istnienie w niej klucza głównego\index{klucz!główny}.
 
 Cała informacja potrzebna do operowania na drzewie zawiera się w dodatkowej tabeli. 
 Zawiera ona informacje o odległości pomiędzy każdym elementem a wszystkimi jego potomkami.
-Czyli 
-
-%\includegraphics[width=8.5cm]%
-%\begin{verbatim}[dot] transclos
-%digraph G {
-%  rankdir=RL;
-%
-%  A -> B [label="1"];
-%  B -> C [label="1"];
-%  C -> D [label="1"];
-%
-%
-%  A -> C [label="2"];
-%  B -> D [label="2"];
-%
-%
-%  A -> D [label="3"];
-%  
-%}
-%\end{verbatim}
-
 
 \temat{Reprezentacja}
 
@@ -150,6 +131,19 @@ NULL   | 10        | 1
 %! method-sql full.descendants
 
 
+\subsection{Uwagi}
+
+Ta metoda jest bardzo elastyczna, pozwala łatwo wykonywać bardzo bardzo różnorodne zapytania.
+
+
+
+\begin{verbatim}[sql]
+SELECT *
+  FROM nested_sets
+  WHERE lft + 1 = rgt
+\end{verbatim}
+
+
 \temat{Wydajność}
 
 \begin{qxtab}{full}{Wydajność reprezentacji pełnych ścieżek}
@@ -159,6 +153,9 @@ NULL   | 10        | 1
 \begin{qxfig}{full}{Wydajność reprezentacji pełnych ścieżek}
 %! result-chart full deep3
 \end{qxfig}
+
+
+
 
 
 \index{metoda!pełnych ścieżek|)}

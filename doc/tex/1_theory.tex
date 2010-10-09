@@ -16,16 +16,16 @@ W informatyce częściej stosuje się definicję rekurencyjną%
 
 \begin{quote}
 
-\emph{Drzewo} zdefiniujemy formalnie jako zbiór $T$ jednego lub więcej elementów zwanych \emph{węzłami}, takich że:
+\treedef{Drzewo} definiujemy jako zbiór $T$ zawierający jednen lub więcej elementów zwanych \treedef{węzłami}, takich że:
 
 \begin{enumerate}
- \item istnieje jeden wyróżniony węzeł zwany \treedef{korzeniem} drzewa, $root(T)$; oraz
+ \item istnieje jeden wyróżniony węzeł zwany \treedef{korzeniem} drzewa, $root(T)$
  \item pozostałe węzły (z wyłączeniem korzenia) są podzielone na $m \geq 0$ rozłącznych zbiorów $T_{1},\ldots, T_{m}$,
 	z których każdy jest drzewem. Drzewa $T_{1},\ldots, T_{m}$ nazywane są \treedef{poddrzewami} korzenia.
 \end{enumerate}
 
-Z naszej definicji wynika, że każdy węzeł drzewa jest korzeniem pewnego poddrzewa zawartego w większym drzewie.
-Liczna poddrzew węzła jest nazywana \treedef{stopniem} tego węzła.
+Każdy węzeł drzewa jest korzeniem pewnego poddrzewa zawartego w większym drzewie.
+Ilość poddrzew węzła jest nazywana \treedef{stopniem} tego węzła.
 Węzeł o stopniu zero nazywamy \treedef{liściem} lub \treedef{węzłem zewnętrznym}. 
 Węzeł nie będący liściem nazywamy \treedef{węzłem wewnętrznym}. 
 Poziom węzła jest zdefiniowany rekurencyjnie: poziom korzenia $root(T)$ równa się zero,
@@ -162,7 +162,8 @@ Z tego powodu słowa ,,drzewa'' i ,,lasy'' są przy nieformalnym omawianiu struk
 
 \paragraph{Przechowywany jest las}
 Zgodnie z definicją z poprzedniego rozdziału las jest bardzo podobny do drzewa.
-Jeśli nie potrzebny jest las a drzewo to wystarczy zauważyć, że chodzi nam o las składający się z tylko jednego drzewa.\todo{przepisać}
+Jeśli nie potrzebny jest las a drzewo to wystarczy zauważyć,
+że chodzi nam o las składający się z tylko jednego drzewa.\todo{przepisać}
 
 
 \paragraph{Drzewa uporządkowane}
@@ -172,18 +173,38 @@ Czasem istnieje też możliwośc sortowania po istniejących już kolumnach, prz
 
 
 \paragraph{Tabela zawiera tylko jedną kolumnę z danymi użytkownika} 
-Bez problemu można dodać więcej kolumn do tabeli. Obecność wyłącznie kolumny \texttt{name} zwiększa czytelność przykładów.
+Bez problemu można dodać więcej kolumn do tabeli.
+Obecność wyłącznie kolumny \texttt{name} zwiększa czytelność przykładów.
 
+%\paragraph{}
 
+\paragraph{Operacje na danych hierarchicznych}
 
-\paragraph{Zapytania wyłącznie związane z hierarchiczną strukturą danych}
 \begin{itemize*}
-    \item \treedef{Pobranie korzeni}
-    \item \treedef{Pobranie rodzica}
-    \item \treedef{Pobranie przodków}
-    \item \treedef{Pobranie dzieci}
-    \item \treedef{Pobranie potomków}
+    \item \textbf{\texttt{create\_table(self)}}
+        
+    \item \textbf{\texttt{insert(self, parent, name)}}
+    \item \textbf{\texttt{get\_roots(self)}}
+    \item \textbf{\texttt{get\_parent(self, id)}}
+    \item \textbf{\texttt{get\_ancestors(self, id)}}
+        \textbf{Uwaga:} W praktyce bardzo często potrzebna jest lista zawierająca nie tylko przodków danego węzła ale również jego samego.
+        Więc ta metoda 
+    \item \textbf{\texttt{get\_children(self, id)}}
+    \item \textbf{\texttt{get\_descendants(self, id)}}
 \end{itemize*}
+
+Jak widać są to operacje wyłącznie związane z hierarchiczną strukturą danych.
+
+%\begin{itemize*}
+%    \item \treedef{Pobranie korzeni}
+%    \item \treedef{Pobranie rodzica}
+%    \item \treedef{Pobranie przodków}
+%        \textbf{Uwaga:} W praktyce bardzo często potrzebna jest lista zawierająca nie tylko przodków danego węzła
+%        ale również jego samego.
+%        % W efekcie 
+%    \item \treedef{Pobranie dzieci}
+%    \item \treedef{Pobranie potomków}
+%\end{itemize*}
 
 
 

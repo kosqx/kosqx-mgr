@@ -34,7 +34,9 @@ Dołączył on do swojego produktu przykładową bazę danych, nazywaną ,,Scott
 \footnote{
     Nazwa tej bazy danych pochodzi od metody autoryzacji w bazie Oracle (login/hasło).
     Login pochodził z nazwiska jednego z pierwszych pracowników 
-    Software Development Laboratories (przekształconych ostatecznie w Oracle) Bruce'a Scott'a. 
+    Software Development Laboratories (przekształconych ostatecznie w Oracle)
+    % Bruce'a Scott'a.
+    Bruca Scotta. 
     Natomiast hasło to imię jego kota.
 }
 korzystającą z tej metody.
@@ -163,11 +165,10 @@ aż dotrze się do korzenia drzewa.
 Należy zwrócić uwagę na równoczesne pobieranie wszystkich węzłów na danym poziomie.
 Wybrany algorytm wymaga wykonania tylko tylu zapytań ile wynosi wysokość poddrzewa,
 którego korzeniem jest dany element.
-%Bez niego wydajność metody spada znacząco.
+
 
 Gdyby zastosować naiwny algorytm pobierania dzieci jednego węzła,
 a następnie, rekurencyjnie, dzieci jego dzieci
-%to wymagał by on wykonania w sumie tylu zapytań ile potomków ma dany element plus jeden.
 to wymagał by on wykonania w sumie tylu zapytań ile węzłów ma poddrzewo,
 którego korzeniem jest dany element.
 

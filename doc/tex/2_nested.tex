@@ -1,12 +1,36 @@
 \section{Metoda zagnieżdzonych zbiorów}
 \index{metoda!zagnieżdzonych zbiorów|(textbf}
 
-Metoda została spopularyzowana przez Joe Celko\cite{celko-sql}\index{Celko Joe}.
+Reprezentacja została spopularyzowana przez Joe Celko\cite{celko-sql}\index{Celko Joe}.
+Dlatego czasem bywa nazywana ,,metodą Celko''.
+Lecz to nie on jako pierwszy ją opisał.
+Przed nim zrobił to Donald Knuth\cite{knuth}.
 
 
 
+%Nazwa tej metody pochodzi od 
+%Drzewo można 
+%
+%W tej reprezentacji
+
+W tej metodzie każdy węzeł drzewa traktowany jest jako zbiór zbiorem.
+Jeśli nie ma podzbiorów to jest liściem.
+Natomiast jeśli ma podzbiory to staje się ich przodkiem.
+Jeśli dodatkowo jest najmniejszym z nadzbiorów danego węzła to jest jego rodzicem.
+Dodatkowym wymogiem jest to by każdy węzeł miał część wspólną tylko i~wyłącznie z swymi przodkami oraz potomkami (a~nie z~rodzeństwem).
+W efekcie każdy zbiór jest \emph{,,zagnieżdzony''} w swoim rodzicu%
+\footnote{
+    Za przykład z realnego świata może posłużyć metoda pakowania przedmiotów w celu przewozu.
+    W kontenerach zanajdują się palety, na których znajdują się kartony, wewnątrz których znajdują się opakowania indywidualne produktów.
+    Innym przykładem są matrioszki
+}.
+Stąd pochodzi nazwa tej reprezentacji.
 
 
+Ponieważ \texttt{left} oraz \texttt{right} są słowami kluczowymi SQL-92
+w~kodzie zostananą zastosowane ich skróty, odpowiednio \texttt{lft} oraz \texttt{rgt}.
+
+Reprezentacja pozwala na przechowywanie drzew uporządkowanych.
 
 \temat{Reprezentacja}
 
@@ -69,7 +93,7 @@ id | lft | rgt | name
 
 Wstawianie danych w tej metodzie jest jej najsłabszą stroną.
 \todo{terminologia}
-Wymaga ono zmiany wartości lft i rgt wielu rekordów.
+Wymaga ono zmiany wartości \texttt{lft} i \texttt{rgt} wielu rekordów.
 
 W powyższym przypadku
 --- jako że wstawiamy dane w kolejności \emph{in depth} ---
@@ -85,7 +109,7 @@ W takiej sytuacji należy sie posłużyć algorytmem \emph{wyszukiwania w głąb
 i~kolejno numerować wartości \texttt{lft} węzła po wejściu do niego oraz \texttt{rgt} przed jego opuszczeniem.
 Przykładowa implementacja tego algorytmu:
 
-\begin{verbatim}[sql]
+\begin{verbatim}[python]
 def preprocess(node):
   node.lft = get_next_int()
   for n in children(node):
