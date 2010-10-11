@@ -485,26 +485,56 @@ class NestedSets(Tree):
 
     
     def get_parent(self, id):
-        # TODO: napisa to z LIMIT
+        '''
+        SELECT ns.*
+            FROM nested_sets ns
+            WHERE :id BETWEEN ns.id_left + 1 AND ns.id_right
+            ORDER BY ns.id_left DESC
+            LIMIT 1
+        '''
+        
+        #""
+        #    SELECT result.*
+        #        FROM nested_sets AS result, nested_sets AS box
+        #        WHERE
+        #            box.id = :id AND
+        #            result.lft < box.lft AND 
+        #            result.rgt > box.rgt
+        #        ORDER BY (result.rgt - result.lft) ASC
+        #        LIMIT 1
+        #    ""
+        #
+        #return self.db.execute('''
+        #    SELECT result.*
+        #        FROM nested_sets AS result, nested_sets AS box
+        #        WHERE
+        #            box.id = :id AND
+        #            result.lft < box.lft AND 
+        #            result.rgt > box.rgt
+        #        ORDER BY (result.rgt - result.lft) ASC
+        #    ''',
+        #    dict(id=id)
+        #).fetch_one()
+        
         """
             SELECT result.*
-                FROM nested_sets AS result, nested_sets AS box
+                FROM nested_sets AS box
+                    JOIN nested_sets AS result
+                        ON (box.lft BETWEEN result.lft + 1  AND result.rgt)
                 WHERE
-                    box.id = :id AND
-                    result.lft < box.lft AND 
-                    result.rgt > box.rgt
-                ORDER BY (result.rgt - result.lft) ASC
+                    box.id = :id
+                ORDER BY result.lft DESC
                 LIMIT 1
-            """
+        """
         
         return self.db.execute('''
             SELECT result.*
-                FROM nested_sets AS result, nested_sets AS box
+                FROM nested_sets AS box
+                    JOIN nested_sets AS result
+                        ON (box.lft BETWEEN result.lft + 1  AND result.rgt)
                 WHERE
-                    box.id = :id AND
-                    result.lft < box.lft AND 
-                    result.rgt > box.rgt
-                ORDER BY (result.rgt - result.lft) ASC
+                    box.id = :id
+                ORDER BY result.lft DESC
             ''',
             dict(id=id)
         ).fetch_one()
@@ -521,34 +551,47 @@ class NestedSets(Tree):
         #    ''',
         #    dict(id=id)
         #)
+        
+        #return self.db.execute_and_fetch(""
+        #    SELECT result.*
+        #        FROM nested_sets AS result, nested_sets AS box
+        #        WHERE
+        #            box.id = :id AND
+        #            result.lft <= box.lft AND 
+        #            result.rgt >= box.rgt
+        #        ORDER BY (result.rgt - result.lft) ASC
+        #    "",
+        #    dict(id=id)
+        #)
+        
         return self.db.execute_and_fetch("""
             SELECT result.*
-                FROM nested_sets AS result, nested_sets AS box
+                FROM nested_sets AS box
+                    JOIN nested_sets AS result
+                        ON (box.lft BETWEEN result.lft  AND result.rgt)
                 WHERE
-                    box.id = :id AND
-                    result.lft <= box.lft AND 
-                    result.rgt >= box.rgt
-                ORDER BY (result.rgt - result.lft) ASC
+                    box.id = :id
+                ORDER BY result.lft DESC
             """,
             dict(id=id)
         )
         
     def get_children(self, id):
         return self.db.execute_and_fetch("""
-        SELECT result.*
-            FROM nested_sets box
-                JOIN nested_sets result
-                    ON (result.lft BETWEEN box.lft + 1 AND box.rgt)
-            WHERE
-                box.lft = :id AND
-                NOT EXISTS (
-                    SELECT *
-                        FROM nested_sets ns
-                        WHERE
-                            ( ns.lft BETWEEN box.lft + 1 AND box.rgt ) AND
-                            ( result.lft BETWEEN ns.lft + 1 AND ns.rgt )
-                )
-            """, 
+            SELECT result.*
+                FROM nested_sets AS box
+                    JOIN nested_sets AS result
+                        ON (result.lft BETWEEN box.lft + 1 AND box.rgt)
+                WHERE
+                    box.id = :id AND
+                    NOT EXISTS (
+                        SELECT *
+                            FROM nested_sets ns
+                            WHERE
+                                ( ns.lft BETWEEN box.lft + 1 AND box.rgt ) AND
+                                ( result.lft BETWEEN ns.lft + 1 AND ns.rgt )
+                    )
+            """,
             dict(id=id)
         )
     
@@ -565,13 +608,25 @@ class NestedSets(Tree):
         #    dict(id=id)
         #)
         
+        #return self.db.execute_and_fetch(""
+        #    SELECT result.*
+        #        FROM nested_sets AS result, nested_sets AS box
+        #        WHERE
+        #            box.id = :id AND
+        #            result.lft > box.lft AND 
+        #            result.rgt < box.rgt
+        #        ORDER BY result.lft ASC
+        #    "",
+        #    dict(id=id)
+        #)
+        
         return self.db.execute_and_fetch("""
             SELECT result.*
-                FROM nested_sets AS result, nested_sets AS box
+                FROM nested_sets AS box
+                    JOIN nested_sets AS result
+                        ON (result.lft BETWEEN box.lft + 1 AND box.rgt)
                 WHERE
-                    box.id = :id AND
-                    result.lft > box.lft AND 
-                    result.rgt < box.rgt
+                    box.id = :id
                 ORDER BY result.lft ASC
             """,
             dict(id=id)

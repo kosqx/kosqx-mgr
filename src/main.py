@@ -41,7 +41,11 @@ def run_test(database, tree_class, testcases):
     def report_null(data):
         pass
     def report_print(data):
-        print data
+        if isinstance(data, list):
+            for i in data:
+                print repr(i)
+        else:
+            print repr(data)
     #report = report_null
     report = report_print
     

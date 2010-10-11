@@ -18,10 +18,20 @@ Tu zostaną opisane te najbardziej przydatne w bazach danych.
 %W ten sposób upodobniają się do programowania dynamicznego.
 
 
+Tym co różni wymienione tu metody to sposób w jaki przetwarzają dane przed zapisaniem ich do bazy danych.
+Tylko pierwsza z wymienionych metod wstawia dane w najprostszej postaci.
+Pozostałe stosują (zwykle dosyć kosztowne) wstępne przetwarzanie, 
+mające na celu przyśpieszenie późniejszych zapytań.
+%Jako, że wstawianie danych jest zwykle o wiele rzadziej wykonywane niż ich pobierania to takie zachowanie jest opłacalne 
+%gdyż zmniejsza koszt średni operacji.
+Wstawianie danych jest zwykle o wiele rzadziej wykonywane niż ich pobierania.
+W efekcie takie zachowanie jest opłacalne gdyż zmniejsza koszt średni operacji.
+
+
 Metody wymienione w tym rozdziale są uniwersalne.
 Daje się je zaimplementować w każdej relacyjnej bazie danych. 
 Można również (przy odrobinie wysiłku) korzystać z nich również w \emph{mapowaniach obiektowo-relacyjnych}\index{OR/M}.
-Nic nie stoi na przeszkodzie aby wykorzystać te metody również w obiektowych bazach danych.
+Nic nie stoi na przeszkodzie aby wykorzystać te metody również w innych niż relacyjne bazach danych.
 
 % Przedstawione zostaną tu różne reprezentacje lasów.
 % Czym czym są reprezentacje?

@@ -27,7 +27,7 @@ Poniżej zostaną przedstawione najważniejsze, używane w tej pracy definicje (
 
 Każdy węzeł drzewa jest korzeniem pewnego poddrzewa zawartego w większym drzewie.
 Ilość poddrzew węzła jest nazywana \treedef{stopniem} \eng{degree} tego węzła.
-Węzeł o stopniu zero nazywamy \treedef{liściem} \eng{leaf} lub \treedef{węzłem zewnętrznym} \eng{terminal node}. 
+Węzeł o~stopniu zero nazywamy \treedef{liściem} \eng{leaf} lub \treedef{węzłem zewnętrznym} \eng{terminal node}. 
 Węzeł nie będący liściem nazywamy \treedef{węzłem wewnętrznym} \eng{branch node}.
 
 % TODO: ścieżka, przodek, potomek
@@ -159,10 +159,10 @@ Dla tego został ustalony poniższy interface.
         Każda tabela kolumnę identyfikatora o nazwie \texttt{id}. 
         % Jest to numeryczny klucz główny \eng{primary key},
         Jest to numeryczny klucz główny,
-        którego wartości są automatycznie pobierane z sekwencji.
+        którego wartości są automatycznie pobierane z~sekwencji.
         Jest ona bardzo ważny gdyż wszystkie metody interface odwołują się do węzłów za jego pomocą
     \item \textbf{\texttt{insert(parent, name)}}
-    	Dodaje nowy węzeł o wartości \texttt{name} jako potomka węzła o identyfikatorze \texttt{parent}.
+    	Dodaje nowy węzeł o wartości \texttt{name} jako potomka węzła o~identyfikatorze \texttt{parent}.
     	Zwraca identyfikator nowo wstawionego rekordu.
     \item \textbf{\texttt{get\_roots()}}
     	Zwraca rekordy  \emph{korzeni} wszystkich drzew w lesie.
@@ -198,9 +198,14 @@ Jak widać są to operacje wyłącznie związane z hierarchiczną strukturą dan
 
 
 \paragraph{Przedstawione fragmenty kodu} 
-W opisach metod znajdują się fragmenty kodu je realizujące operacje na nich. 
+W opisach metod znajdują się fragmenty kodu SQL implementujące operacje na nich. 
 Tam gdzie to jest możliwe (czyli metoda jest dostępna ) została zaprezentowana składnia PostgreSQL\index{PostgreSQL}.
-Fragmenty kodu \todo{napisać o tym że gdzieniegdzie pojawiają się \texttt{:name}} wymagające parametrów...
+Jeśli operacja potrzebuje danych wejściowych zostają one podane jako nazwa parametru poprzedzona dwukropkiem --- przykładowo \texttt{:id}.
+
+% Takie format w Pythonie jest obsługiwany przez .
+% Natomiast w Javie za pomocą klasy \texttt{NamedParameterStatement}.
+
+%Fragmenty kodu \todo{napisać o tym że gdzieniegdzie pojawiają się \texttt{:name}} wymagające parametrów...
 
 Część operacji nie daje się wykonać wyłącznie za pomocą jednego (lub więcej) zapytań SQL.
 W takiej sytuacji fragmenty kodu zawierają kod języka \emph{Python}\index{Python}.

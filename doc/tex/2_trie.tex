@@ -22,7 +22,7 @@ Stąd też wywodzi się popularna angielska nazwa tej reprezentacji --- \textit{
 
 
 Metoda ta polega na przechowywaniu ciągu identyfikatorów wszystkich węzłów pomiędzy korzeniem a danym węzłem.
-Są one przechowywane w pojedyńczym polu danego rekordu.
+Są one przechowywane w pojedyńczym atrybucie danego rekordu.
 Czyli de facto przechowuje się wynik zapytania o przodków czyli ścieżkę.
 Stąd pochodzi najpopularniejsza jej nazwa: \emph{metoda zmaterializowanych ścieżek} \eng{materialized path}\footnote{
     Sama nazwa sugeruje podobieństwo do \emph{zmaterializowanych widoków} \eng{materialized views}.
@@ -30,7 +30,7 @@ Stąd pochodzi najpopularniejsza jej nazwa: \emph{metoda zmaterializowanych ści
 }.
 
 
-Identyfikatorem może być dowolne unikalne pole \todo{term:pole?} tabeli.
+Identyfikatorem może być dowolny, unikalny atrybut \todo{term:pole?} tabeli.
 Dobrym rozwiązaniem jest numeryczny klucz główny, lecz często bywa też stosowana unikalna nazwa węzła.
 
 
@@ -118,7 +118,7 @@ id | path    | name
 
 \operacja{Reprezentacja w SQL}
 
-W tej metodzie ważne jest by właściwie oszacować wymaganą długość pola \texttt{path}.
+W tej metodzie ważne jest by właściwie oszacować wymaganą długość atrybutu \texttt{path}.
 W prakryce nie powinna być ona mniejsza niż:
 \begin{displaymath}
     (\lceil log_{10}(|T|) \rceil + 1) \times height(T)
