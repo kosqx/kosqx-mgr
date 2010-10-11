@@ -42,8 +42,8 @@ def run_test(database, tree_class, testcases):
         pass
     def report_print(data):
         print data
-    report = report_null
-    #report = report_print
+    #report = report_null
+    report = report_print
     
     print '## database', database, tree_class.__name__
     

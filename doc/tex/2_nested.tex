@@ -3,8 +3,13 @@
 
 Reprezentacja została spopularyzowana przez Joe Celko\cite{celko-sql}\index{Celko Joe}.
 Dlatego czasem bywa nazywana ,,metodą Celko''.
-Lecz to nie on jako pierwszy ją opisał.
-Przed nim zrobił to Donald Knuth\cite{knuth}.
+Jak sam przyznaje, oparł się na opisie Donalda Knutha\cite{knuth}.
+
+%Lecz to nie on jako pierwszy ją opisał.
+%%Przed nim zrobił to Donald Knuth\cite{knuth}.
+
+%Lecz to nie on jako pierwszy ją opisał.
+%Przed nim zrobił to Donald Knuth\cite{knuth}.
 
 
 
@@ -13,26 +18,44 @@ Przed nim zrobił to Donald Knuth\cite{knuth}.
 %
 %W tej reprezentacji
 
-W tej metodzie każdy węzeł drzewa traktowany jest jako zbiór zbiorem.
-Jeśli nie ma podzbiorów to jest liściem.
+%W tej metodzie każdy węzeł drzewa traktowany jest jako zbiór zbiorem.
+%Jeśli nie ma podzbiorów to jest liściem.
+%Natomiast jeśli ma podzbiory to staje się ich przodkiem.
+%Jeśli dodatkowo jest najmniejszym z nadzbiorów danego węzła to jest jego rodzicem.
+%Dodatkowym wymogiem jest to by każdy węzeł miał część wspólną tylko i~wyłącznie z swymi przodkami oraz potomkami (a~nie z~rodzeństwem).
+%W efekcie każdy zbiór jest \emph{,,zagnieżdzony''} w swoim rodzicu%
+%\footnote{
+%    Za przykład z realnego świata może posłużyć metoda pakowania przedmiotów w celu przewozu.
+%    W kontenerach zanajdują się palety, na których znajdują się kartony, wewnątrz których znajdują się opakowania indywidualne produktów.
+%    Innym przykładem są matrioszki
+%}.
+%Stąd pochodzi nazwa tej reprezentacji.
+
+W tej metodzie każdy węzeł drzewa traktowany jest jako zbiór.
+Muszą one spełniać wymóg by \emph{każde dwa zbiory były rozłączne albo jeden był podzbiorem drugiego}.
+W efekcie jeśli zbiór nie ma podzbiorów to jest liściem.
 Natomiast jeśli ma podzbiory to staje się ich przodkiem.
 Jeśli dodatkowo jest najmniejszym z nadzbiorów danego węzła to jest jego rodzicem.
-Dodatkowym wymogiem jest to by każdy węzeł miał część wspólną tylko i~wyłącznie z swymi przodkami oraz potomkami (a~nie z~rodzeństwem).
 W efekcie każdy zbiór jest \emph{,,zagnieżdzony''} w swoim rodzicu%
 \footnote{
     Za przykład z realnego świata może posłużyć metoda pakowania przedmiotów w celu przewozu.
     W kontenerach zanajdują się palety, na których znajdują się kartony, wewnątrz których znajdują się opakowania indywidualne produktów.
-    Innym przykładem są matrioszki
+    Innym przykładem są matrioszki.
 }.
 Stąd pochodzi nazwa tej reprezentacji.
 
+W bazie danych najprostrzą metodą implementacji tej metody jest myślenie o zbiorach jako o odcinkach na prostej.
+Odcinek taki jest opisywany przez parę liczb.
+Jedna z nich określa lewy a druga prawy koniec odcinka.
+Jeśli dodatkowo przyjmnie się, że zbiór tych wartości liczbowych końców odcinków
+jest zbiorem kolejnych liczb naturalnych to zyskujemy możliwość łatwego wykonywania wielu operacji.
 
 Ponieważ \texttt{left} oraz \texttt{right} są słowami kluczowymi SQL-92,
 w~kodzie zostananą zastosowane ich skróty, odpowiednio \texttt{lft} oraz \texttt{rgt}.
 
 Reprezentacja pozwala na przechowywanie drzew uporządkowanych.
 
-\temat{Reprezentacja}
+%\temat{Reprezentacja}
 
 \begin{verbatim}[table] nested
 >n1 _
@@ -101,9 +124,13 @@ wymagana jest modyfikacja tylko tylu rekordów na jakim poziomie\todo{?} aktualn
 Lecz należy sie liczyć z przypadkiem pesymistycznym --- dodaniem do korzenia potomka jako pierwszego elementu\todo{las}.
 W takiej sytuacji wymagane jest zmodyfikowanie wszystkich istniejących rekordów.
 
-\textbf{Uwaga:} Jeśli chce się jednorazowo załadować cały las do bazy danych można postąpić bardziej optymalnie\footnote{
-    Powyższy kod tego nie robi gdyż ma być ogólny.
-}.
+%\textbf{Uwaga:} Jeśli chce się jednorazowo załadować cały las do bazy danych można postąpić bardziej optymalnie\footnote{
+%    Powyższy kod tego nie robi gdyż ma być ogólny.
+%}.
+
+\textbf{Uwaga:} Jeśli chce się jednorazowo załadować cały las do bazy danych można postąpić bardziej rozsądznie
+(powyższy kod tego nie robi gdyż ma być ogólny).
+
 Mianowicie przed załadowaniem danych do bazy danych wstępnie przetworzyć dane.
 W takiej sytuacji należy sie posłużyć algorytmem \emph{wyszukiwania w głąb}
 i~kolejno numerować wartości \texttt{lft} węzła po wejściu do niego oraz \texttt{rgt} przed jego opuszczeniem.
@@ -130,14 +157,20 @@ def preprocess(node):
 %! method-sql nested.ancestors
 
 \operacja{Pobieranie potomków}
+
+Pobieranie potomków jest tą operacją, dla której stosuje się tą reprezentację.
+Metoda pozwala na bardzo proste i cz
+
+
 %! method-sql nested.descendants
 
 
 \subsection{Uwagi}
 
-Metoda umożliwia bardzo proste pobieranie liści drzewa. 
-Jest ono możliwe dzięki temu, że $a.right - a.left = 2 * |a.descendants()| + 1$. 
-Skoro liść nie posiada żadnych potomków to da różnica wynosi $1$, co prowadzi do zapytania: 
+Metoda umożliwia bardzo proste pobieranie liści drzewa.
+Jest ono możliwe dzięki temu, że $a.rgt - a.lft = 1$ tylko i wyłacznie dla liści. 
+%Jest ono możliwe dzięki temu, że $a.right - a.left = 2 * |a.descendants()| + 1$. 
+%Skoro liść nie posiada żadnych potomków to da różnica wynosi $1$, co prowadzi do zapytania: 
 \begin{verbatim}[sql]
 SELECT *
   FROM nested_sets

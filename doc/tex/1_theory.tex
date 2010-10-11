@@ -33,23 +33,27 @@ Węzeł nie będący liściem nazywamy \treedef{węzłem wewnętrznym} \eng{bran
 % TODO: ścieżka, przodek, potomek
 
 
-
-
-
-% Karzdy węzeł jest jednocześnie swym przodkiem i potomkiem
-
-\textbf{Poziom} \eng{level} węzła jest zdefiniowany rekurencyjnie: poziom korzenia $root(T)$ równa się zero,
-a poziom każdego innego węzła jest o jeden większy niż poziom korzenia w najmniejszym 
-\todo{w sensie ilości węzłów} zawierającym go poddrzewie.
-%
-% TODO: wysokość
-%
-
 \treedef{Przodkami} \eng{descendant} węzła  nazywamy korzenie wszystkich drzew, w których się zawiera.
 \treedef{Potomkami} \eng{ancestor} węzła  nazywamy wszystkie węzły należące do poddrzewa, którego jest korzeniem. 
 Wynika z tego, że każdy węzeł jest jednocześnie swym przodkiem i potomkiem.
 Jeśli węzeł $x$ jest przodkiem $y$ oraz $x \neq y$ to $x$ jest \treedef{przodkiem właściwym}.
 Analogiczna, jeśli węzeł $x$ jest potomkiem $y$ oraz $x \neq y$ to $x$ jest \treedef{potomkiem właściwym}.
+
+Korzenie poddrzew $T_{1},\ldots, T_{m}$ nawywamy \treedef{dziećmi} \eng{children} węzła.
+Węzeł jest \treedef{rodzicem} \eng{parent} węzłów jeśli są one jego dziećmi.
+
+
+% Karzdy węzeł jest jednocześnie swym przodkiem i potomkiem
+
+\treedef{Poziom} \eng{level} węzła jest zdefiniowany rekurencyjnie: poziom korzenia $root(T)$ równa się zero,
+a poziom każdego innego węzła jest o jeden większy niż poziom korzenia w najmniejszym 
+\todo{w sensie ilości węzłów} zawierającym go poddrzewie.
+Maksymalny poziom wszystkich węzłów nazywa się \treedef{wysokością} \eng{height} drzewa.
+%
+% TODO: wysokość
+%
+
+
 
 
 
@@ -148,7 +152,7 @@ Obecność wyłącznie kolumny \texttt{name} zwiększa czytelność przykładów
 Aby móc porównywać różne metody przechowywania danych hierarchicznych należy stworzyć każdej te same warunki.
 Dla tego został ustalony poniższy interface.
 
-\begin{itemize*}
+\begin{itemize}
     \item \textbf{\texttt{create\_table()}}
         Tworzy w bazie danych wymagane struktury.
         Zwykle sprowadza się to do wykonania sekwencji zapytań SQL z podzbioru \emph{definicji danych} \eng{DDL --- Data Definition Language}.
@@ -175,7 +179,7 @@ Dla tego został ustalony poniższy interface.
     	Zwraca listę rekordów \emph{właściwych potomków} węzła, którego identyfikator został podany jako parametr.
     	Metoda nie wymaga konkretnej kolejności --- jest ona zależna od zastosowanego algorytmu.
     	W praktyce najczęściej jest to kolejność specyficzna dla przeszukiwania wszerz
-\end{itemize*}
+\end{itemize}
 
 Jak widać są to operacje wyłącznie związane z hierarchiczną strukturą danych.
 

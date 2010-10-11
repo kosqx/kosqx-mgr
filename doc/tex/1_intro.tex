@@ -48,7 +48,7 @@ Strukturą danych najlepiej nadającą się do przechowywania danych hierarchicz
 Każda współczesna baza danych korzysta z drzew. 
 Indeksy są implementowane jako \emph{B-drzewa}, \emph{R-drzewa}, itd.
 % inne drzewa w bazach danych
-Zapytania SQL są przetwarzane do \emph{drzew składniowych} \eng{AST --- Abstract Syntax Tree}. Następnie są przetwarzane do postaci planu zapytania który również jest drzewem.
+Zapytania SQL są przetwarzane do \emph{drzew składniowych} \eng{AST --- Abstract Syntax Tree}. Następnie są przetwarzane do postaci planu zapytania, który również jest drzewem.
 Lecz to są drzewa zastosowane w implementacji, mające na celu zwiększenie szybkości działania bazy danych i nie są bezpośrednio widoczne dla użytkownika bazy danych.
 Z tego powodu nie będą tu omawiane.
 
@@ -112,26 +112,25 @@ Miało być ono obroną relacyjnego modelu danych przed zarzutami,
 %Największych problemow należy się spodziewać w
 
 Celem tej pracy jest:
-\begin{itemize*}
+\begin{itemize}
     \item przedstawienie popularnych lub godnych zainteresowania metod przechowywania danych hierarchicznych
     \item porównanie tych metod pod względem łatwości użycia, dostępności, możliwości
     \item sprawdzenie ich wydajności w najpopularniejszych bazach danych
     \item ocena metod, wskazanie ich mocnych i słabych stron
     \item dostarczenie programu umożliwiającego własnoręczne sprawdzenie wymienionych metod
         oraz ułatwiającego sprawdzenie własnych
-\end{itemize*}
+\end{itemize}
 
 
 Zagadnienie przechowywania danych hierarchicznych w relacyjnych bazach danych nie jest tematem nowym.
 Jest często poruszany w Internecie,
 wiele książek na omawiających bazy danych zawiera rozdziały jemu poświęcone.
-Joe Celko nawet napisał całą książkę poruszającą to zagadnienie\cite{celko-tree}.
+Joe Celko napisał całą książkę poruszającą to zagadnienie\cite{celko-tree}.
 Mogło by się więc wydawać, że temat jest dobrze opracowany.
 
 Więc dlaczego powstała ta praca?
 Otóż dostępne materiały często zawierają opisy tylko kilku wybranych metod (zwykle nie więcej niż czterech).
 Ponadto nie zawierają testów wydajności a jeśli już je podają to tylko w jednej bazie.
-
 Celem tej pracy jest uzupełnienie tych braków w sposób spójny i jednolity.
 
 

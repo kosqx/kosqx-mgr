@@ -30,10 +30,16 @@ Jedynym wymogiem jest istnienie w niej klucza głównego\index{klucz!główny}.
 
 Cała informacja potrzebna do operowania na drzewie zawiera się w dodatkowej tabeli. 
 Zawiera ona informacje o odległości pomiędzy każdym elementem a wszystkimi jego potomkami.
+Ilość wierszy w tej tabeli wynosi
+\begin{displaymath}
+    \sum_{t in T} level(t) + 2 \leq |T|(height(T) + 2)
+\end{displaymath}
+Jak widać jest to znacząca ilości rekordów, które trzeba wstawić i przechowywać by móc korzystać z tej metody.
+Dlatego 
 
-Tabela ta 
+Poniższy graf pokazuje wyłącznie zawartość dodatkowej tabeli zawierającej strukturę drzewa.
 
-\temat{Reprezentacja}
+%\temat{Reprezentacja}
 
 \begin{verbatim}[table] full
 

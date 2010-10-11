@@ -282,10 +282,8 @@ class Full(Tree):
             )"""
         )
         
-        self.db.ddl("""
-            CREATE INDEX full_tree_idx_top_id    ON full_tree (top_id)""")
-        self.db.ddl("""
-            CREATE INDEX full_tree_idx_bottom_id ON full_tree (bottom_id)""")
+        #self.db.ddl("CREATE INDEX full_tree_idx_top_id    ON full_tree (top_id)")
+        #self.db.ddl("CREATE INDEX full_tree_idx_bottom_id ON full_tree (bottom_id)")
 
 
     def insert(self, parent, name):
@@ -454,65 +452,132 @@ class NestedSets(Tree):
         
         return pid
         # """
+        
+    def get_roots(self):
+        ## ""
+        #left = 0
+        #roots = []
+        #while True:
+        #    data = self.db.execute_and_fetch('''
+        #        SELECT d.id, d.name, d.rgt as rgt 
+        #            FROM nested_sets d 
+        #            WHERE d.lft = :left
+        #        ''', 
+        #        dict(left=left + 1)
+        #    )
+        #    if len(data) == 0:
+        #        break
+        #    roots.append(data[0])
+        #    left = data[0].rgt
+        #return roots
+        ## ""
+        
+        return self.db.execute_and_fetch("""
+            SELECT result.*
+                FROM nested_sets result
+                    LEFT OUTER JOIN nested_sets AS box
+                        ON (result.lft > box.lft AND result.rgt < box.rgt)
+                WHERE
+                    box.lft IS NULL
+            """,
+            dict(id=id)
+        )
+
     
     def get_parent(self, id):
         # TODO: napisa to z LIMIT
-        return self.db.execute("""
-            SELECT d.id, d.name 
-                FROM nested_sets d 
-                WHERE 
-                    d.lft < (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
-                    AND 
-                    (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) < d.rgt 
-                ORDER BY (d.rgt - d.lft) ASC
-            """,
+        """
+            SELECT result.*
+                FROM nested_sets AS result, nested_sets AS box
+                WHERE
+                    box.id = :id AND
+                    result.lft < box.lft AND 
+                    result.rgt > box.rgt
+                ORDER BY (result.rgt - result.lft) ASC
+                LIMIT 1
+            """
+        
+        return self.db.execute('''
+            SELECT result.*
+                FROM nested_sets AS result, nested_sets AS box
+                WHERE
+                    box.id = :id AND
+                    result.lft < box.lft AND 
+                    result.rgt > box.rgt
+                ORDER BY (result.rgt - result.lft) ASC
+            ''',
             dict(id=id)
         ).fetch_one()
     
     def get_ancestors(self, id):
+        #return self.db.execute_and_fetch('''
+        #    SELECT d.id, d.name 
+        #        FROM nested_sets d 
+        #        WHERE 
+        #            d.lft < (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
+        #            AND 
+        #            (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) < d.rgt 
+        #        ORDER BY (d.rgt - d.lft) ASC
+        #    ''',
+        #    dict(id=id)
+        #)
         return self.db.execute_and_fetch("""
-            SELECT d.id, d.name 
-                FROM nested_sets d 
-                WHERE 
-                    d.lft < (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
-                    AND 
-                    (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) < d.rgt 
-                ORDER BY (d.rgt - d.lft) ASC
+            SELECT result.*
+                FROM nested_sets AS result, nested_sets AS box
+                WHERE
+                    box.id = :id AND
+                    result.lft <= box.lft AND 
+                    result.rgt >= box.rgt
+                ORDER BY (result.rgt - result.lft) ASC
             """,
+            dict(id=id)
+        )
+        
+    def get_children(self, id):
+        return self.db.execute_and_fetch("""
+        SELECT result.*
+            FROM nested_sets box
+                JOIN nested_sets result
+                    ON (result.lft BETWEEN box.lft + 1 AND box.rgt)
+            WHERE
+                box.lft = :id AND
+                NOT EXISTS (
+                    SELECT *
+                        FROM nested_sets ns
+                        WHERE
+                            ( ns.lft BETWEEN box.lft + 1 AND box.rgt ) AND
+                            ( result.lft BETWEEN ns.lft + 1 AND ns.rgt )
+                )
+            """, 
             dict(id=id)
         )
     
     def get_descendants(self, id):
+        #return self.db.execute_and_fetch('''
+        #    SELECT d.id, d.name 
+        #        FROM nested_sets d 
+        #        WHERE 
+        #            d.lft > (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
+        #            AND 
+        #            (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) > d.rgt 
+        #        ORDER BY (d.rgt - d.lft) ASC
+        #    ''',
+        #    dict(id=id)
+        #)
+        
         return self.db.execute_and_fetch("""
-            SELECT d.id, d.name 
-                FROM nested_sets d 
-                WHERE 
-                    d.lft > (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
-                    AND 
-                    (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) > d.rgt 
-                ORDER BY (d.rgt - d.lft) ASC
+            SELECT result.*
+                FROM nested_sets AS result, nested_sets AS box
+                WHERE
+                    box.id = :id AND
+                    result.lft > box.lft AND 
+                    result.rgt < box.rgt
+                ORDER BY result.lft ASC
             """,
             dict(id=id)
         )
     
-    def get_roots(self):
-        # """
-        left = 0
-        roots = []
-        while True:
-            data = self.db.execute_and_fetch('''
-                SELECT d.id, d.name, d.rgt as rgt 
-                    FROM nested_sets d 
-                    WHERE d.lft = :left
-                ''', 
-                dict(left=left + 1)
-            )
-            if len(data) == 0:
-                break
-            roots.append(data[0])
-            left = data[0].rgt
-        return roots
-        # """
+
 
 
 class PathEnum(Tree):

@@ -61,7 +61,7 @@ Ta metoda jest na tyle popularna, że w bazach danych pojawiły się specjalne k
 Zostaną one przedstawione w rozdziale \todo{wstawić jakoś nazwę rozdziału} o konstrukcjach języka specyficznych dla systemu zarządzania bazą danych.
 
 
-\temat{Reprezentacja}
+%\temat{Reprezentacja}
 
 \begin{verbatim}[table] adjacency
 >n1 _
@@ -166,6 +166,9 @@ aż dotrze się do korzenia drzewa.
 
 \operacja{Pobieranie potomków}
 
+Algorytm pobieranie potomków jest podobny do pobierania przodków --- też pobiera się po jednym poziomie.
+%Różnica polega na tym, że w tym przypadku poziom do więcej niż jeden rekord, a 
+
 %! method-python simple.descendants
 
 Należy zwrócić uwagę na równoczesne pobieranie wszystkich węzłów na danym poziomie.
@@ -178,11 +181,16 @@ a następnie, rekurencyjnie, dzieci jego dzieci
 to wymagał by on wykonania w sumie tylu zapytań ile węzłów ma poddrzewo,
 którego korzeniem jest dany element.
 
-Czasem nie ma porzeby pobierać wszystkich potomów a tylko tych różniących się poziomem o nie więcej niż $N$.
+
+\subsection{Uwagi}
+
+Czasem nie ma porzeby pobierać wszystkich potomków a tylko tych różniących się poziomem o nie więcej niż $N$.
 Czyli dla $N = 1$ dzieci, dla $N = 2$, dzieci oraz wnuki, itd.
-Mając taką dodatkową wiedzę można napisać bardziej optymalne zapytanie.
+Mając taką dodatkową wiedzę program można wygenerować bardziej optymalne zapytanie.
 Zasada działania się nie zmienia (dalej jesto wyszukiwanie wszerz)
 ale zamiast łączyć wyniki w wnętrzu programu są one łaczone wewnątrz bazy danych za pomocą operatora \texttt{UNION ALL}.
+
+Poniżej przykład dla $N = 3$.
 
 \begin{verbatim}[sql]
     SELECT * FROM simple WHERE parent = :id
@@ -198,7 +206,7 @@ UNION ALL
     )
 \end{verbatim}
 
-W analogiczny sposób można pobierać przodków
+W analogiczny sposób można pobierać przodków.
 
 
 %SELECT * FROM [kosqx].[dbo].[simple] WHERE parent=1
