@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 
-
 class Tree:
     def __init__(self, db):
         self.db = db
@@ -43,53 +42,6 @@ class Tree:
 
     def reparent(self, id, new_parent):
         pass
-
-
-#class Memory(Tree):
-#    def __init__(self):
-#        self._d = []
-#    
-#    def _by_ids(self,  ids):
-#        return [self._value(i) for i in self._d if self._d[i][0] in ids]
-#    
-#    def _value(self, key):
-#        return key
-#    
-#    def create_table(self):
-#        pass
-#    
-#    def insert(self, parent, name):
-#        if parent is None:
-#            self._d.append((None, name))
-#        else:
-#            self._d.append((int(parent), name))
-#        return len(self._d) - 1
-#    
-#    def get_roots(self):
-#        print self._d
-#        #return [self._value(i) for i in self._d if self._d[i][0] == None]
-#        return [(i, d) for i, d in enumerate(self._d[1:]) if d[0] == None]
-#
-#    def get_parent(self, id):
-#        i = self._d[int(id)][0]
-#        return (i, self._d[i])
-#
-#    def get_ancestors(self, id):
-#        result = []
-#        i = id
-#        cnt = 0
-#        while i is not None and cnt < 10:
-#            print i
-#            i = self._d[i][0]
-#            result.append((i, self._d[i]))
-#            cnt+=1
-#        return result
-#
-#    def get_children(self, id):
-#        pass
-#
-#    def get_descendants(self, id):
-#        pass
 
 
 class Memory(Tree):
@@ -144,6 +96,11 @@ class Memory(Tree):
             keys = set(tmp)
         
         return result
+
+
+#####################################################################################################################################################
+#####################################################################################################################################################
+
 
 class Simple(Tree):
     tree_name = 'simple'
@@ -244,126 +201,7 @@ class Simple(Tree):
         # """
 
 
-class Full(Tree):
-    tree_name = 'full'
-    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
-    
-    def create_table(self):
-        tables = self.db.schema_list('table')
-        #print tables
-        if 'full_data' in tables:
-            self.db.ddl({
-                'oracle': ['DROP SEQUENCE full_data_id_seq', 'DROP TABLE full_data'],
-                '*': 'DROP TABLE full_data',
-            })
-        if 'full_tree' in tables:
-            self.db.execute('DROP TABLE full_tree')
-        
-        self.db.ddl({
-                'sqlite': "CREATE TABLE full_data(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(100))",
-                'oracle': [
-                    'CREATE SEQUENCE full_data_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
-                    'CREATE TABLE full_data(id int, name varchar(100))',
-                    ],
-                'db2':    "CREATE TABLE full_data(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), name varchar(100))", 
-                'mssql':  "CREATE TABLE full_data(id int IDENTITY PRIMARY KEY, name varchar(100))",
-                '*':      """
-                    CREATE TABLE full_data(
-                        id   serial PRIMARY KEY, 
-                        name varchar(100)
-                    )""",
-        })
-        
-        self.db.ddl("""
-            CREATE TABLE full_tree(
-                top_id    int,
-                bottom_id int,
-                distance  int
-            )"""
-        )
-        
-        #self.db.ddl("CREATE INDEX full_tree_idx_top_id    ON full_tree (top_id)")
-        #self.db.ddl("CREATE INDEX full_tree_idx_bottom_id ON full_tree (bottom_id)")
-
-
-    def insert(self, parent, name):
-        pid = self.db.insert_returning_id('full_data', dict(name=name))
-
-        if parent is not None:
-            for row in self.db.execute_and_fetch('SELECT top_id, distance FROM full_tree WHERE bottom_id = :parent', dict(parent=parent)):
-                self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
-                    dict(top_id=row[0], bottom_id=pid, distance=row[1] + 1)
-                )
-        else:
-            self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
-                dict(top_id=None, bottom_id=pid, distance=0)
-            )
-        self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
-            dict(top_id=pid, bottom_id=pid, distance=0)
-        )
-
-
-    def get_roots(self):
-        return self.db.execute_and_fetch("""
-            SELECT d.id, d.name 
-                FROM full_data d 
-                    JOIN full_tree t 
-                        ON (d.id=t.bottom_id) 
-                WHERE t.top_id IS NULL AND t.distance = 0
-            """
-        )
-
-    def get_parent(self, id):
-        return self.db.execute_and_fetch("""
-            SELECT d.id, d.name 
-                FROM full_data d 
-                    JOIN full_tree t 
-                        ON (d.id=t.top_id) 
-                WHERE t.distance = 1 AND t.bottom_id = :id
-            """, 
-            dict(id=id)
-        )
-
-    def get_ancestors(self, id):
-        #return self.db.execute_and_fetch('''
-            #SELECT d.id, d.name 
-                #FROM full_data d 
-                    #JOIN full_tree t 
-                        #ON (d.id=t.top_id)
-                #WHERE t.distance > 0 AND t.bottom_id = :id 
-                #ORDER BY t.distance ASC
-            #''', 
-            #dict(id=id)
-        #)
-        return self.db.execute_and_fetch("""
-            SELECT d.id, d.name 
-                FROM full_data d 
-                    JOIN full_tree t 
-                        ON (d.id=t.top_id)
-                WHERE t.bottom_id = :id AND t.distance > 0 
-            """, 
-            dict(id=id)
-        )
-
-    def get_children(self, id):
-        return self.db.execute_and_fetch("""
-            SELECT d.id, d.name 
-                FROM full_data d 
-                    JOIN full_tree t 
-                        ON (d.id=t.bottom_id) 
-                WHERE t.top_id = :id AND t.distance = 1""", 
-            dict(id=id)
-        )
-
-    def get_descendants(self, id):
-        return self.db.execute_and_fetch("""
-            SELECT d.id, d.name 
-                FROM full_data d 
-                    JOIN full_tree t 
-                        ON (d.id=t.bottom_id) 
-                WHERE t.top_id = :id AND t.distance > 0""", 
-            dict(id=id)
-        )
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 class NestedSets(Tree):
@@ -452,26 +290,8 @@ class NestedSets(Tree):
         
         return pid
         # """
-        
+    
     def get_roots(self):
-        ## ""
-        #left = 0
-        #roots = []
-        #while True:
-        #    data = self.db.execute_and_fetch('''
-        #        SELECT d.id, d.name, d.rgt as rgt 
-        #            FROM nested_sets d 
-        #            WHERE d.lft = :left
-        #        ''', 
-        #        dict(left=left + 1)
-        #    )
-        #    if len(data) == 0:
-        #        break
-        #    roots.append(data[0])
-        #    left = data[0].rgt
-        #return roots
-        ## ""
-        
         return self.db.execute_and_fetch("""
             SELECT result.*
                 FROM nested_sets result
@@ -482,40 +302,8 @@ class NestedSets(Tree):
             """,
             dict(id=id)
         )
-
     
     def get_parent(self, id):
-        '''
-        SELECT ns.*
-            FROM nested_sets ns
-            WHERE :id BETWEEN ns.id_left + 1 AND ns.id_right
-            ORDER BY ns.id_left DESC
-            LIMIT 1
-        '''
-        
-        #""
-        #    SELECT result.*
-        #        FROM nested_sets AS result, nested_sets AS box
-        #        WHERE
-        #            box.id = :id AND
-        #            result.lft < box.lft AND 
-        #            result.rgt > box.rgt
-        #        ORDER BY (result.rgt - result.lft) ASC
-        #        LIMIT 1
-        #    ""
-        #
-        #return self.db.execute('''
-        #    SELECT result.*
-        #        FROM nested_sets AS result, nested_sets AS box
-        #        WHERE
-        #            box.id = :id AND
-        #            result.lft < box.lft AND 
-        #            result.rgt > box.rgt
-        #        ORDER BY (result.rgt - result.lft) ASC
-        #    ''',
-        #    dict(id=id)
-        #).fetch_one()
-        
         """
             SELECT result.*
                 FROM nested_sets AS box
@@ -540,30 +328,6 @@ class NestedSets(Tree):
         ).fetch_one()
     
     def get_ancestors(self, id):
-        #return self.db.execute_and_fetch('''
-        #    SELECT d.id, d.name 
-        #        FROM nested_sets d 
-        #        WHERE 
-        #            d.lft < (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
-        #            AND 
-        #            (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) < d.rgt 
-        #        ORDER BY (d.rgt - d.lft) ASC
-        #    ''',
-        #    dict(id=id)
-        #)
-        
-        #return self.db.execute_and_fetch(""
-        #    SELECT result.*
-        #        FROM nested_sets AS result, nested_sets AS box
-        #        WHERE
-        #            box.id = :id AND
-        #            result.lft <= box.lft AND 
-        #            result.rgt >= box.rgt
-        #        ORDER BY (result.rgt - result.lft) ASC
-        #    "",
-        #    dict(id=id)
-        #)
-        
         return self.db.execute_and_fetch("""
             SELECT result.*
                 FROM nested_sets AS box
@@ -575,7 +339,7 @@ class NestedSets(Tree):
             """,
             dict(id=id)
         )
-        
+    
     def get_children(self, id):
         return self.db.execute_and_fetch("""
             SELECT result.*
@@ -596,30 +360,6 @@ class NestedSets(Tree):
         )
     
     def get_descendants(self, id):
-        #return self.db.execute_and_fetch('''
-        #    SELECT d.id, d.name 
-        #        FROM nested_sets d 
-        #        WHERE 
-        #            d.lft > (SELECT d.lft FROM nested_sets d WHERE d.id = :id) 
-        #            AND 
-        #            (SELECT d.rgt FROM nested_sets d WHERE d.id = :id) > d.rgt 
-        #        ORDER BY (d.rgt - d.lft) ASC
-        #    ''',
-        #    dict(id=id)
-        #)
-        
-        #return self.db.execute_and_fetch(""
-        #    SELECT result.*
-        #        FROM nested_sets AS result, nested_sets AS box
-        #        WHERE
-        #            box.id = :id AND
-        #            result.lft > box.lft AND 
-        #            result.rgt < box.rgt
-        #        ORDER BY result.lft ASC
-        #    "",
-        #    dict(id=id)
-        #)
-        
         return self.db.execute_and_fetch("""
             SELECT result.*
                 FROM nested_sets AS box
@@ -631,8 +371,9 @@ class NestedSets(Tree):
             """,
             dict(id=id)
         )
-    
 
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 class PathEnum(Tree):
@@ -840,6 +581,238 @@ class PathEnum(Tree):
             },
             dict(parent=id)
         )
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+class Full(Tree):
+    tree_name = 'full'
+    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
+    
+    def create_table(self):
+        tables = self.db.schema_list('table')
+        #print tables
+        if 'full_data' in tables:
+            self.db.ddl({
+                'oracle': ['DROP SEQUENCE full_data_id_seq', 'DROP TABLE full_data'],
+                '*': 'DROP TABLE full_data',
+            })
+        if 'full_tree' in tables:
+            self.db.execute('DROP TABLE full_tree')
+        
+        self.db.ddl({
+                'sqlite': "CREATE TABLE full_data(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(100))",
+                'oracle': [
+                    'CREATE SEQUENCE full_data_id_seq START WITH 1 INCREMENT BY 1 NOMAXVALUE',
+                    'CREATE TABLE full_data(id int, name varchar(100))',
+                    ],
+                'db2':    "CREATE TABLE full_data(id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), name varchar(100))", 
+                'mssql':  "CREATE TABLE full_data(id int IDENTITY PRIMARY KEY, name varchar(100))",
+                '*':      """
+                    CREATE TABLE full_data(
+                        id   serial PRIMARY KEY, 
+                        name varchar(100)
+                    )""",
+        })
+        
+        self.db.ddl("""
+            CREATE TABLE full_tree(
+                top_id    int,
+                bottom_id int,
+                distance  int
+            )"""
+        )
+        
+        #self.db.ddl("CREATE INDEX full_tree_idx_top_id    ON full_tree (top_id)")
+        #self.db.ddl("CREATE INDEX full_tree_idx_bottom_id ON full_tree (bottom_id)")
+
+
+    def insert(self, parent, name):
+        pid = self.db.insert_returning_id('full_data', dict(name=name))
+
+        if parent is not None:
+            for row in self.db.execute_and_fetch('SELECT top_id, distance FROM full_tree WHERE bottom_id = :parent', dict(parent=parent)):
+                self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
+                    dict(top_id=row[0], bottom_id=pid, distance=row[1] + 1)
+                )
+        else:
+            self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
+                dict(top_id=None, bottom_id=pid, distance=0)
+            )
+        self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
+            dict(top_id=pid, bottom_id=pid, distance=0)
+        )
+
+
+    def get_roots(self):
+        return self.db.execute_and_fetch("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.bottom_id) 
+                WHERE t.top_id IS NULL AND t.distance = 0
+            """
+        )
+
+    def get_parent(self, id):
+        return self.db.execute_and_fetch("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.top_id) 
+                WHERE t.distance = 1 AND t.bottom_id = :id
+            """, 
+            dict(id=id)
+        )
+
+    def get_ancestors(self, id):
+        #return self.db.execute_and_fetch('''
+            #SELECT d.id, d.name 
+                #FROM full_data d 
+                    #JOIN full_tree t 
+                        #ON (d.id=t.top_id)
+                #WHERE t.distance > 0 AND t.bottom_id = :id 
+                #ORDER BY t.distance ASC
+            #''', 
+            #dict(id=id)
+        #)
+        return self.db.execute_and_fetch("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.top_id)
+                WHERE t.bottom_id = :id AND t.distance > 0 
+            """, 
+            dict(id=id)
+        )
+
+    def get_children(self, id):
+        return self.db.execute_and_fetch("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.bottom_id) 
+                WHERE t.top_id = :id AND t.distance = 1""", 
+            dict(id=id)
+        )
+
+    def get_descendants(self, id):
+        return self.db.execute_and_fetch("""
+            SELECT d.id, d.name 
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id=t.bottom_id) 
+                WHERE t.top_id = :id AND t.distance > 0""", 
+            dict(id=id)
+        )
+
+
+#####################################################################################################################################################
+#####################################################################################################################################################
+
+
+class With(Simple):
+    tree_name = 'with'
+    tree_base = ['db2', 'sqlserver', 'postgresql']
+
+    def get_ancestors(self, id):
+        # WITH RECURSIVE temptab(node_level, id, parent, name) AS
+        return self.db.execute_and_fetch({
+            'postgresql': """
+                WITH RECURSIVE temptab(node_level, id, parent, name) AS
+                (
+                    SELECT 0, root.id, root.parent, root.name
+                        FROM simple root
+                        WHERE root.id = :id
+                UNION ALL
+                    SELECT t.node_level + 1, s.id, s.parent, s.name
+                        FROM simple s, temptab t
+                        WHERE s.id = t.parent
+                )
+                SELECT node_level, id, parent, name FROM temptab
+                """,
+            '*': """
+                WITH temptab(node_level, id, parent, name) AS
+                (
+                    SELECT 0, root.id, root.parent, root.name
+                        FROM simple root
+                        WHERE root.id = :id
+                UNION ALL
+                    SELECT t.node_level + 1, s.id, s.parent, s.name
+                        FROM simple s, temptab t
+                        WHERE s.id = t.parent
+                )
+                SELECT node_level, id, parent, name FROM temptab
+                """
+            
+            },
+            dict(id=id)
+        )
+
+    def get_descendants(self, id):
+        # WITH RECURSIVE temptab(level, id, parent, name) AS
+        return self.db.execute_and_fetch({
+            'postgresql':"""
+                WITH RECURSIVE temptab(level, id, parent, name) AS
+                (
+                    SELECT 0, root.id, root.parent, root.name
+                        FROM simple root
+                        WHERE root.id = :id
+                UNION ALL
+                    SELECT t.level + 1, s.id, s.parent, s.name
+                        FROM simple s, temptab t
+                        WHERE s.parent = t.id
+                )
+                SELECT level, id, parent, name FROM temptab
+                """,
+            '*':"""
+                WITH temptab(level, id, parent, name) AS
+                (
+                    SELECT 0, root.id, root.parent, root.name
+                        FROM simple root
+                        WHERE root.id = :id
+                UNION ALL
+                    SELECT t.level + 1, s.id, s.parent, s.name
+                        FROM simple s, temptab t
+                        WHERE s.parent = t.id
+                )
+                SELECT level, id, parent, name FROM temptab
+                """,
+            },
+            dict(id=id)
+        )
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+class ConnectBy(Simple):
+    tree_name = 'connectby'
+    tree_base = ['oracle']
+
+    def get_ancestors(self, id):
+        return self.db.execute_and_fetch("""
+            SELECT level, id, parent, name 
+                FROM simple 
+                START WITH id = :id 
+                CONNECT BY id = PRIOR parent
+            """, 
+            dict(id=id)
+        )
+
+    def get_descendants(self, id):
+        return self.db.execute_and_fetch("""
+            SELECT level, id, parent, name 
+                FROM simple 
+                START WITH id = :id 
+                CONNECT BY parent = PRIOR id
+            """, 
+            dict(id=id)
+        )
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 class PlSql(Simple):
@@ -1154,121 +1127,10 @@ SELECT t FROM tree_descendants(1) AS t;
 SELECT count(*) FROM tree_descendants(1);
 SELECT id, parent, value FROM tree_descendants(1) AS t JOIN tree ON t = tree.id;
   '''
-        
-    #def get_ancestors(self, id):
-    #    return self.db.execute_and_fetch("""
-    #        SELECT level, id, parent, name 
-    #            FROM simple 
-    #            START WITH id = :id 
-    #            CONNECT BY id = PRIOR parent""", 
-    #        dict(id=id)
-    #    )
-    #
-    #def get_descendants(self, id):
-    #    return self.db.execute_and_fetch("""
-    #        SELECT level, id, parent, name 
-    #            FROM simple 
-    #            START WITH id = :id 
-    #            CONNECT BY parent = PRIOR id""", 
-    #        dict(id=id)
-    #    )
-    
-    
-class ConnectBy(Simple):
-    tree_name = 'connectby'
-    tree_base = ['oracle']
-
-    def get_ancestors(self, id):
-        return self.db.execute_and_fetch("""
-            SELECT level, id, parent, name 
-                FROM simple 
-                START WITH id = :id 
-                CONNECT BY id = PRIOR parent
-            """, 
-            dict(id=id)
-        )
-
-    def get_descendants(self, id):
-        return self.db.execute_and_fetch("""
-            SELECT level, id, parent, name 
-                FROM simple 
-                START WITH id = :id 
-                CONNECT BY parent = PRIOR id
-            """, 
-            dict(id=id)
-        )
 
 
-class With(Simple):
-    tree_name = 'with'
-    tree_base = ['db2', 'sqlserver', 'postgresql']
-
-    def get_ancestors(self, id):
-        # WITH RECURSIVE temptab(node_level, id, parent, name) AS
-        return self.db.execute_and_fetch({
-            'postgresql': """
-                WITH RECURSIVE temptab(node_level, id, parent, name) AS
-                (
-                    SELECT 0, root.id, root.parent, root.name
-                        FROM simple root
-                        WHERE root.id = :id
-                UNION ALL
-                    SELECT t.node_level + 1, s.id, s.parent, s.name
-                        FROM simple s, temptab t
-                        WHERE s.id = t.parent
-                )
-                SELECT node_level, id, parent, name FROM temptab
-                """,
-            '*': """
-                WITH temptab(node_level, id, parent, name) AS
-                (
-                    SELECT 0, root.id, root.parent, root.name
-                        FROM simple root
-                        WHERE root.id = :id
-                UNION ALL
-                    SELECT t.node_level + 1, s.id, s.parent, s.name
-                        FROM simple s, temptab t
-                        WHERE s.id = t.parent
-                )
-                SELECT node_level, id, parent, name FROM temptab
-                """
-            
-            },
-            dict(id=id)
-        )
-
-    def get_descendants(self, id):
-        # WITH RECURSIVE temptab(level, id, parent, name) AS
-        return self.db.execute_and_fetch({
-            'postgresql':"""
-                WITH RECURSIVE temptab(level, id, parent, name) AS
-                (
-                    SELECT 0, root.id, root.parent, root.name
-                        FROM simple root
-                        WHERE root.id = :id
-                UNION ALL
-                    SELECT t.level + 1, s.id, s.parent, s.name
-                        FROM simple s, temptab t
-                        WHERE s.parent = t.id
-                )
-                SELECT level, id, parent, name FROM temptab
-                """,
-            '*':"""
-                WITH temptab(level, id, parent, name) AS
-                (
-                    SELECT 0, root.id, root.parent, root.name
-                        FROM simple root
-                        WHERE root.id = :id
-                UNION ALL
-                    SELECT t.level + 1, s.id, s.parent, s.name
-                        FROM simple s, temptab t
-                        WHERE s.parent = t.id
-                )
-                SELECT level, id, parent, name FROM temptab
-                """,
-            },
-            dict(id=id)
-        )
+#####################################################################################################################################################
+#####################################################################################################################################################
 
 
 class Ltree(Tree):
@@ -1380,6 +1242,9 @@ class Ltree(Tree):
             """, 
             dict(parent=id)
         )
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 class HierarchyId(Tree):
