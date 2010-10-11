@@ -8,23 +8,28 @@ Koncepcja stojąca za tą reprezentacją jest bardzo stara i powszechnie znana.
 Przykładowo ksiązka w biblotece może zostać zaklasyfikowana jako \textit{Epika / Powieść / Powieść fantastyczna}.
 Biolodzy dla opisu różnorodności życia na Ziemi stosują drzewo filogenetyczne.
 Za pomocą niego organizm w nim może zostać opisany jako
-\textit{eukarionty / zwierzęta / strunowce / kręgowce / ssaki / ssaki żyworodne / łożyskowce / drapieżne / kotowate / felis / kot domowy}\footnote{
-    Ta reprezentacja może wyglądać podobnie do ścieżek dostępu.
+\textit{eukarionty / zwierzęta / strunowce / kręgowce / ssaki / ssaki żyworodne / łożyskowce / drapieżne / kotowate / felis / kot domowy}.
+Stąd też wywodzi się popularna angielska nazwa tej reprezentacji --- \textit{lineage} --- oznaczająca rodowód, pochodzenie.
+
+
+    Ta reprezentacja może wyglądać podobnie do ścieżek dostępu w systemach plików.
     Jest to złudne podobieństwo.
     W tej metodzie z wartości każdej częsci ścieżki można wywnioskować wszystkich jej przodków.
     Przykładowo, mając doczynienia z kotem domowym wiemy, że jest ssakiem.
     Natomiast nazwa katalogu \texttt{bin} nie daje nam informacji o tym czy jesteśmy w katalogu \texttt{/bin}, \texttt{/usr/bin} czy \texttt{/home/user/bin}.
     %Nie należy mylić tej metody z 
-}.
-Stąd też wywodzi się popularna angielska nazwa tej reprezentacji --- \textit{lineage} --- oznaczająca rodowód, pochodzenie.
-
-
 
 
 
 Metoda ta polega na przechowywaniu ciągu identyfikatorów wszystkich węzłów pomiędzy korzeniem a danym węzłem.
-
 Są one przechowywane w pojedyńczym polu danego rekordu.
+Czyli de facto przechowuje się wynik zapytania o przodków czyli ścieżkę.
+Stąd pochodzi najpopularniejsza jej nazwa: \emph{metoda zmaterializowanych ścieżek} \eng{materialized path}\footnote{
+    Sama nazwa sugeruje podobieństwo do \emph{zmaterializowanych widoków} \eng{materialized views}.
+    W obu przypadkach wynik zapytania jest przechowywany by przyśpieszyć kolejne operacje.
+}.
+
+
 Identyfikatorem może być dowolne unikalne pole \todo{term:pole?} tabeli.
 Dobrym rozwiązaniem jest numeryczny klucz główny, lecz często bywa też stosowana unikalna nazwa węzła.
 
@@ -41,7 +46,7 @@ Przykładowo ciąg identyfikatorów całkowitoliczbowych \texttt{4, 8, 15, 16, 2
  \item napis z elememtami przekształconymi na napis stałej długości. 
     Przykładowo dla długości 3 będzie to \verb|'004008015016023042'|.
     Wadą tej metody jest konieczność jednorazowego wyboru długości napisu dla identyfikatora.
-    Dla długości $n$ można przechować tylko $10^n-1$ węzłów%\footnote{zakładając, że wszystkie dopuszczalne wartości znajdą się w użyciu, a usuwanie elementow tworzy luki}.
+    Dla długości $n$ można przechować tylko $10^n-1$ węzłów. %\footnote{zakładając, że wszystkie dopuszczalne wartości znajdą się w użyciu, a usuwanie elementow tworzy luki}.
     Natomiast zastosowanie dużej $n$ zwiększa zużycie zasobów SZDB oraz spowalnia działanie.
  \item tablicę \todo{term:array} np. \verb|{4, 8, 15, 16, 23, 42}|
     Możliwość przechowywania tablic wewnątrz rekordu nie jest powszechna wśród implementacji relacyjnych baz danych.
@@ -114,29 +119,53 @@ id | path    | name
 \operacja{Reprezentacja w SQL}
 
 W tej metodzie ważne jest by właściwie oszacować wymaganą długość pola \texttt{path}.
-W prakryce nie powinna być ona mniejsza niż $(\lceil log_{10}(maksymalna ilość rekordów) \rceil + 1)(wysokość drzewa)$.
+W prakryce nie powinna być ona mniejsza niż:
+\begin{displaymath}
+    (\lceil log_{10}(|T|) \rceil + 1) \times height(T)
+\end{displaymath}
 
 %! method-sql pathenum.create
 
 \operacja{Wstawianie danych}
+
+%Wstawianie danych jest prostą operacją.
+
+Podczas wstawiania potrzebne są informacje o wszystkich właściwych przodkach wstawianego węzła.
+Na szczęście znajdują się one w pojedyńczym rekordzie --- rodzicu.
+Wystarczy więc je pobrać i odpowiednio sformatować.
+
 %! method-sql pathenum.insert
 
 \operacja{Pobranie korzeni}
 
-
+Jako, że korzenie nie posiadają przodków to ich ścieżka jest pusta. 
 
 %! method-sql pathenum.roots
 
 \operacja{Pobranie rodzica}
+
+%\todo{przedstawiona tu metoda }
+
 %! method-sql pathenum.parent
 
+Ta metoda nie jest ekstremalnie szybka, ale ma dwie zalety ---
+daje się zaimplementować w każdej z obsługiwanych baz danych oraz wymagane zapytanie jest wszędzie takie samo.
+
+
+
 \operacja{Pobranie dzieci}
+
+
+
 %! method-sql pathenum.children
 
 \operacja{Pobranie przodków}
 %! method-sql pathenum.ancestors
 
 \operacja{Pobieranie potomków}
+
+
+
 %! method-sql pathenum.descendants
 
 

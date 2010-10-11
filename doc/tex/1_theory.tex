@@ -5,51 +5,67 @@
 
 \section{Podstawowe definicje}
 
-Drzewa można traktować i definiować na wiele równowarznych sposobów.
+Drzewa można traktować i definiować na wiele równoważnych sposobów.
 Przykładowo w~teorii grafów jest to acykliczny i spójny graf.
-W informatyce częściej stosuje się definicję rekurencyjną%
-\footnote{
-    Wynika to z częstego w informatyce wymogu by drzewo było uporządkowane.
-    Taki twór formalnie nie jest grafem.
-}.
+W informatyce częściej stosuje się definicję rekurencyjną.
+Wynika to z częstego w informatyce wymogu by drzewo było uporządkowane.
+Taki twór formalnie nie jest grafem.
 
 
-\begin{quote}
+Poniżej zostaną przedstawione najważniejsze, używane w tej pracy definicje (na podstawie \cite{knuth}).
 
-\treedef{Drzewo} definiujemy jako zbiór $T$ zawierający jednen lub więcej elementów zwanych \treedef{węzłami}, takich że:
+
+\treedef{Drzewo} \eng{tree} definiujemy jako zbiór $T$ zawierający jeden lub więcej elementów $t \in T$ zwanych \treedef{węzłami} \eng{node}, takich że:
 
 \begin{enumerate}
- \item istnieje jeden wyróżniony węzeł zwany \treedef{korzeniem} drzewa, $root(T)$
- \item pozostałe węzły (z wyłączeniem korzenia) są podzielone na $m \geq 0$ rozłącznych zbiorów $T_{1},\ldots, T_{m}$,
-	z których każdy jest drzewem. Drzewa $T_{1},\ldots, T_{m}$ nazywane są \treedef{poddrzewami} korzenia.
+ \item
+    istnieje jeden wyróżniony węzeł zwany \treedef{korzeniem} drzewa, $root(T)$
+ \item
+    pozostałe węzły (z wyłączeniem korzenia) są podzielone na $m \geq 0$ rozłącznych zbiorów $T_{1},\ldots, T_{m}$,
+	będących drzewami. Są one nazywane \treedef{poddrzewami} \eng{subtree} korzenia.
 \end{enumerate}
 
 Każdy węzeł drzewa jest korzeniem pewnego poddrzewa zawartego w większym drzewie.
-Ilość poddrzew węzła jest nazywana \treedef{stopniem} tego węzła.
-Węzeł o stopniu zero nazywamy \treedef{liściem} lub \treedef{węzłem zewnętrznym}. 
-Węzeł nie będący liściem nazywamy \treedef{węzłem wewnętrznym}. 
-Poziom węzła jest zdefiniowany rekurencyjnie: poziom korzenia $root(T)$ równa się zero,
-a poziom każdego innego węzła jest o jeden wiekszy niż poziom korzenia w najmniejszym 
+Ilość poddrzew węzła jest nazywana \treedef{stopniem} \eng{degree} tego węzła.
+Węzeł o stopniu zero nazywamy \treedef{liściem} \eng{leaf} lub \treedef{węzłem zewnętrznym} \eng{terminal node}. 
+Węzeł nie będący liściem nazywamy \treedef{węzłem wewnętrznym} \eng{branch node}.
+
+% TODO: ścieżka, przodek, potomek
+
+
+
+
+
+% Karzdy węzeł jest jednocześnie swym przodkiem i potomkiem
+
+\textbf{Poziom} \eng{level} węzła jest zdefiniowany rekurencyjnie: poziom korzenia $root(T)$ równa się zero,
+a poziom każdego innego węzła jest o jeden większy niż poziom korzenia w najmniejszym 
 \todo{w sensie ilości węzłów} zawierającym go poddrzewie.
 %
 % TODO: wysokość
 %
 
+\treedef{Przodkami} \eng{descendant} węzła  nazywamy korzenie wszystkich drzew, w których się zawiera.
+\treedef{Potomkami} \eng{ancestor} węzła  nazywamy wszystkie węzły należące do poddrzewa, którego jest korzeniem. 
+Wynika z tego, że każdy węzeł jest jednocześnie swym przodkiem i potomkiem.
+Jeśli węzeł $x$ jest przodkiem $y$ oraz $x \neq y$ to $x$ jest \treedef{przodkiem właściwym}.
+Analogiczna, jeśli węzeł $x$ jest potomkiem $y$ oraz $x \neq y$ to $x$ jest \treedef{potomkiem właściwym}.
+
+
+
 
 
 Jeśli względny porządek poddrzew $T_{1},\ldots, T_{m}$ w części (2) definicji jest istotny,
-to mówimy, że drzewo jest \treedef{uporządkowane}. \todo{...}
+to mówimy, że drzewo jest \treedef{uporządkowane} \eng{ordered tree}. \todo{...}
 Jeśli nie chcemy rozróżniać drzew, które różnią się jedynie kolejnością poddrzew, mówimy o drzewach \treedef{zorientowanych}.
 
-\treedef{Lasem} nazywamy zbiór zera lub więcej rozłącznych drzew. 
-Innym sposobem wyprowadzenia części (2) definicji jest stwierdzenie: \textit{węzły drzewa z wyłączeniem korzenia tworzą las}.
+\treedef{Lasem} \eng{forest} nazywamy zbiór zera lub więcej rozłącznych drzew. 
+%Innym sposobem wyprowadzenia części (2) definicji jest stwierdzenie: \textit{węzły drzewa z wyłączeniem korzenia tworzą las}.
+Abstrakcyjnie drzewa i lasy różnią się nieznacznie.
+Usuwając korzeń drzewa, otrzymamy las.
+Jeśli zaś wszystkie drzewa w lesie uczynimy poddrzewami jednego dodatkowego węzła, to otrzymamy drzewo.
+Z tego powodu przy nieformalnym omawianiu struktur danych słowa ,,drzewa'' i ,,lasy'' są używane niemal wymiennie.
 
-Abstrakcyjnie drzewa i lasy niewiele się różnią.
-Jeśli usuniemy korzeń drzewa, otrzymamy las.
-W drugą stronę, jeśli wszystkie drzewa w lesie uczynimy poddrzewami jednego dodatkowego węzła, to otrzymamy drzewo.
-Z tego powodu słowa ,,drzewa'' i ,,lasy'' są przy nieformalnym omawianiu struktur danych używane niemal wymiennie.
-
-\end{quote}
 
 %\begin{quote}
 %
@@ -97,100 +113,68 @@ Z tego powodu słowa ,,drzewa'' i ,,lasy'' są przy nieformalnym omawianiu struk
 %\index{rekurencja}
 %
 %
-%Tu: matematyczny opis drzew, ich podstawowe własności, omówienie terminów:
-%\begin{description}
-%    \item
-%    \item[drzewo]
-%    \item[las]
-%    \item[rodzic]
-%    \item[przodek]
-%    \item[korzeń]
-%    \item[dziecko]
-%    \item[potomek]
-%    \item[głębokość, mini]
-%\end{description}
-%
-%\section{Podział drzew}
-%\subsection{Jednorodność}
-%Warto by dodać o drzewach jednorodnych oraz niejednorodnych.
-%
-%\subsection{Kolejność}
-%
-%
-%\section{Podstawowe algorytmy dla drzew}
-%\subsection{Wyszukiwanie w głąb}
-%\index{drzewo!wyszukiwanie!w głąb}
-%\subsection{Wyszukiwanie wszerz}
-%\index{drzewo!wyszukiwanie!wszerz}
-%
-%
-%\section{Różnice pomiędzy drzewami w algorytmice a w bazach danych}
-%
-%Nie ma sensu coś takiego jak drzewo czerwono-czarne gdyż w drzewach w bazach danych chodzi o strukturę a nie o optymalizację czasu dostępu.
-%
-%\section{Tematy porównania - operacje}
-%
-%
-%
-%\subsection{Operacje}
-%\subsection{Pobranie korzeni}
-%\index{drzewo!korzeń}
-%\subsection{Pobranie przodków}
-%\index{drzewo!przodekowie}
-%\subsection{Pobranie rodzica}
-%\index{drzewo!rodzic}
-%\subsection{Pobranie dzieci}
-%\index{drzewo!dzieci}
-%\subsection{Pobranie potomków}
-%\index{drzewo!potomkowie}
-%\subsection{Pobranie (najmłodszego) wspólnego przodka}
 
 
 
-% \begin{description}
-%   \item[pobranie rodzica] polega na pobraniu rodzica bieżącego elementu
-%   \item[pobranie przodków] polega na pobraniu rodzica, rodzica rodzica aż do korzenia elementów
-% \end{description}
-
-%\section{Dostępność}
-%\subsection{Mapowanie relacyjno-obiektowe}
-%\subsection{W zależności od bazy danych}
-%
 
 \section{Przyjęte założenia}
+
 \todo{więcej wypisać, zastanowić się co z tym zrobić}
 
-\paragraph{Przechowywany jest las}
-Zgodnie z definicją z poprzedniego rozdziału las jest bardzo podobny do drzewa.
-Jeśli nie potrzebny jest las a drzewo to wystarczy zauważyć,
-że chodzi nam o las składający się z tylko jednego drzewa.\todo{przepisać}
+\paragraph{Terminologia angielska}
+Literatura dotycząca informatyki jest zdominowana przez publikacje w języku angielskim.
+Aby ułatwić czytelnikowi korzystanie z tych źródeł wiedzy przy każdym ważnym lub nietrywialnym w tłumaczeniu terminie została podana jego angielska wersja.
+
+%\paragraph{Las}
+%Przechowujemy 
+% Zgodnie z definicją z poprzedniego rozdziału las jest bardzo podobny do drzewa.
+%Jeśli nie potrzebny jest las a drzewo to wystarczy zauważyć,
+%że chodzi nam o las składający się z tylko jednego drzewa.\todo{przepisać}
 
 
 \paragraph{Drzewa uporządkowane}
 Nie wymagane jest by metoda odpowiadała za przechowywanie porządku poddrzew.
 Jeśli zaistnieje taki wymóg to można dodać kolumnę przeznaczoną do przechowywania wartości odpowiedzialnej za relację porządku.
-Czasem istnieje też możliwośc sortowania po istniejących już kolumnach, przykładowo nazwie kategorii.
+Czasem istnieje też możliwość sortowania po istniejących już kolumnach, przykładowo nazwie kategorii.
 
 
 \paragraph{Tabela zawiera tylko jedną kolumnę z danymi użytkownika} 
 Bez problemu można dodać więcej kolumn do tabeli.
 Obecność wyłącznie kolumny \texttt{name} zwiększa czytelność przykładów.
 
-%\paragraph{}
 
-\paragraph{Operacje na danych hierarchicznych}
+\paragraph{Przyjęty interface}
+
+Aby móc porównywać różne metody przechowywania danych hierarchicznych należy stworzyć każdej te same warunki.
+Dla tego został ustalony poniższy interface.
 
 \begin{itemize*}
-    \item \textbf{\texttt{create\_table(self)}}
-        
-    \item \textbf{\texttt{insert(self, parent, name)}}
-    \item \textbf{\texttt{get\_roots(self)}}
-    \item \textbf{\texttt{get\_parent(self, id)}}
-    \item \textbf{\texttt{get\_ancestors(self, id)}}
-        \textbf{Uwaga:} W praktyce bardzo często potrzebna jest lista zawierająca nie tylko przodków danego węzła ale również jego samego.
-        Więc ta metoda 
-    \item \textbf{\texttt{get\_children(self, id)}}
-    \item \textbf{\texttt{get\_descendants(self, id)}}
+    \item \textbf{\texttt{create\_table()}}
+        Tworzy w bazie danych wymagane struktury.
+        Zwykle sprowadza się to do wykonania sekwencji zapytań SQL z podzbioru \emph{definicji danych} \eng{DDL --- Data Definition Language}.
+        Każda tabela kolumnę identyfikatora o nazwie \texttt{id}. 
+        % Jest to numeryczny klucz główny \eng{primary key},
+        Jest to numeryczny klucz główny,
+        którego wartości są automatycznie pobierane z sekwencji.
+        Jest ona bardzo ważny gdyż wszystkie metody interface odwołują się do węzłów za jego pomocą
+    \item \textbf{\texttt{insert(parent, name)}}
+    	Dodaje nowy węzeł o wartości \texttt{name} jako potomka węzła o identyfikatorze \texttt{parent}.
+    	Zwraca identyfikator nowo wstawionego rekordu.
+    \item \textbf{\texttt{get\_roots()}}
+    	Zwraca rekordy  \emph{korzeni} wszystkich drzew w lesie.
+    \item \textbf{\texttt{get\_parent(id)}}
+    	Zwraca rekord \emph{rodzica} węzła, którego identyfikator został podany jako parametr.
+    \item \textbf{\texttt{get\_ancestors(id)}}
+    	Zwraca listę rekordów  \emph{przodków} węzła, którego identyfikator został podany jako parametr.
+    	Lista jest posortowana malejąco wedle poziomu rekordu, czyli korzeń jest jej ostatnim elementem.
+        %W praktyce bardzo często potrzebna jest lista zawierająca nie tylko przodków danego węzła ale również jego samego.
+        %Więc ta metoda 
+    \item \textbf{\texttt{get\_children(id)}}
+    	Zwraca listę rekordów \emph{dzieci} węzła, którego identyfikator został podany jako parametr.
+    \item \textbf{\texttt{get\_descendants(id)}}
+    	Zwraca listę rekordów \emph{właściwych potomków} węzła, którego identyfikator został podany jako parametr.
+    	Metoda nie wymaga konkretnej kolejności --- jest ona zależna od zastosowanego algorytmu.
+    	W praktyce najczęściej jest to kolejność specyficzna dla przeszukiwania wszerz
 \end{itemize*}
 
 Jak widać są to operacje wyłącznie związane z hierarchiczną strukturą danych.
@@ -216,19 +200,18 @@ Fragmenty kodu \todo{napisać o tym że gdzieniegdzie pojawiają się \texttt{:n
 
 Część operacji nie daje się wykonać wyłącznie za pomocą jednego (lub więcej) zapytań SQL.
 W takiej sytuacji fragmenty kodu zawierają kod języka \emph{Python}\index{Python}.
-Został on wybrany do tego zadania ze względu na jego ekspresyjność, zwięzłość oraz wysoki poziom abstrakcji\todo{dobre sformuowanie?}.
+Został on wybrany do tego zadania ze względu na jego ekspresyjność, zwięzłość oraz wysoki poziom abstrakcji.
 Z powodu tych cech jest często nazywany \emph{wykonywalnym pseudokodem}.
 
-Aby polepszyć zwięzłość fragmęty kodu korzystają z bibloteki PADA, stworzonej aby uprościć pisanie implementacji opisanych metod. 
-Więcej informacji o tej biblotece znajduje się w \todo{Załączniku 2}.
+Aby polepszyć zwięzłość fragmenty kodu korzystają z biblioteki PADA, stworzonej aby uprościć pisanie implementacji opisanych metod. 
+Więcej informacji o tej bibliotece znajduje się w dodatkach\todo{Załączniku 2}.
 
 
 
-\paragraph{Operacje z wykorzystaniem \texttt{id}}
-Wszystkie operacje wykorzystują sztucznie utworzony klucz główny\index{klucz!główny} \texttt{id}. 
+%\paragraph{Operacje z wykorzystaniem \texttt{id}}
+%Wszystkie operacje wykorzystują sztucznie utworzony klucz główny\index{klucz!główny} \texttt{id}. 
 
 
 
-\paragraph{Terminologia anglojęzyczna} \todo{nazwać to jakoś normalnie}
-Literatura dotycząca informatyki jest dzisiaj zdominowana przez publikacje w języku angielskim. Dlatego przy każdym ważnym lub nietrywialnym w tłumaczeniu terminie została podana jego angielska wersja. 
+
 

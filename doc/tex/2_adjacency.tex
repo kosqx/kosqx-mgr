@@ -25,8 +25,8 @@
 Najprostszą, najbardziej intuicyjną i zapewne najpopularniejszą metodą jest metoda krawędziowa \eng{adjacency}\index{adjacency}.
 Została ona pierwszy raz zaprezentowana przez Edgara Franka Codda\index{Codd Edgar Frank}.
 %On też nadał im nazwę, która odnosi się do tego, że informacja o rodzicu elementu znajduje się w tej samej krotce\todo{krotka?} co dane.
-Nadał też jej nazwę. Wynika ona z tego, że każdy rekord zawiera własny identyfikator oraz identyfikator rodzica.
-Takie dane są wystarczające aby w drzewie opisać krawędz.
+%Nadał też jej nazwę. Wynika ona z tego, że każdy rekord zawiera własny identyfikator oraz identyfikator rodzica.
+%Takie dane są wystarczające aby w drzewie opisać krawędz.
 
 
 Zasługa spopularyzowania tej metody przypada Oracle.
@@ -117,7 +117,13 @@ automatycznie zostaną usunięci wszyscy jego potomkowie.
 
 
 \operacja{Wstawianie danych}
+
+Ta metoda --- jako jedyna w tym rozdziale --- nie wymaga żadnego wstępnego przetwarzania danych.
+W efekcie wstawianie węzłów jest bardzo proste.
+
 %! method-sql simple.insert
+
+
 
 \operacja{Pobranie korzeni}
 Cechą charakterystyczną korzenia jest to, że jego rodzic jest ustawiony na \texttt{NULL}.
@@ -171,6 +177,37 @@ Gdyby zastosować naiwny algorytm pobierania dzieci jednego węzła,
 a następnie, rekurencyjnie, dzieci jego dzieci
 to wymagał by on wykonania w sumie tylu zapytań ile węzłów ma poddrzewo,
 którego korzeniem jest dany element.
+
+Czasem nie ma porzeby pobierać wszystkich potomów a tylko tych różniących się poziomem o nie więcej niż $N$.
+Czyli dla $N = 1$ dzieci, dla $N = 2$, dzieci oraz wnuki, itd.
+Mając taką dodatkową wiedzę można napisać bardziej optymalne zapytanie.
+Zasada działania się nie zmienia (dalej jesto wyszukiwanie wszerz)
+ale zamiast łączyć wyniki w wnętrzu programu są one łaczone wewnątrz bazy danych za pomocą operatora \texttt{UNION ALL}.
+
+\begin{verbatim}[sql]
+    SELECT * FROM simple WHERE parent = :id
+UNION ALL 
+    SELECT * FROM simple WHERE parent IN (
+        SELECT id FROM simple WHERE parent = :id
+    )
+UNION ALL
+    SELECT * FROM simple WHERE parent IN (
+        SELECT id FROM simple WHERE parent IN (
+            SELECT id FROM simple WHERE parent = :id
+        )
+    )
+\end{verbatim}
+
+W analogiczny sposób można pobierać przodków
+
+
+%SELECT * FROM [kosqx].[dbo].[simple] WHERE parent=1
+%UNION ALL 
+%SELECT * FROM [kosqx].[dbo].[simple] WHERE parent IN (SELECT id FROM [kosqx].[dbo].[simple] WHERE parent=1)
+%UNION ALL
+%SELECT * FROM [kosqx].[dbo].[simple] WHERE parent IN (SELECT id FROM [kosqx].[dbo].[simple] WHERE parent IN (SELECT id FROM [kosqx].[dbo].[simple] WHERE parent=1))
+
+
 
 
 
