@@ -129,7 +129,7 @@ W takiej sytuacji wymagane jest zmodyfikowanie wszystkich istniejących rekordó
 %    Powyższy kod tego nie robi gdyż ma być ogólny.
 %}.
 
-\textbf{Uwaga:} Jeśli chce się jednorazowo załadować cały las do bazy danych można zrobić to bardziej optymalnie
+\textbf{Uwaga:} Jeśli chce się jednorazowo załadować całe drzewo do bazy danych można zrobić to bardziej wydajnie.
 (powyższy kod tego nie robi gdyż ma być ogólny).
 
 Mianowicie przed załadowaniem danych do bazy danych wstępnie przetworzyć dane.
@@ -145,35 +145,75 @@ def preprocess(node):
   node.rgt = get_next_int()
 \end{verbatim}
 
+%
+%\operacja{Pobranie węzłów --- cechy wspólne}
+%
+%Wszystkie implementacje operacje są do siebie bardzo podobne.
+
+% JOIN box
+% wewnątz/na zewnątez
+
 \operacja{Pobranie korzeni}
-%! method-python nested.roots
+
+W tej reprezentacji korzeń to węzeł, który nie zawiera się w żadnym innym.
+Zapytanie próbuje pobrać rodzica danego rekordu, a dzięki złączeniu zewnętrznemu 
+
+%! method-sql nested.roots
 
 \operacja{Pobranie rodzica}
 %! method-sql nested.parent
 
+Ten zapytanie różni się od pobrania przodków w dwóch miejscach:
+\begin{itemize}
+    \item 
+	\texttt{result.lft + 1} w warunku złączenia powoduje, że spełniają go wyłącznie przodkowie właściwi
+    \item 
+        klauzula \texttt{LIMIT 1} sprawia, że pobiera tylko jeden rekord 
+\end{itemize}
+
 \operacja{Pobranie dzieci}
+
+Pobieranie dzieci to de facto pobieranie potomków z dodatkowym warunkiem.
+Jest nim sprawdzenie czy 
+
+%Podzapytanie skorelowane
+
 %! method-sql nested.children
 
+
+
 \operacja{Pobranie przodków}
+
+Przodkowie to wszystkie węzły zawierające (w całości) dany węzeł.
+Oznacza to, że wartość z węzła będącego parametrem znajduje się pomiędzy ich lewym i prawym końcem. 
+
 %! method-sql nested.ancestors
+
+
+Aby uzyskać wymaganą kolejność można by zastosować sortowanie \texttt{ORDER BY (result.rgt - result.lft) ASC}.
+Jednak można zauważyć, że lewy koniec przodka ma mniejszą wartośc liczbową niż u potomka.
+Prowadzi to do prostrzego \texttt{ORDER BY result.lft DESC}.
 
 \operacja{Pobieranie potomków}
 
 Pobieranie potomków jest tą operacją, dla której stosuje się tą reprezentację.
-Metoda pozwala na bardzo proste i cz
-
-
-
-
+Metoda pozwala na bardzo proste i szybkie wykonywanie tej operacji.
 
 %! method-sql nested.descendants
 
 Dzięki sortowaniu \texttt{ORDER BY result.lft ASC} otrzymuje się potomków w kolejności wyszukiwania w głąb.
 
-\subsection{Uwagi}
+% Jeśli by box.lft + 0 to nie tylko potomkowie właściwi.
+
+\operacja{Uwagi}
 
 Metoda umożliwia bardzo proste pobieranie liści drzewa.
-Jest ono możliwe dzięki temu, że $a.rgt - a.lft = 1$ tylko i wyłącznie dla liści. 
+Jest ono możliwe dzięki temu, że $node.rgt - node.lft = 1$\footnote{
+    Warto zauważyć, że warunek podany jako \texttt{node.rgt - node.lft = 1} mimo,
+    że jest matematycznie równoważny z \texttt{node.lft + 1 = node.rgt} może być mniej wydajny.
+    Wynika to z tego, że drugim przypadku optymalizator może wykorzystać indeks.
+}
+tylko i wyłącznie dla liści. 
 %Jest ono możliwe dzięki temu, że $a.right - a.left = 2 * |a.descendants()| + 1$. 
 %Skoro liść nie posiada żadnych potomków to da różnica wynosi $1$, co prowadzi do zapytania: 
 \begin{verbatim}[sql]
@@ -181,6 +221,8 @@ SELECT *
   FROM nested_sets
   WHERE lft + 1 = rgt
 \end{verbatim}
+
+
 
 
 \temat{Wydajność}

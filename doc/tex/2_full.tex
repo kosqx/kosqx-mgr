@@ -12,7 +12,7 @@
 % Ta metoda
 
 Ta reprezentacja jest najmniej rozpowszechniona spośród zaprezentowanych w tym rozdziale.
-Przy czym w Polsce jest bardziej znana niż w reście świata.
+Przy czym w Polsce jest bardziej popularna niż poza granicami kraju.
 Jest to zasługa \emph{Huberta Lubaczewskiego}\index{Lubaczewski Hubert} lepiej znanego pod pseudonimem \emph{depesz}\index{depesz|see{Lubaczewski Hubert}}.
 Stąd w polskim internecie często można spotkać się z tą metodą pod nazwą \emph{metoda depesza}.
 On sam nazywa tę reprezentację \emph{metodą pełnych ścieżek}.
@@ -25,14 +25,14 @@ On sam nazywa tę reprezentację \emph{metodą pełnych ścieżek}.
 \index{drzewo!domknięcie przechodnie}
 
 Idea metody jest prosta. 
-Głowna tabela z danymi nie zawiera żadnych informacji o hierarchi danych. 
+Głowna tabela z danymi nie zawiera żadnych informacji o hierarchii danych. 
 Jedynym wymogiem jest istnienie w niej klucza głównego\index{klucz!główny}.
 
 Cała informacja potrzebna do operowania na drzewie zawiera się w dodatkowej tabeli. 
 Zawiera ona informacje o odległości pomiędzy każdym elementem a wszystkimi jego potomkami.
 Ilość wierszy w tej tabeli wynosi
 \begin{displaymath}
-    \sum_{t in T} level(t) + 2 \leq |T|(height(T) + 2)
+    \sum_{t \in T} level(t) + 2 \leq |T|(height(T) + 2)
 \end{displaymath}
 Jak widać jest to znacząca ilości rekordów, które trzeba wstawić i przechowywać by móc korzystać z tej metody.
 Dlatego 
@@ -144,11 +144,9 @@ NULL   | 10        | 1
 Ta metoda jest bardzo elastyczna, pozwala łatwo wykonywać bardzo bardzo różnorodne zapytania.
 
 
-
 \begin{verbatim}[sql]
 SELECT *
-  FROM nested_sets
-  WHERE lft + 1 = rgt
+  FROM none
 \end{verbatim}
 
 
