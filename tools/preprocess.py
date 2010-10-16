@@ -110,7 +110,7 @@ def do_highlight(code, lexer_name):
     #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=single,xleftmargin=5mm')
     #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=lines,xleftmargin=5mm')
     #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=leftline,xleftmargin=5mm')
-    formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='xleftmargin=5mm')
+    formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='xleftmargin=9mm')
     
     result = highlight(code, lexer, formatter)
     

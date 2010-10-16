@@ -1,4 +1,4 @@
-\section{Metoda zagnieżdzonych zbiorów}
+\section{Metoda zagnieżdżonych zbiorów}
 \index{metoda!zagnieżdzonych zbiorów|(textbf}
 
 Reprezentacja \emph{zagnieżdżonych zbiorów} \eng{nested sets} została spopularyzowana przez Joe Celko\cite{celko-sql}\index{Celko Joe}.
@@ -32,7 +32,7 @@ Jak sam przyznaje, oparł się na opisie Donalda Knutha\cite{knuth}.
 %Stąd pochodzi nazwa tej reprezentacji.
 
 W tej metodzie każdy węzeł drzewa traktowany jest jako zbiór.
-Muszą one spełniać wymóg by \emph{każde dwa zbiory były rozłączne albo jeden był podzbiorem drugiego}.
+Muszą one spełniać wymóg by \textbf{każde dwa zbiory były rozłączne albo jeden był podzbiorem drugiego}.
 W efekcie jeśli zbiór nie ma podzbiorów to jest liściem.
 Natomiast jeśli ma podzbiory to staje się ich przodkiem.
 Jeśli dodatkowo jest najmniejszym z nadzbiorów danego węzła to jest jego rodzicem.
@@ -111,16 +111,12 @@ id | lft | rgt | name
 
 
 
-% \begin{verbatim}[sql]
-% INSERT INTO simple (parent, name) VALUES (:parent, :name)
-% \end{verbatim}
-
 Wstawianie danych w tej metodzie jest jej najsłabszą stroną.
 \todo{terminologia}
 Wymaga ono zmiany wartości \texttt{lft} i \texttt{rgt} wielu rekordów.
 
 W powyższym przypadku
---- jako że wstawiamy dane w kolejności \emph{in depth} ---
+--- jako że wstawiamy dane w kolejności przeszukiwania w głąb ---
 wymagana jest modyfikacja tylko tylu rekordów na jakim poziomie\todo{?} aktualnie wstawiamy nowy węzeł.
 Lecz należy się liczyć z przypadkiem pesymistycznym --- dodaniem do korzenia potomka jako pierwszego elementu\todo{las}.
 W takiej sytuacji wymagane jest zmodyfikowanie wszystkich istniejących rekordów.
@@ -133,7 +129,7 @@ W takiej sytuacji wymagane jest zmodyfikowanie wszystkich istniejących rekordó
 (powyższy kod tego nie robi gdyż ma być ogólny).
 
 Mianowicie przed załadowaniem danych do bazy danych wstępnie przetworzyć dane.
-W takiej sytuacji należy sie posłużyć algorytmem \emph{wyszukiwania w głąb}
+W takiej sytuacji należy się posłużyć algorytmem \emph{przeszukiwania w głąb}
 i~kolejno numerować wartości \texttt{lft} węzła po wejściu do niego oraz \texttt{rgt} przed jego opuszczeniem.
 Przykładowa implementacja tego algorytmu:
 
@@ -153,28 +149,83 @@ def preprocess(node):
 % JOIN box
 % wewnątz/na zewnątez
 
+
+
+
+\operacja{Pobranie węzłów}
+
+%W tej metodzie wszystkie analizowane operacje są do siebie bardzo podobne.
+%By nie omawiać ich wielokrotnie zostanie tu zaprezentowany ogólny mechanizm.
+
+%W tej metodzie operacje pobierające węzły opierają się na bardzo podobnych założeniach.
+%Warto wymienić pośród nich kilka:
+
+Wszystkie operacje pobierające węzły zbudowane na wspólnych koncepcjach.
+Warto wymienić pośród nich kilka:
+%
+%\begin{itemize}
+%    \item 
+%	Węzeł, którego potomków/przodków chcemy poznać znamy tylko z identyfikatora, a potrzebne są jego końce.
+%        Problem rozwiązuje złączenie \verb|JOIN nested_sets AS box| oraz warunek \verb|box.id = :id| umieszczony w klauzuli \verb|WHERE|.
+%    \item 
+%        Mająć już końce przedziału (tu nazywanego \verb|box|) można pobierać jego nadzbiory lub podzbiory.
+%        Przyładowo podzbiór (czyli potomków) można by pobrać stosując warunek
+%        \verb|box.lft < result.lft AND result.rgt < box.rgt|.
+%        Poniewarz dwa zbiory były rozłączne albo jeden był podzbiorem drugiego to można uprościć ten warunek do postaci
+%        \verb|result.lft BETWEEN box.lft + 1 AND box.rgt|.
+%    \item
+%        %Ponieważ każdy zbiór jest swoim pozdbiorem
+%        
+%\end{itemize}
+
+
+\begin{itemize}
+    \item 
+	Węzeł, którego potomków chcemy poznać znamy tylko z identyfikatora, a potrzebne są jego końce.
+        Problem rozwiązuje złączenie \verb|JOIN nested_sets AS box| oraz warunek \verb|box.id = :id| umieszczony w klauzuli \verb|WHERE|.
+    \item 
+        Mająć już końce przedziału można pobierać jego podzbiory,
+        przyładowo stosując warunek
+        \texttt{box.lft < result.lft AND result.rgt < box.rgt}.
+        Poniewarz w tej reprezentacji dwa zbiory są rozłączne albo jeden jest podzbiorem drugiego to można uprościć ten warunek do postaci
+        \texttt{result.lft BETWEEN box.lft AND box.rgt}.
+    \item
+        %Ponieważ każdy zbiór jest swoim pozdbiorem
+        Chcąc pobrać potomków właściwych należy zmniejszyć przedział.
+        Czyli przykładowo zamienić \verb|box.lft| na \verb|box.lft + 1|.
+\end{itemize}
+
+Analogiczna sytuacja zachodzi dla przodków (czyli nadzbiorów)
+
 \operacja{Pobranie korzeni}
 
 W tej reprezentacji korzeń to węzeł, który nie zawiera się w żadnym innym.
-Zapytanie próbuje pobrać rodzica danego rekordu, a dzięki złączeniu zewnętrznemu 
+Zapytanie próbuje pobrać rodzica danego rekordu, a dzięki złączeniu zewnętrznemu tam gdzie on nie istnieje pojawi się wartość \texttt{NULL}.
 
 %! method-sql nested.roots
 
 \operacja{Pobranie rodzica}
 %! method-sql nested.parent
 
-Ten zapytanie różni się od pobrania przodków w dwóch miejscach:
-\begin{itemize}
-    \item 
-	\texttt{result.lft + 1} w warunku złączenia powoduje, że spełniają go wyłącznie przodkowie właściwi
-    \item 
-        klauzula \texttt{LIMIT 1} sprawia, że pobiera tylko jeden rekord 
-\end{itemize}
+%Ten zapytanie różni się od pobrania przodków w dwóch miejscach:
+%\begin{itemize}
+%    \item 
+%	\texttt{result.lft + 1} w warunku złączenia powoduje, że spełniają go wyłącznie przodkowie właściwi
+%    \item 
+%        klauzula \texttt{LIMIT 1} sprawia, że operacja pobiera tylko jeden rekord 
+%\end{itemize}
+
+Ten zapytanie różni się od pobrania przodków w dwóch miejscach.
+Po pierwsze \texttt{result.lft + 1} w warunku złączenia powoduje, że spełniają go wyłącznie przodkowie właściwi.
+Natomiast klauzula \texttt{LIMIT 1} sprawia, że zapytanie pobiera tylko jeden rekord.
+
 
 \operacja{Pobranie dzieci}
 
-Pobieranie dzieci to de facto pobieranie potomków z dodatkowym warunkiem.
-Jest nim sprawdzenie czy 
+%Pobieranie dzieci to de facto pobieranie potomków z dodatkowym warunkiem.
+%Jest nim sprawdzenie czy potomek
+
+Pobieranie dzieci to de facto pobieranie potomków z dodatkowym warunkiem sprawdzającym czy potomek nie jest ,,wnukiem''.
 
 %Podzapytanie skorelowane
 
@@ -191,8 +242,8 @@ Oznacza to, że wartość z węzła będącego parametrem znajduje się pomiędz
 
 
 Aby uzyskać wymaganą kolejność można by zastosować sortowanie \texttt{ORDER BY (result.rgt - result.lft) ASC}.
-Jednak można zauważyć, że lewy koniec przodka ma mniejszą wartośc liczbową niż u potomka.
-Prowadzi to do prostrzego \texttt{ORDER BY result.lft DESC}.
+Jednak można zauważyć, że lewy koniec przodka ma mniejszą wartość liczbową niż u potomka.
+Prowadzi to do prostszego \texttt{ORDER BY result.lft DESC}.
 
 \operacja{Pobieranie potomków}
 
@@ -201,7 +252,7 @@ Metoda pozwala na bardzo proste i szybkie wykonywanie tej operacji.
 
 %! method-sql nested.descendants
 
-Dzięki sortowaniu \texttt{ORDER BY result.lft ASC} otrzymuje się potomków w kolejności wyszukiwania w głąb.
+Dzięki sortowaniu \texttt{ORDER BY result.lft ASC} otrzymuje się potomków w kolejności przeszukiwania w głąb.
 
 % Jeśli by box.lft + 0 to nie tylko potomkowie właściwi.
 
@@ -227,11 +278,11 @@ SELECT *
 
 \temat{Wydajność}
 
-\begin{qxtab}{nested}{Wydajność reprezentacji zagnieżdzonych zbiorów}
+\begin{qxtab}{nested}{Wydajność reprezentacji zagnieżdżonych zbiorów}
 %! result-table nested deep3
 \end{qxtab}
 
-\begin{qxfig}{nested}{Wydajność reprezentacji zagnieżdzonych zbiorów}
+\begin{qxfig}{nested}{Wydajność reprezentacji zagnieżdżonych zbiorów}
 %! result-chart nested deep3
 \end{qxfig}
 

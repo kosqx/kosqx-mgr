@@ -108,6 +108,7 @@ class SqlLexer(RegexLexer):
              r'DEC|DECIMAL|FLOAT|INT|INTEGER|INTERVAL|NUMBER|NUMERIC|REAL|'
              r'SERIAL|SMALLINT|VARCHAR|VARYING|INT8|SERIAL8|TEXT)\b',
              Name.Builtin),
+            
             (r'\$\$', Punctuation),
             (r'[+*/<>=~!@#%^&|`?^-]', Operator),
             (r'[0-9]+', Number.Integer),
@@ -115,7 +116,8 @@ class SqlLexer(RegexLexer):
             (r"'(''|[^'])*'", String.Single),
             (r'"(""|[^"])*"', String.Symbol), # not a real string literal in ANSI SQL
             (r'::', Punctuation),
-
+            
+            (r'\$[a-zA-Z0-9_-]+\$', Name.Constant),
             (r':[a-zA-Z_][a-zA-Z0-9_]*', Name.Constant),
             (r'[a-zA-Z_][a-zA-Z0-9_]*', Name),
             (r'[;:()\[\],\.]', Punctuation)

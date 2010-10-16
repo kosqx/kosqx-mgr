@@ -29,13 +29,21 @@ Głowna tabela z danymi nie zawiera żadnych informacji o hierarchii danych.
 Jedynym wymogiem jest istnienie w niej klucza głównego\index{klucz!główny}.
 
 Cała informacja potrzebna do operowania na drzewie zawiera się w dodatkowej tabeli. 
-Zawiera ona informacje o odległości pomiędzy każdym elementem a wszystkimi jego potomkami.
-Ilość wierszy w tej tabeli wynosi
+Zawiera ona informacje o odległości pomiędzy każdym elementem a wszystkimi jego przodkami.
+
+
+Przedstawiona tutaj implementacja została lekko zmieniona względem oryginalnej ,,metody depesza''.
+Mianowicie dodatkowo zawiera jeden specjalny rekord dla każdego węzła.
+Przechowuje on odległość pomiędzy węzłem a korzeniem.
+Posiada on atrybut \verb|top_id| ustawiony na \verb|NULL|.
+
+
+Ilość wierszy drugiej tabeli wynosi:
 \begin{displaymath}
     \sum_{t \in T} level(t) + 2 \leq |T|(height(T) + 2)
 \end{displaymath}
-Jak widać jest to znacząca ilości rekordów, które trzeba wstawić i przechowywać by móc korzystać z tej metody.
-Dlatego 
+Jak widać, metoda wymaga znacząca ilości rekordów (które trzeba wstawić i przechowywać).
+Jednak nie jest to duży problem gdyż pojedyńczy rekord zawiera wyłącznie trzy liczby całkowite, więc rozmiar rekordu jest mały.
 
 Poniższy graf pokazuje wyłącznie zawartość dodatkowej tabeli zawierającej strukturę drzewa.
 
@@ -121,13 +129,47 @@ NULL   | 10        | 1
 %! method-sql full.create
 
 \operacja{Wstawianie danych}
-% %! method-sql full.insert
+%! method-sql full.insert
+
+\operacja{Pobranie węzłów}
+
+W tej metodzie wszystkie analizowane operacje są do siebie bardzo podobne.
+By nie omawiać ich wielokrotnie zostanie tu zaprezentowany ogólny mechanizm.
+
+\begin{verbatim}[sql]
+SELECT d.*
+    FROM full_data d 
+        JOIN full_tree t 
+            ON (d.id = $JOIN-ATTR$)
+    WHERE
+        $WHERE-ATTR$ = :id AND
+        t.distance $DISTANCE$
+\end{verbatim}
+
+Jak widać w powyższym kodze pojawiły się ,,bloki'' (zapisywane \verb|$NAZWA-BLOKU$|).
+Należy je zastąpić odpowiednimi fragmentami SQL.
+
+Bloki \verb|$JOIN-ATTR$| i \verb|$WHERE-ATTR$| są od siebie zależne.
+Gdy jeden z nich jest postaci \verb|t.top_id| drugi musi być \verb|t.bottom_id|.
+Jeśli \verb|$JOIN-ATTR$| ma wartość \verb|t.bottom_id| to zapytanie będzie pobierało potomków (węzły ,,pod'').
+Analogicznie przodków w przeciwnej sytuacji.
+
+Natomiast blok \verb|$DISTANCE$| pozwala sprecyzować z których poziomów zostaną pobrane węzły.
+I tak dla \verb|>= 0| zostaną pobrani przodkowie/potomkowie%
+\footnote{Równie dobrze można by było pominąć ten warunek, gdyż wszystkie wartości atrybutu \texttt{distance} są większe lub równe zero},
+dla \verb|> 0| zostaną pobrani przodkowie/potomkowie właściwi.
+Natomiast \verb|= 1| spowoduje pobranie rodzica/potomków.
+Oczywiście można zastosować dowolny warunek lub ich kombinację, co stanowi siłę tej reprezentacji. 
+
 
 \operacja{Pobranie korzeni}
 %! method-sql full.roots
 
+
 \operacja{Pobranie rodzica}
 %! method-sql full.parent
+
+%Tabela \verb|full_tree| zawiera rekordy z 
 
 \operacja{Pobranie dzieci}
 %! method-sql full.children
@@ -138,16 +180,21 @@ NULL   | 10        | 1
 \operacja{Pobieranie potomków}
 %! method-sql full.descendants
 
+Jak widać w klauzuli \texttt{SELECT} pojawiło się podzapytanie
+zwracające identyfikator rodzica bieżącego węzła.
+Jeśli operacja ma pobierać tylko zbiór potomków to można je pominąć.
+Natomiast jeśli wynik zapytania ma zostać przekształcony w drzewo to jest ono konieczne.
+Wynika to z faktu, że sama tabela \verb|full_tree| nie zawiera informacji o strukturze hierarchicznej.
 
-\subsection{Uwagi}
-
-Ta metoda jest bardzo elastyczna, pozwala łatwo wykonywać bardzo bardzo różnorodne zapytania.
-
-
-\begin{verbatim}[sql]
-SELECT *
-  FROM none
-\end{verbatim}
+%\operacja{Uwagi}
+%
+%Ta metoda jest bardzo elastyczna, pozwala łatwo wykonywać bardzo bardzo różnorodne zapytania.
+%
+%
+%\begin{verbatim}[sql]
+%SELECT *
+%  FROM none
+%\end{verbatim}
 
 
 \temat{Wydajność}

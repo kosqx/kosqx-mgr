@@ -1,12 +1,17 @@
-\chapter{Metodyka testów}
+\chapter{Metodyka testów wydajności}
+
+Ważnyme elementem tej pracy jest sprawdzenie wydajności przedstawionych metod w bazach danych.
+Zostaną tu przedstawione warunki w jakich odbywały się testy.
 
 \section{Wybrane SZDB}
 
 Do testów zostały wybrane popularne, dostępne bezpłatnie\footnote{również do zastosowań komercyjnych} bazy danych. 
-W przypadku baz Open Source wykorzystano najnowsze, stabilne wersje.
+%W przypadku baz Open Source wykorzystano najnowsze, stabilne wersje.
 Dla baz komercyjnych zostały wybrane ich darmowe edycje. 
 Posiadają one ograniczenia co do wielkości baz danych, wykorzystania zasobów oraz zmniejszoną funkcjonalność. 
 Specyfika testów sprawia jednak, że te ograniczenia nie miały znaczenia podczas testów.
+
+
 
 
 % \begin{itemize}
@@ -22,12 +27,12 @@ Specyfika testów sprawia jednak, że te ograniczenia nie miały znaczenia podcz
 \begin{tabular}{l|l|l}
 Baza danych                            & Wersja & Edycja \\
 \hline
-PostgreSQL\index{PostgreSQL}           &  8.3   & \\
-MySQL\index{MySQL}                     &  5.1   & \\
-SQLite\index{SQLite}                   &  3     & \\
-Oracle Database\index{Oracle}          &  10g   & Express Edition \\
-IBM DB2\index{IBM DB2}                 &  9.5   & Express-C \\
-Microsoft SQL Server\index{SQL Server} &  2008  & Express\\
+PostgreSQL\index{PostgreSQL}           &  8.4      & \\
+MySQL\index{MySQL}                     &  5.1      & \\
+SQLite\index{SQLite}                   &  3        & \\
+Oracle Database\index{Oracle}          &  10g      & Express Edition \\
+IBM DB2\index{IBM DB2}                 &  9.7      & Express-C \\
+Microsoft SQL Server\index{SQL Server} &  2008 R2  & Express\\
 \end{tabular} 
 \end{qxtab}
 
@@ -117,4 +122,8 @@ więc ominięto problem przepustowości interfacu sieciowego.
 Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. 
 Baza Microsoft SQL Server została zainstalowana na Windows XP Service Pack 2.
 
+\section{Dostrajanie baz danych}
+
 Bazy nie były w żaden sposób dostrajane \eng{tuning}, czyli pracują z domyślnymi ustawieniami. 
+
+

@@ -5,7 +5,7 @@
 %Metoda jest też zwana Lineage.
 
 Koncepcja stojąca za tą reprezentacją jest bardzo stara i powszechnie znana.
-Przykładowo ksiązka w biblotece może zostać zaklasyfikowana jako \textit{Epika / Powieść / Powieść fantastyczna}.
+Przykładowo książka w bibliotece może zostać zaklasyfikowana jako \textit{Epika / Powieść / Powieść fantastyczna}.
 Biolodzy dla opisu różnorodności życia na Ziemi stosują drzewo filogenetyczne.
 Za pomocą niego organizm w nim może zostać opisany jako
 \textit{eukarionty / zwierzęta / strunowce / kręgowce / ssaki / ssaki żyworodne / łożyskowce / drapieżne / kotowate / felis / kot domowy}.
@@ -14,15 +14,15 @@ Stąd też wywodzi się popularna angielska nazwa tej reprezentacji --- \textit{
 
     Ta reprezentacja może wyglądać podobnie do ścieżek dostępu w systemach plików.
     Jest to złudne podobieństwo.
-    W tej metodzie z wartości każdej częsci ścieżki można wywnioskować wszystkich jej przodków.
-    Przykładowo, mając doczynienia z kotem domowym wiemy, że jest ssakiem.
+    W tej metodzie z wartości każdej części ścieżki można wywnioskować wszystkich jej przodków.
+    Przykładowo, mając do czynienia z kotem domowym wiemy, że jest ssakiem.
     Natomiast nazwa katalogu \texttt{bin} nie daje nam informacji o tym czy jesteśmy w katalogu \texttt{/bin}, \texttt{/usr/bin} czy \texttt{/home/user/bin}.
     %Nie należy mylić tej metody z 
 
 
 
 Metoda ta polega na przechowywaniu ciągu identyfikatorów wszystkich węzłów pomiędzy korzeniem a danym węzłem.
-Są one przechowywane w pojedyńczym atrybucie danego rekordu.
+Są one przechowywane w pojedynczym atrybucie danego rekordu.
 Czyli de facto przechowuje się wynik zapytania o przodków czyli ścieżkę.
 Stąd pochodzi najpopularniejsza jej nazwa: \emph{metoda zmaterializowanych ścieżek} \eng{materialized path}\footnote{
     Sama nazwa sugeruje podobieństwo do \emph{zmaterializowanych widoków} \eng{materialized views}.
@@ -39,18 +39,18 @@ Listę elementów można przechowywać na wiele sposobów.
 Jedynym wymogiem jest to by można było dokonać prostego pobrania identyfikatorów poszczególnych węzłów.
 Przykładowo ciąg identyfikatorów całkowitoliczbowych \texttt{4, 8, 15, 16, 23, 42} można przechować jako:
 \begin{itemize}
- \item napis z elememtami rozdzielonymi separatorami. 
+ \item napis z elementami rozdzielonymi separatorami. 
     Przykładowo dla separatora~\verb|'.'| będzie to napis \verb|'4.8.15.16.23.42'|.
     Ważne jest aby znak lub ciąg znaków będący separatorem nie mogły występować w identyfikatorze.
     %W praktyce najczęsciej stosuje się do tego celu 
- \item napis z elememtami przekształconymi na napis stałej długości. 
+ \item napis z elementami przekształconymi na napis stałej długości. 
     Przykładowo dla długości 3 będzie to \verb|'004008015016023042'|.
     Wadą tej metody jest konieczność jednorazowego wyboru długości napisu dla identyfikatora.
     Dla długości $n$ można przechować tylko $10^n-1$ węzłów. %\footnote{zakładając, że wszystkie dopuszczalne wartości znajdą się w użyciu, a usuwanie elementow tworzy luki}.
     Natomiast zastosowanie dużej $n$ zwiększa zużycie zasobów SZDB oraz spowalnia działanie.
  \item tablicę \todo{term:array} np. \verb|{4, 8, 15, 16, 23, 42}|
     Możliwość przechowywania tablic wewnątrz rekordu nie jest powszechna wśród implementacji relacyjnych baz danych.
-    Jako pozytywny wyjątek może posłórzyć PostgreSQL oferujący typ danych \verb|ARRAY|.
+    Jako pozytywny wyjątek może posłużyć PostgreSQL oferujący typ danych \verb|ARRAY|.
     % dostpne tylko w wybranych bazach danych, niedostpne dla ORM, potencjalne problemy z indeksami
     % http://www.postgresql.org/docs/9.0/interactive/arrays.html
 \end{itemize}
@@ -126,7 +126,7 @@ id | path    | name
 W tej metodzie ważne jest by właściwie oszacować wymaganą długość atrybutu \texttt{path}.
 W prakryce nie powinna być ona mniejsza niż:
 \begin{displaymath}
-    (\lceil log_{10}(|T|) \rceil + 1) \times height(T)
+    (\lceil log_{10}(|T|) \rceil + 2) \times height(T)
 \end{displaymath}
 
 %! method-sql pathenum.create
@@ -136,7 +136,7 @@ W prakryce nie powinna być ona mniejsza niż:
 %Wstawianie danych jest prostą operacją.
 
 Podczas wstawiania potrzebne są informacje o wszystkich właściwych przodkach wstawianego węzła.
-Na szczęście znajdują się one w pojedyńczym rekordzie --- rodzicu.
+Na szczęście znajdują się one w pojedynczym rekordzie --- rodzicu.
 Wystarczy więc je pobrać i odpowiednio sformatować.
 
 %! method-sql pathenum.insert
@@ -177,20 +177,20 @@ daje się zaimplementować w każdej z obsługiwanych baz danych oraz wymagane z
 
 \temat{Uwagi}
 
-Dostosowania metody do przyjętego interfacu zmniejsza jej wydajność.
+Dostosowania metody do przyjętego interface zmniejsza jej wydajność.
 Praktycznie wszystkie zapytania zawierają podzapytanie które dla danego identyfikatora węzła \todo{term} pobierają jego ścieżkę.
 Ta operacja jest w prawdzie bardzo szybka (kolumna \texttt{id} jest kluczem głównym) ale mimo wszystko mają wpływ na ogólną wydajność.
-W razie stosowania tej metody warto sie zastanowić nad używaniem ścieżki (\texttt{path}) jako parametrów metod. 
+W razie stosowania tej metody warto się zastanowić nad używaniem ścieżki (\texttt{path}) jako parametrów metod. 
 
 Dodatkowo odwoływanie się do węzłów za pomocą ścieżek a nie identyfikatorów daje większe możliwości.
 W takiej sytuacji można wykonać dodatkowe operacje bez konieczności wykonywania zapytań w bazie danych.
-Są to:
-\begin{itemize}
-    \item
-        Pobranie głebokości węzła w drzewie (wystarczy policzyć ilość elementów w ścieżce, zero oznacza korzeń\todo{dopisać})
-    \item
-        Wyznaczenie pierwszego wspólnego potomka
-\end{itemize}
+%Są to:
+%\begin{itemize}
+%    \item
+%        Pobranie głębokości węzła w drzewie (wystarczy policzyć ilość elementów w ścieżce, zero oznacza korzeń\todo{dopisać})
+%    \item
+%        Wyznaczenie pierwszego wspólnego potomka
+%\end{itemize}
 
 \temat{Wydajność}
 

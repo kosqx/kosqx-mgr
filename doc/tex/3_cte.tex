@@ -32,7 +32,7 @@
 
 
 
-W standardzie SQL:99\index{SQL!SQL:99} wprowadzono \emph{Wspólne Wyrażenia Tabelowe} \eng{CTEs --- Common Table Expressions}.
+W standardzie SQL:99\index{SQL!SQL:99} wprowadzono \emph{Wspólne Wyrażenia Tabelowe} \eng{CTE --- Common Table Expressions}.
 Ich działanie przypomina stworzenie tymczasowego widoku\index{widok}, 
 istniejącego tylko na czas wykonania danego zapytania.
 
@@ -40,18 +40,30 @@ istniejącego tylko na czas wykonania danego zapytania.
 Pozwala ono również na rekurencyjne wykonywanie zapytań w bazie danych.
 
 W chwili obecnej to rozszerzenie jest dostępne w:
-\begin{description}
- \item[IBM DB2]
-    wprowadzone w wersji 8
- \item[Microsoft SQL Server]
+\begin{itemize}
+ \item \textbf{IBM DB2} wprowadzone w wersji 8
+ \item \textbf{Microsoft SQL Server}
 	% http://www.mssqltips.com/tip.asp?tip=1520
 	w wersjach począwszy od SQL Server 2005
- \item[PostgreSQL]
+ \item \textbf{PostgreSQL}
 	% http://developer.postgresql.org/pgdocs/postgres/queries-with.html
-	ma się pojawić w wersji 8.4 (w chwili obecnej jest ona dostępna jako \emph{beta}, ma zostać wydana w pierwszym kwartale 2009 roku)
- \item[Firebird]
-	wersja 2.1 
-\end{description}
+	ma się pojawić w wersji 8.4
+% \item \textbf{Firebird}
+%	wersja 2.1 
+\end{itemize}
+
+%\begin{description}
+% \item[IBM DB2]
+%    wprowadzone w wersji 8
+% \item[Microsoft SQL Server]
+%	% http://www.mssqltips.com/tip.asp?tip=1520
+%	w wersjach począwszy od SQL Server 2005
+% \item[PostgreSQL]
+%	% http://developer.postgresql.org/pgdocs/postgres/queries-with.html
+%	ma się pojawić w wersji 8.4
+% \item[Firebird]
+%	wersja 2.1 
+%\end{description}
 
 
 \temat{Opis Wspólnych Wyrażeń Tabelowych}
@@ -67,7 +79,7 @@ Składnia \texttt{WITH} prezentuje się następująco:
 \index{WITH RECURSIVE@\texttt{WITH RECURSIVE}|see{Wspólne Wyrażenia Tabelowe}}
 
 
-\begin{verbatim}
+\begin{verbatim}[sql]
 WITH <<nazwa widoku>>(<<nazwy kolumn>>) AS
 (
   <<zapytanie startowe>>
@@ -79,7 +91,7 @@ SELECT <<nazwy kolumn>> FROM <<nazwa widoku>>
 
 Działanie tej konstrukcji jest proste.
 
-\begin{verbatim}
+\begin{verbatim}[python]
 widok = []
 tmp = zapytanie_startowe()
 while tmp:
@@ -89,13 +101,13 @@ return widok
 \end{verbatim}
 
 Najprostrzy przykład wykorzystania zapytań rekurencyjnych to wygenerowanie ciągu liczb. 
-W tym przykładzie ciągu arytmetycznego zaczynającego się od $0$ (cu wynika z zapytania startowego \texttt{SELECT \textbf{0} AS i}), 
+W tym przykładzie ciągu arytmetycznego zaczynającego się od $0$ (co wynika z zapytania startowego \texttt{SELECT \textbf{0} AS i}), 
 różnica ciągu wynosi $1$ (\texttt{SELECT \textbf{i + 1} AS i})
 
 \begin{verbatim}[sql]
 WITH RECURSIVE a(i) AS (
     SELECT 0 AS i
-    UNION ALL
+  UNION ALL
     SELECT i + 1 AS i FROM a WHERE i < 10
 )
 SELECT i FROM a;

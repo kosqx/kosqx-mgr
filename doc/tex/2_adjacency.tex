@@ -182,12 +182,12 @@ to wymagał by on wykonania w sumie tylu zapytań ile węzłów ma poddrzewo,
 którego korzeniem jest dany element.
 
 
-\subsection{Uwagi}
+\operacja{Uwagi}
 
 Czasem nie ma potrzeby pobierać wszystkich potomków a tylko tych różniących się poziomem o nie więcej niż $N$.
 Czyli dla $N = 1$ dzieci, dla $N = 2$, dzieci oraz wnuki, itd.
 Mając taką dodatkową wiedzę program można wygenerować bardziej optymalne zapytanie.
-Zasada działania się nie zmienia (dalej jest to wyszukiwanie wszerz)
+Zasada działania się nie zmienia (dalej jest to przeszukiwanie wszerz)
 ale zamiast łączyć wyniki w wnętrzu programu są one łączone wewnątrz bazy danych za pomocą operatora \texttt{UNION ALL}.
 
 Poniżej przykład dla $N = 3$.
@@ -206,7 +206,7 @@ UNION ALL
     )
 \end{verbatim}
 
-Podejście to może być bardzo przydatna w drzewach o ustalonej, małej wysokości.
+Podejście to może być bardzo przydatne w drzewach o ustalonej, małej wysokości.
 W takiej sytuacji może ono zastąpić ogólny algorytm.
 
 W analogiczny sposób można pobierać przodków.
