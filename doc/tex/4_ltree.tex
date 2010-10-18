@@ -2,84 +2,137 @@
 \index{PostgreSQL}
 \index{metoda!ltree@\texttt{ltree}|(textbf}
 
-% Oleg Bartunov, Teodor Sigaev Oleg Bartunow, Teodor Sigaew
+% Oleg Bartunov, Teodor Sigaev   Oleg Bartunow, Teodor Sigaew
 % Rok 2002, wersja 7.2
-\temat{Opis modułu \texttt{ltree}}
 
-\podtemat{Definicje}
 
-\begin{description}
-    \item[etykieta] \eng{label} węzła jest ciągiem jednego lub więcej słów rozdzielonych przez znak \verb|'_'|. 
-        Słowa mogą zawierać litery i liczby.
-        Długość etykiety nie może przekraczać 256 bajtów. 
-        \todo{bajtów? znaków? czy mogą być pl-literki?}
-    \item[ścieżka etykieta]
-        \eng{label path} -- ciąg jednej lub więcej rozdzielonych kropkami etykiet $l_1.l_2...l_n$. 
-        Reprezentuje ścieżkę korzenia do węzła. 
-        Długość ścieżki etykiet jest ograniczony do $2^{16} - 1 = 65535 \approx 64 Kb$. 
-        \todo{Kb? KB?} \todo{2Kb zalecane} 
+Moduł \texttt{ltree} zawiera implementacje typu danych oraz funkcji umożliwiających przechowywanie danych hierarchicznych.
+Jest on dostępny w bazie PostgreSQL począwszy od wersji 7.2 (wydanej w roku 2002).
 
-%   \item[etykieta] \eng{label} 
-\end{description}
+Oparty jest na \emph{reprezentacji zmaterializowanych ścieżek}.
+Jednak, w odróżnieniu od metody opisanej w jednym z poprzednich rozdziałów tej pracy, oferuje wiele udogodnień.
+Chodzi tu przede wszystkim o kilkadziesiąt funkcji i operatorów ułatwiających pracę z tą metodą.
+Są one dobrze opisane w oficjalnej dokumentacji \cite{ltree}, 
+więc tutaj zostaną przedstawione wyłącznie najważniejsze funkcjonalności.
 
-\podtemat{Typy danych}
 
-\begin{description}
-    \item[\texttt{ltree}] -- typ danych
-    \item[\texttt{ltree[]}]
-    \item[\texttt{lquery}] wyrażenie ściekowe
-    \begin{description}
-        \item[\texttt{\{n\}}] asdf
-        \item[\texttt{\{n,\}}] Dopasowuje dokładnie \emph{n} poziomów
-        \item[\texttt{\{n,m\}}] Dopasowuje dokładnie \emph{n} poziomów
-        \item[\texttt{\{,m\}}] Dopasowuje dokładnie \emph{n} poziomów
-    \end{description}
-\end{description}
+Jedną z metod korzystania z \texttt{ltree} jest wykorzystanie \texttt{lquery}.
+Są to wyrażenia ścieżkowe, przypominające trochę wyrażenia regularne.
+Poszczególne elementy zapytania rozdziela się za pomocą kropki.
+Chcąc dopasować konkretną etykietę węzła po prostu się ją podaje.
+Można też zastosować znak \verb|*|, który pasuje do każdego ciągu węzłów.
+Jeśli zastosuje \texttt{\{n\}}, \texttt{\{n,\}}, \texttt{\{n,m\}} lub \texttt{\{,m\}} 
+(działające jak w wyrażeniach regularnych)
+można określić ile węzłów ma zostać dopasowanych.
+Mając zbudowane zapytanie, używa się go następująco: \verb|ltree ~ lquery|.
+Przykładowo \verb|t.node ~ '*.5.*'| spowoduje dopasowanie wszystkich węzłów, 
+których przodkiem jest węzeł o identyfikatorze \texttt{5}.
 
-\podtemat{Funkcje i operatory}
+
+Ponadto dostępnych jest wiele funkcji, z których najpotrzebniejsze są:
 
 \begin{description}
-    \item[\texttt{ltree subltree(ltree, start, end)}] \index{subltree@\texttt{subltree}}
-    \item[\texttt{ltree subpath(ltree, offset[, len])}] \index{subpath@\texttt{subpath}}
-    \item[\texttt{int4 nlevel(ltree)}] \index{nlevel@\texttt{nlevel}}
-        zwraca poziom węzła, czyli ilość etykiet w ścieżce
-    \item[\texttt{int4 index(ltree, ltree[, offset])}] \index{index@\texttt{index}}
-    \item[\texttt{ltree text2ltree(text)}] \index{text2ltree@\texttt{text2ltree}}
-    \item[\texttt{text ltree2text(ltree)}] \index{ltree2text@\texttt{ltree2text}}
-    \item[\texttt{ltree lca(ltree[])}] \index{lca@\texttt{lca}}
-\end{description}
-
-\begin{description}
-    \item[\texttt{<}, \texttt{>}, \texttt{<=}, \texttt{>=}, \texttt{=}, \texttt{<>}]
-        have their usual meanings. Comparison is doing in the order of direct tree traversing, children of a node are sorted lexicographic.
-    \item[\texttt{ltree @> ltree}]
-        returns TRUE if left argument is an ancestor of right argument (or equal).
-    \item[\texttt{ltree <@ ltree}]
-        returns TRUE if left argument is a descendant of right argument (or equal).
-    \item[\texttt{ltree \~{} lquery}, \texttt{lquery \~{} ltree}]
-        returns TRUE if node represented by ltree satisfies lquery.
-    \item[\texttt{ltree || ltree}, \texttt{ltree || text}, \texttt{text || ltree}]
-        return concatenated ltree.
+%    \item[\texttt{ltree subltree(ltree, start, end)}] \index{subltree@\texttt{subltree}}
+    \item[\texttt{ltree subpath(ltree, offset[, len])}]
+    	pobiera część \texttt{ltree} zawierającą się pomiędzy elementami o pozycjach pomiędzy 
+    	\texttt{offset} a \texttt{len}. 
+%    \item[\texttt{int4 nlevel(ltree)}] \index{nlevel@\texttt{nlevel}}
+%        zwraca poziom węzła, czyli ilość etykiet w ścieżce
+%    \item[\texttt{int4 index(ltree, ltree[, offset])}] \index{index@\texttt{index}}
+    \item[\texttt{ltree text2ltree(text)} oraz \texttt{text ltree2text(ltree)}] 
+    	pozwalają dokonywać konwersji pomiędzy \texttt{ltree} a łańcuchami znaków
+    \item[operator \texttt{ltree <@ ltree}] sprawdza, czy lewa strona jest potomkiem prawej
+    \item[operator \texttt{ltree @> ltree}] sprawdza, czy lewa strona jest przodkiem prawej
 \end{description}
 
 
-\podtemat{Indeksy}
+%\begin{description}
+%    \item[\texttt{ltree subltree(ltree, start, end)}] \index{subltree@\texttt{subltree}}
+%    \item[\texttt{ltree subpath(ltree, offset[, len])}] \index{subpath@\texttt{subpath}}
+%    \item[\texttt{int4 nlevel(ltree)}] \index{nlevel@\texttt{nlevel}}
+%        zwraca poziom węzła, czyli ilość etykiet w ścieżce
+%    \item[\texttt{int4 index(ltree, ltree[, offset])}] \index{index@\texttt{index}}
+%    \item[\texttt{ltree text2ltree(text)}] \index{text2ltree@\texttt{text2ltree}}
+%    \item[\texttt{text ltree2text(ltree)}] \index{ltree2text@\texttt{ltree2text}}
+%    \item[\texttt{ltree lca(ltree[])}] \index{lca@\texttt{lca}}
+%\end{description}
 
-\begin{description}
-    \item[B-tree]\index{indeks!Btree@B-tree} na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|
-    \item[GiST]\index{indeks!GiST} na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: 
-        \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|, \verb|<@|, \verb|@|, \verb|@>|, \verb|~|, \verb|?|.
-        Indeksy GiST \eng{Generalized Search Tree} umożliwiają stosowanie różnych strategii indeksowania w zależności od potrzeb.
-        Za ich pomocą może być zaimplementowane zarówno wyszukiwanie pełnotekstowe (\texttt{tsearch2}), 
-        indeksowanie typu \texttt{hstore} (pozwalające na przechowywanie w jednym atrybucie dowolnej ilości par klucz--wartość).
-        Oczywiście wspiera również typ \texttt{ltree}.
-\end{description}
 
-Dla przykładu można stworzyć następujące indeksy:
-\begin{verbatim}[sql]
-CREATE INDEX test_path_idx_btree ON test USING btree (path);
-CREATE INDEX test_path_idx_gist  ON test USING gost  (path);
-\end{verbatim}
+%\temat{Opis modułu \texttt{ltree}}
+%
+%\podtemat{Definicje}
+
+%\begin{description}
+%    \item[etykieta] \eng{label} węzła jest ciągiem jednego lub więcej słów rozdzielonych przez znak \verb|'_'|. 
+%        Słowa mogą zawierać litery i liczby.
+%        Długość etykiety nie może przekraczać 256 bajtów. 
+%        \todo{bajtów? znaków? czy mogą być pl-literki?}
+%    \item[ścieżka etykieta]
+%        \eng{label path} -- ciąg jednej lub więcej rozdzielonych kropkami etykiet $l_1.l_2...l_n$. 
+%        Reprezentuje ścieżkę korzenia do węzła. 
+%        Długość ścieżki etykiet jest ograniczony do $2^{16} - 1 = 65535 \approx 64 Kb$. 
+%        \todo{Kb? KB?} \todo{2Kb zalecane} 
+%
+%%   \item[etykieta] \eng{label} 
+%\end{description}
+
+%\podtemat{Typy danych}
+%
+%\begin{description}
+%    \item[\texttt{ltree}] -- typ danych
+%    \item[\texttt{lquery}] wyrażenie ściekowe
+%    \begin{description}
+%        \item[\texttt{\{n\}}] asdf
+%        \item[\texttt{\{n,\}}] Dopasowuje dokładnie \emph{n} poziomów
+%        \item[\texttt{\{n,m\}}] Dopasowuje dokładnie \emph{n} poziomów
+%        \item[\texttt{\{,m\}}] Dopasowuje dokładnie \emph{n} poziomów
+%    \end{description}
+%\end{description}
+%
+%\podtemat{Funkcje i operatory}
+%
+%\begin{description}
+%    \item[\texttt{ltree subltree(ltree, start, end)}] \index{subltree@\texttt{subltree}}
+%    \item[\texttt{ltree subpath(ltree, offset[, len])}] \index{subpath@\texttt{subpath}}
+%    \item[\texttt{int4 nlevel(ltree)}] \index{nlevel@\texttt{nlevel}}
+%        zwraca poziom węzła, czyli ilość etykiet w ścieżce
+%    \item[\texttt{int4 index(ltree, ltree[, offset])}] \index{index@\texttt{index}}
+%    \item[\texttt{ltree text2ltree(text)}] \index{text2ltree@\texttt{text2ltree}}
+%    \item[\texttt{text ltree2text(ltree)}] \index{ltree2text@\texttt{ltree2text}}
+%    \item[\texttt{ltree lca(ltree[])}] \index{lca@\texttt{lca}}
+%\end{description}
+%
+%\begin{description}
+%    \item[\texttt{<}, \texttt{>}, \texttt{<=}, \texttt{>=}, \texttt{=}, \texttt{<>}]
+%        have their usual meanings. Comparison is doing in the order of direct tree traversing, children of a node are sorted lexicographic.
+%    \item[\texttt{ltree @> ltree}]
+%        returns TRUE if left argument is an ancestor of right argument (or equal).
+%    \item[\texttt{ltree <@ ltree}]
+%        returns TRUE if left argument is a descendant of right argument (or equal).
+%    \item[\texttt{ltree \~{} lquery}, \texttt{lquery \~{} ltree}]
+%        returns TRUE if node represented by ltree satisfies lquery.
+%    \item[\texttt{ltree || ltree}, \texttt{ltree || text}, \texttt{text || ltree}]
+%        return concatenated ltree.
+%\end{description}
+%
+%
+%\podtemat{Indeksy}
+%
+%\begin{description}
+%    \item[B-tree]\index{indeks!Btree@B-tree} na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|
+%    \item[GiST]\index{indeks!GiST} na kolumnie \texttt{ltree} pozwala na skorzystanie z operatorów: 
+%        \verb|<|, \verb|<=|, \verb|=|, \verb|>=|, \verb|>|, \verb|<@|, \verb|@|, \verb|@>|, \verb|~|, \verb|?|.
+%        Indeksy GiST \eng{Generalized Search Tree} umożliwiają stosowanie różnych strategii indeksowania w zależności od potrzeb.
+%        Za ich pomocą może być zaimplementowane zarówno wyszukiwanie pełnotekstowe (\texttt{tsearch2}), 
+%        indeksowanie typu \texttt{hstore} (pozwalające na przechowywanie w jednym atrybucie dowolnej ilości par klucz--wartość).
+%        Oczywiście wspiera również typ \texttt{ltree}.
+%\end{description}
+%
+%Dla przykładu można stworzyć następujące indeksy:
+%\begin{verbatim}[sql]
+%CREATE INDEX test_path_idx_btree ON test USING btree (path);
+%CREATE INDEX test_path_idx_gist  ON test USING gost  (path);
+%\end{verbatim}
 
 
 
@@ -87,6 +140,8 @@ CREATE INDEX test_path_idx_gist  ON test USING gost  (path);
 
 \operacja{Reprezentacja w SQL}
 %! method-sql ltree.create
+
+
 
 \operacja{Wstawianie danych}
 %! method-sql ltree.insert
@@ -110,11 +165,11 @@ CREATE INDEX test_path_idx_gist  ON test USING gost  (path);
 \temat{Wydajność}
 
 \begin{qxtab}{ltree}{Wydajność metody \texttt{ltree}}
-%! result-table ltree deep3
+%! result-table ltree
 \end{qxtab}
 
 \begin{qxfig}{ltree}{Wydajność metody \texttt{ltree}}
-%! result-chart ltree deep3
+%! result-chart ltree
 \end{qxfig}
 
 

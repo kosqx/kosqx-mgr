@@ -3,7 +3,7 @@
 
 Reprezentacja \emph{zagnieżdżonych zbiorów} \eng{nested sets} została spopularyzowana przez Joe Celko\cite{celko-sql}\index{Celko Joe}.
 Dlatego czasem bywa nazywana ,,metodą Celko''.
-Jak sam przyznaje, oparł się na opisie Donalda Knutha\cite{knuth}.
+Który, jak sam przyznaje, oparł się na opisie Donalda Knutha\cite{knuth}.
 
 %Lecz to nie on jako pierwszy ją opisał.
 %%Przed nim zrobił to Donald Knuth\cite{knuth}.
@@ -38,11 +38,37 @@ Natomiast jeśli ma podzbiory to staje się ich przodkiem.
 Jeśli dodatkowo jest najmniejszym z nadzbiorów danego węzła to jest jego rodzicem.
 W efekcie każdy zbiór jest \emph{,,zagnieżdżony''} w swoim rodzicu%
 \footnote{
+    
     Za przykład z realnego świata może posłużyć metoda pakowania przedmiotów w celu przewozu.
     W kontenerach znajdują się palety, na których znajdują się kartony, wewnątrz których znajdują się opakowania indywidualne produktów.
     Innym przykładem są matrioszki czy jednostki podziału administracyjnego (województwa, gminy, miejscowości, \ldots).
 }.
 Stąd pochodzi nazwa tej reprezentacji.
+
+%todo porównanie do XML każdy tag zaczynający w
+
+%\begin{verbatim}[xml]
+%<node id="1" name="Bazy Danych">
+%    <node id="2" name="Obiektowe">
+%        <node id="3" name="db4o">
+%        </node>
+%    </node>
+%    <node id="4" name="Relacyjne">
+%        <node id="5" name="Open Source">
+%            <node id="6" name="PostgreSQL">
+%            </node>
+%            <node id="7" name="MySQL">
+%            </node>
+%            <node id="8" name="SQLite">
+%            </node>
+%        </node>
+%        <node id="9" name="Komercyjne">
+%        </node>
+%    </node>
+%    <node id="10" name="XML">
+%    </node>
+%</node>
+%\end{verbatim}
 
 W bazie danych najprostszą metodą implementacji tej metody jest myślenie o zbiorach jako o odcinkach na prostej%
 \footnote{W tym celu można by było użyć również rozszerzeń przestrzennych, przykładowo \emph{PostGIS} lub \emph{Oracle Spatial}}.
@@ -118,7 +144,7 @@ Wymaga ono zmiany wartości \texttt{lft} i \texttt{rgt} wielu rekordów.
 W powyższym przypadku
 --- jako że wstawiamy dane w kolejności przeszukiwania w głąb ---
 wymagana jest modyfikacja tylko tylu rekordów na jakim poziomie\todo{?} aktualnie wstawiamy nowy węzeł.
-Lecz należy się liczyć z przypadkiem pesymistycznym --- dodaniem do korzenia potomka jako pierwszego elementu\todo{las}.
+Lecz należy się liczyć z przypadkiem pesymistycznym --- dodaniem nowego drzewa jako pierwszego elementu lasu.
 W takiej sytuacji wymagane jest zmodyfikowanie wszystkich istniejących rekordów.
 
 %\textbf{Uwaga:} Jeśli chce się jednorazowo załadować cały las do bazy danych można postąpić bardziej optymalnie\footnote{
@@ -215,7 +241,7 @@ Zapytanie próbuje pobrać rodzica danego rekordu, a dzięki złączeniu zewnęt
 %        klauzula \texttt{LIMIT 1} sprawia, że operacja pobiera tylko jeden rekord 
 %\end{itemize}
 
-Ten zapytanie różni się od pobrania przodków w dwóch miejscach.
+To zapytanie różni się od pobrania przodków w dwóch miejscach.
 Po pierwsze \texttt{result.lft + 1} w warunku złączenia powoduje, że spełniają go wyłącznie przodkowie właściwi.
 Natomiast klauzula \texttt{LIMIT 1} sprawia, że zapytanie pobiera tylko jeden rekord.
 
@@ -279,11 +305,11 @@ SELECT *
 \temat{Wydajność}
 
 \begin{qxtab}{nested}{Wydajność reprezentacji zagnieżdżonych zbiorów}
-%! result-table nested deep3
+%! result-table nested
 \end{qxtab}
 
 \begin{qxfig}{nested}{Wydajność reprezentacji zagnieżdżonych zbiorów}
-%! result-chart nested deep3
+%! result-chart nested
 \end{qxfig}
 
 \index{metoda!zagnieżdzonych zbiorów|)}

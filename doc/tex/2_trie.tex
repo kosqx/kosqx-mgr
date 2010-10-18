@@ -160,6 +160,11 @@ daje się zaimplementować w każdej z obsługiwanych baz danych oraz wymagane z
 
 \operacja{Pobranie dzieci}
 
+Podczas wstawiania danych ścieżka rodzica jest konkatenowana z jego identyfikatorem.
+Wynik jest zapisywany w ścieżce dziecka.
+Czyli z węzła można wyliczyć wartość ścieżki jego dzieci.
+%W efekcie mając węzeł można stworzyć na jego podstawie dokładnie takąś samą ścierzkę,
+%jaką mają jego 
 
 
 %! method-sql pathenum.children
@@ -195,11 +200,11 @@ W takiej sytuacji można wykonać dodatkowe operacje bez konieczności wykonywan
 \temat{Wydajność}
 
 \begin{qxtab}{pathenum}{Wydajność reprezentacji zmaterializowanych ścieżek}
-%! result-table pathenum deep3
+%! result-table pathenum
 \end{qxtab}
 
 \begin{qxfig}{pathenum}{Wydajność reprezentacji zmaterializowanych ścieżek}
-%! result-chart pathenum deep3
+%! result-chart pathenum
 \end{qxfig}
 
 

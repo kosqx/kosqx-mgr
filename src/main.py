@@ -16,16 +16,25 @@ class Stopwatch():
         self._prefix = ':'.join(prefix)
         self._time = None
         self._name = ''
+        self._count = 0
     
-    def start(self, name):
-        print '#', name
+    def start(self, name, count=0):
+        print '#', name, count
         self.stop()
         self._name = '%s:%s' % (self._prefix, name)
         self._time = time.time()
+        self._count = count
         
+    def _throughput(self, time, count):
+        #print count, time
+        if time > 0:
+            return count / time
+        else:
+            return 0
+    
     def stop(self):
         if self._time is not None:
-            self._results.append((self._name, time.time() - self._time))
+            self._results.append((self._name, self._throughput(time.time() - self._time, self._count)))
         
     def lines(self):
         total = sum([t for n, t in self._results])
@@ -37,6 +46,14 @@ class Stopwatch():
         return '\n'.join(self.lines())
 
 
+#def get_tree(database, tree_class):
+#    if database in ('memory', 'mem'):
+#        tree = methods.Memory()
+#    else:
+#
+#    
+#    return tree
+
 def run_test(database, tree_class, testcases):
     def report_null(data):
         pass
@@ -46,32 +63,105 @@ def run_test(database, tree_class, testcases):
                 print repr(i)
         else:
             print repr(data)
-    #report = report_null
-    report = report_print
+    report = report_null
+    #report = report_print
     
     print '## database', database, tree_class.__name__
     
-    if database in ('memory', 'mem'):
-        tree = methods.Memory()
-    else:
-        db = pada.connect(file='config/%s.cfg' % database)
-        db.set_paramstyle('named')
-        tree = tree_class(db)
+    db = pada.connect(file='config/%s.cfg' % database)
+    db.set_paramstyle('named')
+    tree = tree_class(db)
+    
+    #tree = get_tree(database, tree_class)
     
     id2id = {}
     
     sw = Stopwatch([tree_class.tree_name, database, testcases['data']])
     
+    sw.start('create', 1)
+    tree.create_table()
+    
+    case = testcases.get('insert', [])
+    sw.start('insert', len(case))
+    for i, node in enumerate(case):
+        #id2id[node['id']] = tree.insert(parent=node['parent'], name=node['name'][:99])
+        id2id[node['id']] = tree.insert(
+            parent=id2id.get(node['parent'], None),
+            name=node['name'][:99]
+        )
+        
+        if i % 1000 == 0:
+            print '#', i
+    db.commit()
+    
+    #print repr(testcases)
+    case = int(testcases.get('roots', ['1'])[0])
+    sw.start('roots', case)
+    for i in xrange(case):
+        report(tree.get_roots())
+    
+    case = testcases.get('parent', [])
+    sw.start('parent', len(case))
+    for i, idn in enumerate(case):
+        report(tree.get_parent(id2id[idn]))
+        if i % 1000 == 0:
+            print '#', i
+    
+    case = testcases.get('children', [])
+    sw.start('children', len(case))
+    for i, idn in enumerate(case):
+        report(tree.get_children(id2id[idn]))
+        if i % 1000 == 0:
+            print '#', i
+    
+    case = testcases.get('ancestors', [])
+    sw.start('ancestors', len(case))
+    for i, idn in enumerate(case):
+        report(tree.get_ancestors(id2id[idn]))
+        if i % 1000 == 0:
+            print '#', i
+    
+    case = testcases.get('descendants', [])
+    sw.start('descendants', len(case))
+    for i, idn in enumerate(case):
+        report(tree.get_descendants(id2id[idn]))
+        if i % 1000 == 0:
+            print '#', i
+    
+    sw.stop()
+    
+    return sw
+
+
+def run_checkgen(testcases):
+    def report_null(data):
+        pass
+    def report_print(data):
+        if isinstance(data, list):
+            for i in data:
+                print repr(i)
+        else:
+            print repr(data)
+    report = report_null
+    #report = report_print
+    
+    tree = methods.Memory()
+    
+    id2id = {}
+    
+    sw = Stopwatch([])
+    
     sw.start('create')
     tree.create_table()
     
 
+    case = testcases.get('insert', [])
     sw.start('insert')
     for i, node in enumerate(testcases.get('insert', [])):
         id2id[node['id']] = tree.insert(parent=node['parent'], name=node['name'][:48])
         if i % 10000 == 0:
             print '#', i
-    db.commit()
+    #db.commit()
     
     
     
@@ -101,9 +191,9 @@ def run_test(database, tree_class, testcases):
     for idn in case:
         report(tree.get_descendants(id2id[idn]))
     
-    sw.stop()
+    #sw.stop()
     
-    return sw
+    #return sw
 
 
 def find_methods():
@@ -124,6 +214,7 @@ def main():
     args = sys.argv[1:]
     
     if args[0] == 'test':
+        #python main.py test postgresql example nested
         bases = find_methods()
         database = args[1]
         testcases = utils.read_tree('data/%s.xml' % args[2])
@@ -137,8 +228,10 @@ def main():
     elif args[0] == 'generate':
         utils.generate_test('data/%s.xml' % args[1], int(args[2]), int(args[3]))
         
-    elif args[0] == 'check':
-        utils.generate_test('data/%s.xml' % args[1], int(args[2]), int(args[3]))
+    elif args[0] == 'checkgen':
+        testcases = utils.read_tree('data/%s.xml' % args[1])
+        run_checkgen(testcases)
+        #utils.generate_test('data/%s.xml' % args[1], int(args[2]), int(args[3]))
     
     elif args[0] == 'sql':
         database, sql = args[1], args[2]

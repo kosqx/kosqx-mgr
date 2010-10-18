@@ -110,7 +110,7 @@ def do_highlight(code, lexer_name):
     #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=single,xleftmargin=5mm')
     #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=lines,xleftmargin=5mm')
     #formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='frame=leftline,xleftmargin=5mm')
-    formatter = LatexFormatter(linenos=False, commandprefix='PYG', verboptions='xleftmargin=9mm')
+    formatter = LatexFormatter(linenos=True, commandprefix='PYG', verboptions='xleftmargin=9mm')
     
     result = highlight(code, lexer, formatter)
     
@@ -133,6 +133,8 @@ def code_pre(lines):
         lexer_name = "python"
     elif head.endswith('[c]'):
         lexer_name = "c"
+    elif head.endswith('[xml]'):
+        lexer_name = "xml"
     else:
         lexer_name = "sql"
         
@@ -177,14 +179,28 @@ def code_method_python(line):
     else:
         return "\n\n\\textcolor{red}{\\textbf{[[tu brakuje kodu źródłowego: Python]]}}\n\n"
 
-def code_results_table(line):
+def do_code_results(line):
     global results
+    global config
     
     parts = line.split()
-    method = parts[-2]
-    testdata = parts[-1]
+    method = parts[-1]
+    testdata = config['testdata']
     
     final = process_results(results, method, testdata)
+    
+    return final, method, testdata
+
+def code_results_table(line):
+    #global results
+    #
+    #parts = line.split()
+    #method = parts[-2]
+    #testdata = parts[-1]
+    #
+    #final = process_results(results, method, testdata)
+    
+    final, method, testdata = do_code_results(line)
     
     lines = [
         '\\begin{tabular}{| r | ' + ('r ' * (len(final[0]) - 1)) + '  |}',
@@ -207,19 +223,30 @@ def code_results_table(line):
     return '\n'.join(lines)
 
 def code_results_chart(line):
-    global results
+    #global results
+    #
+    ##parts = line.split()
+    ##method = parts[-2]
+    ##testdata = parts[-1]
+    #
+    #data = process_results(results, method, testdata)
     
-    parts = line.split()
-    method = parts[-2]
-    testdata = parts[-1]
-    data = process_results(results, method, testdata)
+    final, method, testdata = do_code_results(line)
     
     #print data
     
     filename = 'img_chart_%s.png' % method
-    chart(data, filename, value2desc)
+    chart(final, filename, value2desc)
     return r'\includegraphics[totalheight=0.4\textheight]{%s}' % filename
     #return r'\includegraphics[width=\textwidth]{%s}' % filename
+
+def code_results_testdata(line):
+    global config
+    
+    parts = line.split()
+    config['testdata'] = parts[-1]
+    
+    return ''
 
 def code_dot(lines):
     filename = 'img_graph_%s.png' % lines[0].split()[-1]
@@ -292,6 +319,8 @@ def main(args):
     results = read_results('../src/results.txt')
     global methods
     methods = parse_methods('../src/methods.py')
+    global config
+    config = {}
     
     tmpdir = tempfile.mkdtemp()
     abspath = os.path.abspath(args[0])
@@ -299,7 +328,7 @@ def main(args):
     os.chdir(abspath)
     
     shutil.copyfile('Makefile', os.path.join(tmpdir, 'Makefile'))
-    files = glob.glob('*.tex') + glob.glob('tex/*.tex') + glob.glob('tex/*.bib')
+    files = glob.glob('*.tex') + sorted(glob.glob('tex/*.tex')) + glob.glob('tex/*.bib')
  
     os.chdir(tmpdir)
     
@@ -310,6 +339,7 @@ def main(args):
         (r'\\begin\{verbatim\}\[sql]\s*',     r'\\end\{verbatim\}', code_pre),
         (r'\\begin\{verbatim\}\[c]\s*',       r'\\end\{verbatim\}', code_pre),
         (r'\\begin\{verbatim\}\[python]\s*',  r'\\end\{verbatim\}', code_pre),
+        (r'\\begin\{verbatim\}\[xml]\s*',     r'\\end\{verbatim\}', code_pre),
         (r'\\begin\{verbatim\}\[dot]\s*',     r'\\end\{verbatim\}', code_dot),
         (r'\\begin\{verbatim\}\[table]\s*',   r'\\end\{verbatim\}', code_table),
         (r'^%! *pygments-style',            None,                 code_pre_style),
@@ -317,6 +347,7 @@ def main(args):
         (r'^%! *method-python',             None,                 code_method_python),
         (r'^%! *result-table',              None,                 code_results_table),
         (r'^%! *result-chart',              None,                 code_results_chart),
+        (r'^%! *result-testdata',           None,                 code_results_testdata),
     ])
     
     os.system('make pdf')

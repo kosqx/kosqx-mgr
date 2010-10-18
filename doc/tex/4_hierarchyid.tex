@@ -53,18 +53,22 @@ Pozwala on na wygodne przechowywanie danych hierarchicznych.
 
 
 
+
 Reprezentacja pozwala na przechowywanie drzew uporządkowanych.
 
 \temat{Opis typu \texttt{hierarchyid}}
+%
+%\podtemat{Budowa}
 
-\podtemat{Budowa}
+
+Typ \texttt{hierarchyid} koncepcyjnie przypomina \emph{reprezentację zmaterializowanych ścieżek}.
+Różnica polega na tym, że zamiast zapisywać pełne identyfikatory węzłów przodków 
+zapisuje numery porządkowe określające, którym z kolei dzieckiem swojego rodzica jest dany węzeł.
 
 Typ \texttt{hierarchyid}\index{hierarchyid@\texttt{hierarchyid}} jest przechowywany wewnętrznie jako \texttt{VARBINARY}.
-
-W budowie wewnętrznej przypomina reprezentację zmaterializowanych krawędzi, 
-lecz aby osiągnąć mały rozmiar atrybutu zastosowano algorytm OrdPath\cite{ordpath,kumaran}\index{OrdPath}.
-Pierwotnie \todo{upewnić się} skonstruowano go aby ułarwić pracę z danymi XML\index{XML} pozbawionymi schematu\todo{schematu?}.
-Nastepnie został on zastosowany w implementacji typu \texttt{hierarchyid}.
+Dodatkowo by osiągnąć mały rozmiar atrybutu zastosowano algorytm OrdPath\cite{ordpath,kumaran}\index{OrdPath}.
+Pierwotnie \todo{upewnić się} skonstruowano go, aby ułatwić pracę z danymi XML\index{XML} pozbawionymi schematu\todo{schematu?}.
+Następnie został on zastosowany w implementacji typu \texttt{hierarchyid}.
 
 % Podobieństwo do UTF-8
 
@@ -74,96 +78,114 @@ Nastepnie został on zastosowany w implementacji typu \texttt{hierarchyid}.
 
 % Jest to 
 
-\podtemat{Indeksowanie}
-
-SQL Server udostępnia dwie strategie indeksowania hierarchicznych danych:
-\begin{description}
- \item[w głąb] \index{drzewo!wyszukiwanie!w głąb} 
- \item[wszerz] \index{drzewo!wyszukiwanie!wszerz} \todo{napisać o kolumnie OrgLevel}
- \end{description}
-
-
-
-\begin{verbatim}[sql]
-CREATE TABLE tree (
-    node hierarchyid PRIMARY KEY CLUSTERED,
-    level AS node.GetLevel(),
-    name varchar(100)
-);
-
-CREATE CLUSTERED INDEX Org_Breadth_First
-    ON tree(level, node);
-
-CREATE UNIQUE INDEX Org_Depth_First
-    ON tree(node);
-\end{verbatim}
+%\podtemat{Indeksowanie}
+%
+%SQL Server udostępnia dwie strategie indeksowania hierarchicznych danych:
+%\begin{description}
+% \item[w głąb] \index{drzewo!wyszukiwanie!w głąb} 
+% \item[wszerz] \index{drzewo!wyszukiwanie!wszerz} \todo{napisać o kolumnie OrgLevel}
+% \end{description}
+%
+%
+%
+%\begin{verbatim}[sql]
+%CREATE TABLE tree (
+%    node hierarchyid PRIMARY KEY CLUSTERED,
+%    level AS node.GetLevel(),
+%    name varchar(100)
+%);
+%
+%CREATE CLUSTERED INDEX Org_Breadth_First
+%    ON tree(level, node);
+%
+%CREATE UNIQUE INDEX Org_Depth_First
+%    ON tree(node);
+%\end{verbatim}
 
 
 \podtemat{Użyteczne funkcje}
 
 \begin{description}
-  \item[\texttt{child.GetAncestor(n)}] \index{GetAncestor@\texttt{GetAncestor()}}
-    Zwraca węzeł będący \texttt{n-tym} przodkiem danego węzła.
-    Dla $n = 0$ zwraca tem sam element, dla $n = 1$ rodzica, dla $n = 2$ dziadka, itd.
-    % 0 -> ten element; 1->rodzic; 2->dziadek
-	%This method is useful to find the (nth ancestor of the given child node.
+  	\item[\texttt{hierarchyid::GetRoot()}]
+  		Zwraca korzeń drzewa.
+  	
+  \item[\texttt{parent.GetDescendant(child\_after, child\_before)}]
+  	Zwraca wartość ścieżki dla nowo wstawianego węzła. 
+  	Zmienne oznaczają odpowiednio:
+  	\begin{description}
+  		\item[\texttt{parent}] węzeł rodzica nowo wstawianego rekordu
+  		\item[\texttt{child\_after}] dziecko, za którym nowy węzeł ma być wstawiony 
+  		\item[\texttt{child\_before}] dziecko, przed którym nowy węzeł ma być wstawiony 
+  	\end{description}
+	
+	W przypadku drzew zorientowanych \texttt{child\_before} należy ustawić na \texttt{NULL}.
+	Natomiast \texttt{child\_after} ustawić na największą z wartości ścieżki braci nowego elementu.
+  	
+%	This method is very useful to get the descendant of a given node. 
+%	It has a great significance in terms of finding the new descendant position get the descendants etc. 
+%
+%	This function returns one child node that is a descendant of the parent. 
+%	If parent is NULL, returns NULL. 
+%	If parent is not NULL, and both child1 and child2 are NULL, returns a child of parent. 
+%	If parent and child1 are not NULL, and child2 is NULL, returns a child of parent greater than child1. 
+%	If parent and child2 are not NULL and child1 is NULL, returns a child of parent less than child2. 
+%	If parent, child1, and child2 are all not NULL, returns a child of parent greater than child1 and less than child2. 
+%	If child1 or child2 is not NULL but is not a child of parent, an exception is raised. 
+%	If child1 >= child2, an exception is raised.
 
-  \item[\texttt{parent.GetDescendant(child1, child2)}] \index{GetDescendant@\texttt{GetDescendant()}}
-	This method is very useful to get the descendant of a given node. 
-	It has a great significance in terms of finding the new descendant position get the descendants etc. 
+  \item[\texttt{node.GetLevel()}]
+	Zwraca liczbę całkowitą będącą poziomem danego węzła w drzewie. 
+	%Korzeń ma poziom równy $0$. 
+	Jako, że typ \texttt{hierarchyid} nie obsługuje lasów, to aby to kompensować tworzy się sztuczny korzeń, a korzenie obsługiwanych drzew znajdują się na poziomie $1$.
 
-	This function returns one child node that is a descendant of the parent. 
-	If parent is NULL, returns NULL. 
-	If parent is not NULL, and both child1 and child2 are NULL, returns a child of parent. 
-	If parent and child1 are not NULL, and child2 is NULL, returns a child of parent greater than child1. 
-	If parent and child2 are not NULL and child1 is NULL, returns a child of parent less than child2. 
-	If parent, child1, and child2 are all not NULL, returns a child of parent greater than child1 and less than child2. 
-	If child1 or child2 is not NULL but is not a child of parent, an exception is raised. 
-	If child1 >= child2, an exception is raised.
+	\item[\texttt{child.GetAncestor(n)}]
+    	Zwraca węzeł będący \texttt{n-tym} przodkiem danego węzła.
+    	Dla $n = 0$ zwraca tem sam element, dla $n = 1$ rodzica, dla $n = 2$ dziadka, itd.
+    	% 0 -> ten element; 1->rodzic; 2->dziadek
+		%This method is useful to find the (nth ancestor of the given child node.
 
-  \item[\texttt{node.GetLevel()}] \index{GetLevel@\texttt{GetLevel()}}
-	Zwraca liczbę całowitą będącą poziomem danego węzła w drzewie \todo{słownik}. 
-	Korzeń ma poziom równy $0$. 
-	Jako, że typ \texttt{hierarchyid} nie obsługuje lasów to aby to kompensować tworzy się sztuczny korzeń, a korzenie obsługiwanych drzew znajdują się na poziomie $1$.
+
 
 	% This function will return an integer that represents the depth of this node in the current tree. 
 
-  \item[\texttt{hierarchyid::GetRoot()}] \index{GetRoot@\texttt{GetRoot()}}
-	This method will return the root of the hierarchy tree and this is a static method if you are using it within CLR. 
-	It will return the data type hierarchyID. 
 
-  \item[\texttt{parent.IsDescendant(child)}] \index{IsDescendant@\texttt{IsDescendant()}}
-	This method returns true/false (BIT) if the node is a descendant of the parent. 
+%	This method will return the root of the hierarchy tree and this is a static method if you are using it within CLR. 
+%	It will return the data type hierarchyID. 
 
-  \item[\texttt{hierarchyid::Parse (input)}] \index{Parse@\texttt{Parse()}}
-	Parse converts the canonical string representation of a hierarchyid to a hierarchyid value. 
-	Parse is called implicitly when a conversion from a string type to hierarchyid occurs. 
-	Acts as the opposite of ToString(). 
-	Parse() is a static method. 
+  \item[\texttt{child.IsDescendantOf(parent)}]
+  	Zwraca wartość logiczną określającą czy \texttt{child} jest potomkiem \texttt{parent}
+	%This method returns true/false (BIT) if the node is a descendant of the parent. 
 
-  \item[\texttt{void Read( BinaryReader r )}] \index{Read@\texttt{Read()}}
-	Read reads binary representation of SqlHierarchyId from the passed-in BinaryReader and sets the SqlHierarchyId object to that value. 
-	Read cannot be called by using Transact-SQL. Use CAST or CONVERT instead.
+%  \item[\texttt{hierarchyid::Parse (input)}] \index{Parse@\texttt{Parse()}}
+%	Parse converts the canonical string representation of a hierarchyid to a hierarchyid value. 
+%	Parse is called implicitly when a conversion from a string type to hierarchyid occurs. 
+%	Acts as the opposite of ToString(). 
+%	Parse() is a static method. 
 
-  \item[\texttt{node.Reparent(oldRoot, newRoot)}] \index{Reparent@\texttt{Reparent()}}
-	This is a very useful method which helps you to reparent a node i.e. suppose if we want to align an existing node 
-	to a new parent or any other existing parent then this method is very useful. 
+%  \item[\texttt{void Read( BinaryReader r )}]
+%	Read reads binary representation of SqlHierarchyId from the passed-in BinaryReader and sets the SqlHierarchyId object to that value. 
+%	Read cannot be called by using Transact-SQL. Use CAST or CONVERT instead.
+
+%  \item[\texttt{node.Reparent(oldRoot, newRoot)}] \index{Reparent@\texttt{Reparent()}}
+%	This is a very useful method which helps you to reparent a node i.e. suppose if we want to align an existing node 
+%	to a new parent or any other existing parent then this method is very useful. 
 
   \item[\texttt{node.ToString()}] \index{ToString@\texttt{ToString()}}
-	This method is useful to get the string representation of the HierarchyID. 
-	The method returns a string that is a nvarchar(4000) data type.
+  	Zwraca tekstową reprezentację danych.
+%	This method is useful to get the string representation of the HierarchyID. 
+%	The method returns a string that is a nvarchar(4000) data type.
 
 
-  \item[\texttt{void Write( BinaryWriter w )}] \index{Write@\texttt{Write()}}
-	Write writes out a binary representation of SqlHierarchyId to the passed-in BinaryWriter. 
-	Write cannot be called by using Transact-SQL. Use CAST or CONVERT instead.
+%  \item[\texttt{void Write( BinaryWriter w )}]
+%	Write writes out a binary representation of SqlHierarchyId to the passed-in BinaryWriter. 
+%	Write cannot be called by using Transact-SQL. Use CAST or CONVERT instead.
 
  \end{description}
 
 
 \temat{Reprezentacja}
 
-Typ \texttt{hierarchyid} jest przeznaczony do przechowywania pojedyńczego drzewa drzewa.
+Typ \texttt{hierarchyid} jest przeznaczony do przechowywania pojedyńczego drzewa.
 Aby umożliwić mu przechowywanie lasu należy połączyć korzenie wszystkich drzew z dodatkowym węzłem.
 Stanie się on korzeniem przechowywanego drzewa.
 
@@ -220,20 +242,37 @@ id | node      | name
 \operacja{Reprezentacja w SQL}
 %! method-sql hierarchyid.create
 
+Po stworzeniu tabeli wstawiamy do niej pierwszy rekord --- sztuczny korzeń całego lasu.
+
 \operacja{Wstawianie danych}
 %! method-sql hierarchyid.insert
 
+
 \operacja{Pobranie korzeni}
+
+Mając do dyspozycji metodę \texttt{node.GetLevel()} można łatwo pobrać korzenie.
+Wystarczy tylko pamiętać, że na poziomie $0$ znajduje się sztuczny korzeń, 
+a właściwe korzenie są ma poziomie $1$.
+
 %! method-sql hierarchyid.roots
 
 \operacja{Pobranie rodzica}
+
+Dzięki metodzie \texttt{node.GetAncestor(n)} można wyliczyć ścieżkę rodzica.
+
 %! method-sql hierarchyid.parent
 
 \operacja{Pobranie dzieci}
+
+%Dzieci to węzły posiadające 
+Ta operacja jest de facto odwróconym pobieraniem rodzica.
+
 %! method-sql hierarchyid.children
 
 \operacja{Pobranie przodków}
 %! method-sql hierarchyid.ancestors
+
+Po raz kolejny należy pamiętać o pominięciu sztucznego korzenia.
 
 \operacja{Pobieranie potomków}
 %! method-sql hierarchyid.descendants
@@ -245,7 +284,7 @@ id | node      | name
 \begin{table}[h!]
   \caption{Wyniki \texttt{hierarchyid}}
   \begin{center}
-%! result-table hierarchyid deep3
+%! result-table hierarchyid
   \end{center}
 \end{table}
 
@@ -253,25 +292,25 @@ id | node      | name
   \caption{Wyniki \texttt{hierarchyid}}
   \label{fig:img_chart_simple}
   \begin{center}
-%! result-chart hierarchyid deep3
+%! result-chart hierarchyid
   \end{center}
 \end{figure}
 
 
-\temat{Uwagi}
-
-SQL Server udostępnia \texttt{PERSISTED}\index{PERSISTED@\texttt{PERSISTED}} --- umożliwiające dynamiczne tworzenie dynamicznych kolumn. \todo{lepiej to sformuować}
-Przykładowo może zostać to użyte do łatwego pobrania 
-
-\begin{verbatim}[sql]
-CREATE TABLE tree (
-  node hierarchyid PRIMARY KEY CLUSTERED,
-  level AS node.GetLevel() PERSISTED,
-  name varchar(100)
-);
-
-SELECT level, name FROM tree;
-\end{verbatim}
+%\temat{Uwagi}
+%
+%SQL Server udostępnia \texttt{PERSISTED}\index{PERSISTED@\texttt{PERSISTED}} --- umożliwiające dynamiczne tworzenie dynamicznych kolumn. \todo{lepiej to sformuować}
+%Przykładowo może zostać to użyte do łatwego pobrania 
+%
+%\begin{verbatim}[sql]
+%CREATE TABLE tree (
+%  node hierarchyid PRIMARY KEY CLUSTERED,
+%  level AS node.GetLevel() PERSISTED,
+%  name varchar(100)
+%);
+%
+%SELECT level, name FROM tree;
+%\end{verbatim}
 
 
 

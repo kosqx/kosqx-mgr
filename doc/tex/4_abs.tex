@@ -17,3 +17,31 @@
 %Pozostałe metody też korzystają z omówionych poprzednio reprezentacji.
 %Oferują za to mechanizmy ułatwiające operowanie tymi reprezentacjami, 
 %jak też optymalizacje zwiększające wydajność i zmniejszające zrozmiar pola.
+
+
+Standardowo bazy danych umożliwiają przechowywanie wielu typów danych.
+Do powszechnie występujących można zaliczyć typy\footnote{Wymienione nazwy konkretnych typów pochodzą z bazy PostgreSQL}:
+\begin{itemize}
+    \item numeryczne
+        (\verb|integer|, \verb|numeric|, \verb|real|, \ldots)
+    \item znakowe
+        (\verb|char|, \verb|varchar|, \verb|text|, \ldots)
+    \item daty i czasu
+        (\verb|date|, \verb|time|, \verb|timestamp|, \verb|interval|, \ldots)
+    \item binarne
+        (\verb|bytea|)
+%    \item numeryczne
+%        (\verb||, \verb||, \verb||, \verb||, \verb||, \verb||, )
+%    \item numeryczne
+%        (\verb||, \verb||, \verb||, \verb||, \verb||, \verb||, )
+\end{itemize}
+
+Ponadto bazy danych oferują własne, specyficzne dla implementacji typy.
+Wśród nich warto wymienić typy tablicowe, sieciowe, logiczne, monetarne, wyliczeniowe oraz złożone.
+Coraz częściej stosowane są też typy umożliwiające przechowywanie dokumentów XML.
+
+
+Co najważniejsze --- z punktu widzenia tej pracy --- istnieją typy ułatwiające przechowywanie danych hierarchicznych.
+
+
+ 

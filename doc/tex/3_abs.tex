@@ -17,12 +17,16 @@
 
 
 Opisana w poprzednim rozdziale metoda krawędziowa ma szereg zalet.
-Niestety ma też powarzną wadę --- aby pobrać przodków lub potomków należy wykonać wiele zapytań.
+Niestety ma też poważną wadę --- aby pobrać przodków lub potomków należy wykonać wiele zapytań.
 W praktyce oznacza to większą czasochłonność takiej operacji. 
 Ponadto wymaga bardziej skomplikowanego kodu.
 
 Obejściem tego problemu jest pełniejsze wykorzystanie możliwości dawanych przez bazy danych.
-Nie są ona zwykłymi składami danych, lecz udostępniają coraz większe możliwości operowania na nich.
+Nie są one zwykłymi składami danych, lecz udostępniają coraz większe możliwości operowania na nich.
 
-Wystarczy więc przepisać te powolne metody tak by wykonywane były jako pojedyńcze zapytanie w bazie danych.
+Wystarczy więc przepisać te dwie powolne metody tak by wykonywane były jako pojedyncze zapytanie w bazie danych.
+Pozostałe operacje w tych metodach korzystają z implementacji \emph{metody krawędziowej}.
 
+%Siłą rzeczy przedstawione tu metody będą dziediczyły z implementacji metody krawędziowej.
+%Jedyne przedstawione operacje to  pobrania przodków i potomków.
+%Pozostałem tetody są identyczne z oryginalną  metodą.

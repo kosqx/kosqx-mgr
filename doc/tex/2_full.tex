@@ -33,7 +33,7 @@ Zawiera ona informacje o odległości pomiędzy każdym elementem a wszystkimi j
 
 
 Przedstawiona tutaj implementacja została lekko zmieniona względem oryginalnej ,,metody depesza''.
-Mianowicie dodatkowo zawiera jeden specjalny rekord dla każdego węzła.
+Mianowicie zawiera dodatkowo jeden specjalny rekord dla każdego węzła.
 Przechowuje on odległość pomiędzy węzłem a korzeniem.
 Posiada on atrybut \verb|top_id| ustawiony na \verb|NULL|.
 
@@ -129,7 +129,18 @@ NULL   | 10        | 1
 %! method-sql full.create
 
 \operacja{Wstawianie danych}
+
+%Mimo, że w tej metodzie trzeba wstawić sporo węzłów
+
+W bazach dających możliwość wstawiania danych wygenerowanych przez podzapytanie ta operacja jest bardzo łatwa do wykonania.
+
 %! method-sql full.insert
+
+
+Jak widać podzapytanie składa się z 3 części, których wyniki są łączone za pomocą operatora \texttt{UNION ALL}.
+Pierwszy fragment przetwarza rekordy odpowiadające za położenie rodzica w drzewie.
+Drugi odpowiada za sytuację gdy węzeł jest korzeniem i trzeba wstawić specjalny rekord z \texttt{top\_id = NULL}.
+Natomiast trzeci odpowiada za rekord z \texttt{distance = 0}.
 
 \operacja{Pobranie węzłów}
 
@@ -156,7 +167,7 @@ Analogicznie przodków w przeciwnej sytuacji.
 
 Natomiast blok \verb|$DISTANCE$| pozwala sprecyzować z których poziomów zostaną pobrane węzły.
 I tak dla \verb|>= 0| zostaną pobrani przodkowie/potomkowie%
-\footnote{Równie dobrze można by było pominąć ten warunek, gdyż wszystkie wartości atrybutu \texttt{distance} są większe lub równe zero},
+\footnote{W tej sytuacji można by było pominąć ten warunek, gdyż wszystkie wartości atrybutu \texttt{distance} są większe lub równe zero},
 dla \verb|> 0| zostaną pobrani przodkowie/potomkowie właściwi.
 Natomiast \verb|= 1| spowoduje pobranie rodzica/potomków.
 Oczywiście można zastosować dowolny warunek lub ich kombinację, co stanowi siłę tej reprezentacji. 
@@ -200,11 +211,11 @@ Wynika to z faktu, że sama tabela \verb|full_tree| nie zawiera informacji o str
 \temat{Wydajność}
 
 \begin{qxtab}{full}{Wydajność reprezentacji pełnych ścieżek}
-%! result-table full deep3
+%! result-table full
 \end{qxtab}
 
 \begin{qxfig}{full}{Wydajność reprezentacji pełnych ścieżek}
-%! result-chart full deep3
+%! result-chart full
 \end{qxfig}
 
 

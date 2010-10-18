@@ -32,22 +32,35 @@
 
 
 
-W standardzie SQL:99\index{SQL!SQL:99} wprowadzono \emph{Wspólne Wyrażenia Tabelowe} \eng{CTE --- Common Table Expressions}.
-Ich działanie przypomina stworzenie tymczasowego widoku\index{widok}, 
-istniejącego tylko na czas wykonania danego zapytania.
+W standardzie SQL:1999\index{SQL!SQL:1999} dodano \emph{Wspólne Wyrażenia Tabelowe} \eng{CTE --- Common Table Expressions}.
+Głównym celem ich wprowadzenia było umożliwienie pisania bardziej zwięzłego, czytelnego a przede wszystkim prostszego kodu.
+
+Ich działanie przypomina stworzenie tymczasowego widoku\index{widok}. 
+%istniejącego tylko na czas wykonania danego zapytania.
+Po zdefiniowaniu jest on dostępny dla zapytania.
+Jednak w odróżnieniu od widoku jest on tworzony w samym zapytaniu i istnieje tylko na czas jego wykonywania.
 
 
-Pozwala ono również na rekurencyjne wykonywanie zapytań w bazie danych.
+Przykładowym zastosowaniem CTE jest uniknięcie wielokrotnego używania tego samego podzapytania\cite{apress-sqlserver}.
+Nie tylko zwiększy to czytelność kodu, ale poprawi jego wydajność.
+% http://www.postgresonline.com/journal/archives/127-PostgresQL-8.4-Common-Table-Expressions-CTE,-performance-improvement,-precalculated-functions-revisited.html
+
+
+
+%Pozwala ono również na rekurencyjne wykonywanie zapytań w bazie danych.
+
+Wspólne Wyrażenia Tabelowe mają też inne, ciekawsze z punktu widzenia tej pracy, zastosowanie.
+Pozwalają one na rekurencyjne wykonywanie zapytań w bazie danych.
 
 W chwili obecnej to rozszerzenie jest dostępne w:
 \begin{itemize}
- \item \textbf{IBM DB2} wprowadzone w wersji 8
+ \item \textbf{IBM DB2} począwszy od  wersji 8
  \item \textbf{Microsoft SQL Server}
 	% http://www.mssqltips.com/tip.asp?tip=1520
-	w wersjach począwszy od SQL Server 2005
+	począwszy od SQL Server 2005
  \item \textbf{PostgreSQL}
 	% http://developer.postgresql.org/pgdocs/postgres/queries-with.html
-	ma się pojawić w wersji 8.4
+	począwszy od 8.4
 % \item \textbf{Firebird}
 %	wersja 2.1 
 \end{itemize}
@@ -73,7 +86,7 @@ W chwili obecnej to rozszerzenie jest dostępne w:
 \index{WITH@\texttt{WITH}|see{Wspólne Wyrażenia Tabelowe}}
 
 
-Składnia \texttt{WITH} prezentuje się następująco:
+Składnia Rekurencyjnych Wspólnych Wyrażeń Tabelowych prezentuje się następująco:
 
 
 \index{WITH RECURSIVE@\texttt{WITH RECURSIVE}|see{Wspólne Wyrażenia Tabelowe}}
@@ -89,8 +102,22 @@ UNION ALL
 SELECT <<nazwy kolumn>> FROM <<nazwa widoku>>
 \end{verbatim}
 
-Działanie tej konstrukcji jest proste.
+Działanie tej konstrukcji można streścić jako:
+\begin{enumerate}
+    \item
+        Na początku wykonywane jest \texttt{zapytanie startowe}.
+        Jego wynik jest widoczny pod nazwą \texttt{nazwa widoku}.
+    \item
+        Korzystając z wygenerowanych w poprzednim kroku rekordów
+        (wyłącznie w ostatnim kroku, wyniki poprzednich wywołań nie są tu dostępne)
+        \texttt{zapytanie rekurencyjne} zwraca nowe wyniki.
+        %Jeśli nie został pobrany żaden nowy element
+        Jeśli jest ich więcej niż zero to ten etap się powtarza.
+    \item
+        Po zakończeniu pracy części rekurencyjnej jej \emph{wszystkie} wyniki są dostępne dla zapytania znajdującego się po nim.
+\end{enumerate}
 
+Ten algorytm można przedstawić również w poniższy sposób:
 \begin{verbatim}[python]
 widok = []
 tmp = zapytanie_startowe()
@@ -100,7 +127,7 @@ while tmp:
 return widok
 \end{verbatim}
 
-Najprostrzy przykład wykorzystania zapytań rekurencyjnych to wygenerowanie ciągu liczb. 
+Najprostszy przykład wykorzystania zapytań rekurencyjnych to wygenerowanie ciągu liczb. 
 W tym przykładzie ciągu arytmetycznego zaczynającego się od $0$ (co wynika z zapytania startowego \texttt{SELECT \textbf{0} AS i}), 
 różnica ciągu wynosi $1$ (\texttt{SELECT \textbf{i + 1} AS i})
 
@@ -108,65 +135,54 @@ różnica ciągu wynosi $1$ (\texttt{SELECT \textbf{i + 1} AS i})
 WITH RECURSIVE a(i) AS (
     SELECT 0 AS i
   UNION ALL
-    SELECT i + 1 AS i FROM a WHERE i < 10
+    SELECT i + 1 AS i
+      FROM a
+      WHERE i < 10
 )
 SELECT i FROM a;
 \end{verbatim}
 
 
-Rozszerzenie to można wykorzystać do pracy z reprezentacją krawędziową. 
-Umożliwi ono wysłanie do bazy danych tylko jednego zapytania podczas pobierania potomków i przodków. 
-Bez niego konieczne było wykonywanie odzielnego zapytania podczas przechodzenia przez każdy poziom drzewa.
+%Rozszerzenie to można wykorzystać do pracy z reprezentacją krawędziową. 
+%Umożliwi ono wysłanie do bazy danych tylko jednego zapytania podczas pobierania potomków i przodków. 
+%Bez niego konieczne było wykonywanie odzielnego zapytania podczas przechodzenia przez każdy poziom drzewa.
 
 \temat{Operacje}
+
+%W bazie PostgreSQL należy urzyć \texttt{}
+
+Niestety implementacje CTE różnią się od siebie.
+PostgreSQL wymaga jawnego podania, że chodzi o zapytanie rekurencyjne czyli \texttt{WITH RECURSIVE}.
+Pozostałe bazy wymagają samego \texttt{WITH} a słowo \texttt{RECURSIVE} powoduje zgłoszenie błędu.
+Ponadto DB2 nie zezwala na jawne użycie złączenia (czyli z \texttt{JOIN}).
+Czyli trzeba przenieść warunek złączenia do klauzuli \texttt{WHERE}.
+
 
 \operacja{Pobranie przodków}
 %! method-sql with.ancestors
 
-% \begin{verbatim}[sql]
-% WITH temptab(node_level, id, parent, name) AS
-% (
-%     SELECT 0, root.id, root.parent, root.name
-%       FROM simple root
-%       WHERE root.id = :id
-%   UNION ALL
-%     SELECT t.node_level + 1, s.id, s.parent, s.name
-%       FROM simple s, temptab t
-%       WHERE s.id = t.parent
-% )
-% SELECT node_level, id, parent, name FROM temptab
-% \end{verbatim}
-
 \operacja{Pobieranie potomków}
 %! method-sql with.descendants
 
-% \begin{verbatim}[sql]
-% WITH temptab(level, id, parent, name) AS
-% (
-%   SELECT 0, root.id, root.parent, root.name
-%     FROM simple root
-%     WHERE root.id = :id
-% UNION ALL
-%   SELECT t.level + 1, s.id, s.parent, s.name
-%     FROM simple s, temptab t
-%     WHERE s.parent = t.id
-% )
-% SELECT level, id, parent, name FROM temptab
-% \end{verbatim}
+By zapytanie zwracało potomków właściwych dodano dodatkową kolumnę \texttt{level}.
+Jej wartość odpowiada poziomowi węzła w pobieranym poddrzewie.
 
-Warto zwrócić uwagę, że ta konstrukcja przeszukuje drzwewo wszerz. Można można to dostrzec w tym jak zapytanie jest sformuowane. 
+Pomijając tą kolumnę, kod jest niemal identyczny jak w pobieraniu przodków.
+Tym co je różni jest warunek złączenia.
 
-Jeśli by zaszła potrzeba pobrania całego drzewa wystarczy w zapytaniu startowym zmienić \texttt{WHERE root.id = :id} na \texttt{WHERE root.parent IS NULL}
+%Warto zwrócić uwagę, że ta konstrukcja przeszukuje drzwewo wszerz. Można można to dostrzec w tym jak zapytanie jest sformuowane. 
+%
+%Jeśli by zaszła potrzeba pobrania całego drzewa wystarczy w zapytaniu startowym zmienić \texttt{WHERE root.id = :id} na \texttt{WHERE root.parent IS NULL}
 
 
 \temat{Wydajność}
 
-\begin{qxtab}{with}{Wydajność metody \texttt{WITH}}
-%! result-table with deep3
+\begin{qxtab}{with}{Wydajność metody Wspólnych Wyrażeń Tabelowych}
+%! result-table with
 \end{qxtab}
 
-\begin{qxfig}{with}{Wydajność metody \texttt{WITH}}
-%! result-chart with deep3
+\begin{qxfig}{with}{Wydajność metody Wspólnych Wyrażeń Tabelowych}
+%! result-chart with
 \end{qxfig}
 
 

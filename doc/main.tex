@@ -103,6 +103,9 @@
 \usepackage{fancyvrb}
 %! pygments-style
 
+% zestaw danych testowych
+%! result-testdata deep3
+
 % mniejsze odstępy w listach
 \usepackage{mdwlist}
 
@@ -133,6 +136,7 @@
 }
 
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % document
 
@@ -142,39 +146,26 @@
 \bibliographystyle{plalpha}
 
 \input{tex/0_titlepage}
-\input{tex/0_abstract}
+%\input{tex/0_abstract}
 
 \tableofcontents{}
 
-% \chapter*{Wstęp}
 \input{tex/1_intro}
-
-
-% \chapter{Wprowadzenie do tematu}
 \input{tex/1_theory}
-
-% \chapter{Podstawowe metody przechowywania danych}
 \input{tex/2_abs}
     \clearpage
-
-	\input{tex/2_adjacency}
-	\clearpage
-
-	\input{tex/2_nested}
-	\clearpage
-
-	\input{tex/2_full}
-	\clearpage
-	
-	\input{tex/2_trie}
-	\clearpage
-        
-        %\input{tex/2_other}
-        %\clearpage
-
-    % \input{tex/2_edgeenum}
-    % \clearpage
-
+    
+    \input{tex/2_adjacency}
+    \clearpage
+    
+    \input{tex/2_nested}
+    \clearpage
+    
+    \input{tex/2_full}
+    \clearpage
+    
+    \input{tex/2_trie}
+    \clearpage
 
 \input{tex/3_abs}
     \clearpage
@@ -188,23 +179,23 @@
     %\input{tex/3_plsql}
     %\clearpage
     
-%\input{tex/4_abs}
-%    \clearpage
-%
-%    \input{tex/4_ltree}
-%    \clearpage
-%    
-%    % \section{Microsoft SQL Server \texttt{hierarchyid}}
-%    \input{tex/4_hierarchyid}
-%    \clearpage
+\input{tex/4_abs}
+    \clearpage
+
+    \input{tex/4_ltree}
+    \clearpage
+    
+    \input{tex/4_hierarchyid}
+    \clearpage
+    
+    
 %
 %\input{tex/7_summary}
 %
 %
-%\appendix
+\appendix
+\input{tex/8_test}
 %\input{tex/8_app}
-%\input{tex/8_test}
-
 
 
 %\input{tex/9_bibliography}

@@ -18,12 +18,13 @@
 
 System zarządzania bazą danych Oracle nie posiada możliwości przetwarzania danych hierarchicznych za pomocą klauzuli \texttt{WITH}.
 \index{Wspolne@Wspólne Wyrażenia Tabelowe}
-W prawdzie jest ona dostępna od wersji \emph{Oracle 9i release 2} ale służy wyłacznie do pracy z podzapytaniami.
+W prawdzie jest ona dostępna od wersji \emph{Oracle 9i release 2}, ale służy wyłacznie do pracy z podzapytaniami.
 
 % po ludzku: ma CTE ale tylko WITH, ale bez WITH RECURSIVE
 
 W to miejsce \emph{Oracle} udostępnia własne rozszerzenie \texttt{CONNECT BY}. 
-Jest ono dobrze opisane w \cite{oracle-ref11}, wiec tu zostaną przedstawione tylko podstawowe i najczęściej potrzebne jego możliwości.
+Jest ono dobrze opisane w \cite{oracle-ref11},
+wiec tu zostaną przedstawione tylko podstawowe i najczęściej używane jego możliwości.
 
 
 \temat{Opis klauzuli \texttt{CONNECT BY}}
@@ -43,7 +44,7 @@ Sposób działania da się w skrócie opisać regułami:
     \item \texttt{START WITH}\index{START WITH@\texttt{START WITH}} wskazuje w którym miejscu drzewa rozpocząć działanie. 
         Klauzula może się znajdować zarówno przed jak i po \texttt{CONNECT BY}.
     \item kierunek przechodzenia po węzłach zależny jest od tego przed którym wyrażeniem stoi \texttt{PRIOR}\index{PRIOR@\texttt{PRIOR}}.
-         Nie ma różnicy \verb|CONNECT BY PRIOR a = b| a \verb|CONNECT BY b = PRIOR a|.
+        Nie ma różnicy \verb|CONNECT BY PRIOR a = b| a \verb|CONNECT BY b = PRIOR a|.
     \item klauzula \texttt{WHERE} pozwala na wyeliminowanie z wyniku pojedyńczych rekordów, 
         ale nie usuwa rekordów, które są dostępne po przejściu przez ten pominięty rekord.
     \item zastosowanie zwykłej klauzuli \texttt{ORDER BY} niszczy hierarchiczny układ danych 
@@ -73,10 +74,10 @@ Przydatne mechanizmy:
     \item[\texttt{CONNECT\_BY\_ISLEAF}] \index{CONNECTBYISLEAF@\texttt{CONNECT\_BY\_ISLEAF}}
         pseudokolumna o wartości $1$ jeśli rekord jest liściem, $0$ w przeciwnym wypadku
     \item[\texttt{CONNECT\_BY\_ISCYCLE}]  \index{CONNECTBYISCYCLE@\texttt{CONNECT\_BY\_ISCYCLE}}
-        pseudokolumna o wartości $1$ jeśli rekord ma potomka który też jest jego przodkiem, $0$ w przeciwnym wypadku
-    \item[\texttt{SYS\_CONNECT\_BY\_PATH(kolumna\_wartości, znak\_separujacy)}] \index{SYSCONNECTBYPATH@\texttt{SYS\_CONNECT\_BY\_PATH()}}
+        pseudokolumna o wartości $1$ jeśli rekord ma potomka, który też jest jego przodkiem, $0$ w przeciwnym wypadku
+    \item[\texttt{SYS\_CONNECT\_BY\_PATH(kolumna\_wartosci, znak\_separujacy)}] \index{SYSCONNECTBYPATH@\texttt{SYS\_CONNECT\_BY\_PATH()}}
         funkcja zwraca złączoną w listę wartości 
-        z kolumny \texttt{kolumna\_wartości} wchodzące w skład ścieżki pomiędzy korzeniem a aktualnym węzłem.
+        z kolumny \texttt{kolumna\_wartosci} wchodzące w skład ścieżki pomiędzy korzeniem a aktualnym węzłem.
         Każda wartość jest poprzedzona znakiem \texttt{znak\_separujacy}.
         Dla przykładu \texttt{SYS\_CONNECT\_BY\_PATH(name, '/')} może zwrócić \texttt{/Bazy danych/Obiektowe/db4o}.
 
@@ -110,40 +111,42 @@ Przydatne mechanizmy:
 \temat{Wydajność}
 
 \begin{qxtab}{connectby}{Wydajność metody \texttt{CONNECT BY}}
-%! result-table connectby deep3
+%! result-table connectby
 \end{qxtab}
 
 \begin{qxfig}{connectby}{Wydajność metody \texttt{CONNECT BY}}
-%! result-chart connectby deep3
+%! result-chart connectby
 \end{qxfig}
 
 \temat{Uwagi}
 
-Oracle w wersjach wcześniejszych od 11g wykonując zapytanie korzystające z klauzuli \texttt{CONNECT BY}
+Oracle w wersjach wcześniejszych od 11g wykonując zapytanie korzystające
+z klauzuli \texttt{CONNECT BY} korzysta z \emph{full table scan}.
+Dlatego wydajność tych metod nie jest dobra.
 
 
 
 % http://www.postgresql.org/docs/current/static/tablefunc.html
 % wajig install postgresql-contrib-8.3
 
-\podtemat{PostgreSQL \texttt{connectby()}}
-
-PostgreSQL dostarcza moduł \texttt{tablefunc}\index{tablefunc} zawierający różne funkcje zwracające tabele.
-% Ta funkcjonalność pojawiła się w wersji 7.4, natomiast dokumentacja dal niej dopiero w wersji 8.3.
-Są one zaimplementowane w C\index{C} dla większej wydajności.
-
-Jedną z dostępnych funkcji jest \texttt{connectby()}, będąca odpowiednikiem wyrażenia \texttt{CONNECT BY}. Jej składnia\todo{składnia?} wygląda następująco:
-
-\begin{verbatim}[sql]
-connectby(
-  text relname,          -- nazwa tabeli
-  text keyid_fld,        -- 
-  text parent_keyid_fld, -- 
-  [text orderby_fld,]    -- 
-  text start_with,       -- 
-  int max_depth,         -- 
-  [text branch_delim])   -- 
-\end{verbatim}
+%\podtemat{PostgreSQL \texttt{connectby()}}
+%
+%PostgreSQL dostarcza moduł \texttt{tablefunc}\index{tablefunc} zawierający różne funkcje zwracające tabele.
+%% Ta funkcjonalność pojawiła się w wersji 7.4, natomiast dokumentacja dal niej dopiero w wersji 8.3.
+%Są one zaimplementowane w C\index{C} dla większej wydajności.
+%
+%Jedną z dostępnych funkcji jest \texttt{connectby()}, będąca odpowiednikiem wyrażenia \texttt{CONNECT BY}. Jej składnia\todo{składnia?} wygląda następująco:
+%
+%\begin{verbatim}[sql]
+%connectby(
+%  text relname,          -- nazwa tabeli
+%  text keyid_fld,        -- 
+%  text parent_keyid_fld, -- 
+%  [text orderby_fld,]    -- 
+%  text start_with,       -- 
+%  int max_depth,         -- 
+%  [text branch_delim])   -- 
+%\end{verbatim}
 
 
 

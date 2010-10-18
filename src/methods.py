@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 class Tree:
     def __init__(self, db):
         self.db = db
@@ -52,7 +51,7 @@ class Memory(Tree):
         pass
     
     def _get(self, i):
-        return i, self._d[i]
+        return {'id': i, 'name': self._d[i][1]}
     
     def insert(self, parent, name):
         l = len(self._d) + 1
@@ -65,22 +64,21 @@ class Memory(Tree):
     def get_roots(self):
         #print self._d
         #return [self._value(i) for i in self._d if self._d[i][0] == None]
-        return [self._get(i) for i in self._d if self._d[i] == None]
+        return [self._get(i) for i in self._d if self._d[i][0] == None]
 
     def get_parent(self, id):
         i = self._d[int(id)][0]
-        return (i, self._d[i])
+        if i in self._d:
+            return [self._get(i)]
+        else:
+            return []
 
     def get_ancestors(self, id):
         result = []
         i = id
-        cnt = 0
-        while i is not None and cnt < 10:
-            result.append((i, self._d[i]))
+        while i is not None:
+            result.append(self._get(i))
             i = self._d[i][0]
-            
-            
-            cnt+=1
         return result
 
     def get_children(self, id):
@@ -89,7 +87,8 @@ class Memory(Tree):
 
     def get_descendants(self, id):
         keys = set([id])
-        result = [self._get(i) for i in keys]
+        #result = [self._get(i) for i in keys]
+        result = []
         while keys:
             tmp = [i for i in self._d if self._d[i][0] in keys]
             result.extend([self._get(i) for i in tmp])
@@ -294,20 +293,19 @@ class NestedSets(Tree):
     def get_roots(self):
         return self.db.execute_and_fetch("""
             SELECT result.*
-                FROM nested_sets AS result
-                    LEFT OUTER JOIN nested_sets AS box
+                FROM nested_sets result
+                    LEFT OUTER JOIN nested_sets box
                         ON (box.lft < result.lft AND result.rgt < box.rgt)
                 WHERE
                     box.lft IS NULL
-            """,
-            dict(id=id)
+            """
         )
     
     def get_parent(self, id):
         """
             SELECT result.*
-                FROM nested_sets AS box
-                    JOIN nested_sets AS result
+                FROM nested_sets box
+                    JOIN nested_sets result
                         ON (box.lft BETWEEN result.lft + 1  AND result.rgt)
                 WHERE
                     box.id = :id
@@ -317,8 +315,8 @@ class NestedSets(Tree):
         
         return self.db.execute('''
             SELECT result.*
-                FROM nested_sets AS box
-                    JOIN nested_sets AS result
+                FROM nested_sets box
+                    JOIN nested_sets result
                         ON (box.lft BETWEEN result.lft + 1  AND result.rgt)
                 WHERE
                     box.id = :id
@@ -330,8 +328,8 @@ class NestedSets(Tree):
     def get_ancestors(self, id):
         return self.db.execute_and_fetch("""
             SELECT result.*
-                FROM nested_sets AS box
-                    JOIN nested_sets AS result
+                FROM nested_sets box
+                    JOIN nested_sets result
                         ON (box.lft BETWEEN result.lft AND result.rgt)
                 WHERE
                     box.id = :id
@@ -341,10 +339,38 @@ class NestedSets(Tree):
         )
     
     def get_children(self, id):
+        # dla SQLite to rozwiazanie jest WIELOKROTNIE szybsze
+        if self.db.is_dialect('sqlite', 'mysql'):
+            
+            #value = self.db.execute(
+            #    'SELECT lft FROM nested_sets WHERE id = :parent',
+            #    dict(parent=parent)
+            #).fetch_single('rgt')
+            #
+            #while value:
+            
+            left = value = self.db.execute(
+                'SELECT lft FROM nested_sets WHERE id = :id',
+                dict(id=id)
+            ).fetch_single('lft')
+            nodes = []
+            while True:
+                data = self.db.execute("""
+                    SELECT d.id, d.name, d.rgt as rgt 
+                        FROM nested_sets d 
+                        WHERE d.lft = :left""", 
+                    dict(left=left + 1)
+                ).fetch_all()
+                if len(data) == 0:
+                    break
+                nodes.append(data[0])
+                left = data[0]['rgt']
+            return nodes
+            
         return self.db.execute_and_fetch("""
             SELECT result.*
-                FROM nested_sets AS box
-                    JOIN nested_sets AS result
+                FROM nested_sets box
+                    JOIN nested_sets result
                         ON (result.lft BETWEEN box.lft + 1 AND box.rgt)
                 WHERE
                     box.id = :id AND
@@ -362,8 +388,8 @@ class NestedSets(Tree):
     def get_descendants(self, id):
         return self.db.execute_and_fetch("""
             SELECT result.*
-                FROM nested_sets AS box
-                    JOIN nested_sets AS result
+                FROM nested_sets box
+                    JOIN nested_sets result
                         ON (result.lft BETWEEN box.lft + 1 AND box.rgt)
                 WHERE
                     box.id = :id
@@ -378,8 +404,8 @@ class NestedSets(Tree):
 
 class PathEnum(Tree):
     tree_name = 'pathenum'
-    #tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
-    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2']
+    tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2', 'sqlserver']
+    #tree_base = ['postgresql', 'mysql', 'sqlite', 'oracle', 'db2']
     
    
     def create_table(self):
@@ -402,7 +428,7 @@ class PathEnum(Tree):
                     'CREATE TABLE pathenum(id int, path varchar(100), name varchar(100))',
                 ],
             'mssql': '''
-                CREATE TABLE nested_sets(
+                CREATE TABLE pathenum(
                     id int IDENTITY PRIMARY KEY,
                     path varchar(100),
                     name varchar(100)
@@ -449,20 +475,29 @@ class PathEnum(Tree):
                 #pid = self.db.insert_returning_id('pathenum', dict(name=name), dict(
                 #    path="(SELECT concat(path, id,  '.') FROM pathenum WHERE id = %s)" % parent)
                 #)
+            elif self.db.is_dialect('sqlserver'):
+                pid = self.db.insert_returning_id('pathenum', dict(name=name), dict(
+                    path="(SELECT path + CONVERT(varchar(10), id) +  '.' FROM pathenum WHERE id = %s)" % parent)
+                )
             else:
-                
                 pid = self.db.insert_returning_id('pathenum', dict(name=name), dict(
                     path="(SELECT path || id ||  '.' FROM pathenum WHERE id = %s)" % parent)
                 )
         return pid
     
     def get_roots(self):
-        return self.db.execute_and_fetch("""
-            SELECT *  
+        return self.db.execute_and_fetch({
+            '*': """
+            SELECT *
                 FROM pathenum 
                 WHERE path = ''
-            """
-        )
+            """,
+            'oracle': """
+            SELECT *
+                FROM pathenum 
+                WHERE trim(path) IS NULL
+            """,
+        })
 
     def get_parent(self, id):
         return self.db.execute_and_fetch({
@@ -475,6 +510,15 @@ class PathEnum(Tree):
                             arg.id = :id AND
                             (result.path || result.id || '.') = arg.path
                 """,
+            'oracle': '''
+                    SELECT r.*
+                        FROM
+                            pathenum t,
+                            pathenum r
+                        WHERE
+                            t.id = :id AND
+                            (r.path || r.id || '.') = t.path
+                ''',                
             'mysql': '''
                     SELECT result.*
                         FROM
@@ -483,6 +527,15 @@ class PathEnum(Tree):
                         WHERE
                             arg.id = :id AND
                             concat(result.path, result.id, '.') = arg.path
+                ''',
+            'sqlserver': '''
+                    SELECT result.*
+                        FROM
+                            pathenum AS arg,
+                            pathenum AS result
+                        WHERE
+                            arg.id = :id AND
+                            result.path + CONVERT(varchar(10), result.id) + '.' = arg.path
                 '''
             },
             dict(id=id)
@@ -519,9 +572,21 @@ class PathEnum(Tree):
                         pathenum AS result
                     WHERE
                         arg.id = :id AND
-                        arg.path LIKE (result.path || result.id || '%')
+                        arg.path LIKE (result.path || result.id || '%%')
                     ORDER BY result.path DESC
                 """,
+                
+            'oracle': '''
+                SELECT result.*
+                    FROM
+                        pathenum arg,
+                        pathenum result
+                    WHERE
+                        arg.id = :id AND
+                        arg.path LIKE (result.path || result.id || '%')
+                    ORDER BY result.path DESC
+                ''',
+                
             # tutaj '%%' jest gdyz mysqldb uzywa domyslnie formatu %s
             'mysql': '''
                     SELECT result.*
@@ -532,7 +597,17 @@ class PathEnum(Tree):
                             arg.id = :id AND
                             arg.path LIKE concat(result.path, result.id, '%%')
                         ORDER BY result.path DESC
-                '''
+                ''',
+            'sqlserver': '''
+                SELECT result.*
+                    FROM
+                        pathenum AS arg,
+                        pathenum AS result
+                    WHERE
+                        arg.id = :id AND
+                        arg.path LIKE (result.path + CONVERT(varchar(10), result.id) + '%%')
+                    ORDER BY result.path DESC
+                ''',
             },
             dict(id=id)
         )
@@ -556,7 +631,16 @@ class PathEnum(Tree):
                             FROM pathenum 
                             WHERE id = :parent
                     )
-                '''
+                ''',
+            'sqlserver': """
+                SELECT * 
+                    FROM pathenum 
+                    WHERE path = (
+                        SELECT path + CONVERT(varchar(10), id) +  '.'
+                            FROM pathenum 
+                            WHERE id = :parent
+                    )
+                """,
             }, 
             dict(parent=id)
         )
@@ -565,7 +649,7 @@ class PathEnum(Tree):
         
         if self.db.is_dialect('db2'):
             row = self.db.execute('''SELECT path, id FROM pathenum WHERE id = :id''', dict(id=id)).fetch_one()
-            print row
+            #print row
             return self.db.execute_and_fetch('''
                 SELECT *
                     FROM pathenum
@@ -578,7 +662,7 @@ class PathEnum(Tree):
                 SELECT * 
                     FROM pathenum 
                     WHERE path LIKE (
-                        SELECT path || id || '.' || '%'
+                        SELECT path || id || '.' || '%%'
                             FROM pathenum
                             WHERE id = :parent
                     )
@@ -591,7 +675,16 @@ class PathEnum(Tree):
                             FROM pathenum
                             WHERE id = :parent
                     )
-                '''                
+                ''',
+            'sqlserver': """
+                SELECT * 
+                    FROM pathenum 
+                    WHERE path LIKE (
+                        SELECT path + CONVERT(varchar(10), id) + '.' + '%%'
+                            FROM pathenum
+                            WHERE id = :parent
+                    )
+                """,
             },
             dict(parent=id)
         )
@@ -664,36 +757,37 @@ class Full(Tree):
         
         pid = self.db.insert_returning_id('full_data', dict(name=name))
         
-        self.db.execute("""
-            INSERT INTO full_tree(top_id, bottom_id, distance) 
-                SELECT top_id, :pid, distance + 1
-                    FROM full_tree
-                    WHERE bottom_id = :parent
-            UNION ALL
-                SELECT NULL, :pid, 0
-                    WHERE :parent IS NULL
-            UNION ALL
-                SELECT :pid, :pid, 0
-            """,
-            dict(parent=parent, pid=pid)
-        )
-        
-        #if parent is not None:
-        #    for row in self.db.execute_and_fetch('SELECT top_id, distance FROM full_tree WHERE bottom_id = :parent', dict(parent=parent)):
-        #        self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
-        #            dict(top_id=row[0], bottom_id=pid, distance=row[1] + 1)
-        #        )
-        #else:
-        #    self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
-        #        dict(top_id=None, bottom_id=pid, distance=0)
-        #    )
-        #self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
-        #    dict(top_id=pid, bottom_id=pid, distance=0)
-        #)
+        if self.db.is_dialect('mysql', 'db2', 'oracle'):
+            if parent is not None:
+                for row in self.db.execute_and_fetch('SELECT top_id, distance FROM full_tree WHERE bottom_id = :parent', dict(parent=parent)):
+                    self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
+                        dict(top_id=row[0], bottom_id=pid, distance=row[1] + 1)
+                    )
+            else:
+                self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
+                    dict(top_id=None, bottom_id=pid, distance=0)
+                )
+            self.db.execute('INSERT INTO full_tree(top_id, bottom_id, distance) VALUES (:top_id, :bottom_id, :distance)', 
+                dict(top_id=pid, bottom_id=pid, distance=0)
+            )
+        else:
+            self.db.execute("""
+                INSERT INTO full_tree(top_id, bottom_id, distance) 
+                        SELECT top_id, :pid, distance + 1
+                            FROM full_tree
+                            WHERE bottom_id = :parent
+                    UNION ALL
+                        SELECT NULL, :pid, 0
+                            WHERE :parent IS NULL
+                    UNION ALL
+                        SELECT :pid, :pid, 0
+                """,
+                dict(parent=parent, pid=pid)
+            )
         
         return pid
         
-        # """
+        # ""
     
     def get_roots(self):
         return self.db.execute_and_fetch("""
@@ -750,6 +844,21 @@ class Full(Tree):
     def get_descendants(self, id):
         return self.db.execute_and_fetch("""
             SELECT
+                d.*
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id = t.bottom_id) 
+                WHERE
+                    t.top_id = :id AND
+                    t.distance > 0
+            """,
+            dict(id=id)
+        )
+
+    def get_descendants(self, id):
+        return self.db.execute_and_fetch({
+            '*': """
+            SELECT
                 d.*,
                 (SELECT tmp.top_id
                     FROM full_tree AS tmp
@@ -765,6 +874,17 @@ class Full(Tree):
                     t.top_id = :id AND
                     t.distance > 0
             """,
+            'oracle': '''
+            SELECT
+                d.*
+                FROM full_data d 
+                    JOIN full_tree t 
+                        ON (d.id = t.bottom_id) 
+                WHERE
+                    t.top_id = :id AND
+                    t.distance > 0
+            '''
+            },
             dict(id=id)
         )
 
@@ -781,33 +901,48 @@ class With(Simple):
         # WITH RECURSIVE temptab(node_level, id, parent, name) AS
         return self.db.execute_and_fetch({
             'postgresql': """
-                WITH RECURSIVE temptab(node_level, id, parent, name) AS
+                WITH RECURSIVE temptab(id, parent, name) AS
                 (
-                    SELECT 0, root.id, root.parent, root.name
+                    SELECT root.id, root.parent, root.name
                         FROM simple AS root
                         WHERE root.id = :id
                 UNION ALL
-                    SELECT t.node_level + 1, s.id, s.parent, s.name
-                        FROM
-                            simple AS s,
-                            temptab AS t
-                        WHERE s.id = t.parent
+                    SELECT s.id, s.parent, s.name
+                        FROM simple AS s
+                            JOIN temptab AS t
+                                ON (s.id = t.parent)
                 )
-                SELECT node_level, id, parent, name
+                SELECT id, parent, name
                     FROM temptab
                 """,
-            '*': '''
-                WITH temptab(node_level, id, parent, name) AS
+        'db2': '''
+                WITH temptab(id, parent, name) AS
                 (
-                    SELECT 0, root.id, root.parent, root.name
-                        FROM simple root
+                    SELECT root.id, root.parent, root.name
+                        FROM simple AS root
                         WHERE root.id = :id
                 UNION ALL
-                    SELECT t.node_level + 1, s.id, s.parent, s.name
-                        FROM simple s, temptab t
-                        WHERE s.id = t.parent
+                    SELECT s.id, s.parent, s.name
+                        FROM simple AS s, temptab AS t
+                        WHERE (s.id = t.parent)
                 )
-                SELECT node_level, id, parent, name FROM temptab
+                SELECT id, parent, name
+                    FROM temptab
+                ''',
+            '*': '''
+                WITH temptab(id, parent, name) AS
+                (
+                    SELECT root.id, root.parent, root.name
+                        FROM simple AS root
+                        WHERE root.id = :id
+                UNION ALL
+                    SELECT s.id, s.parent, s.name
+                        FROM simple AS s
+                            JOIN temptab AS t
+                                ON (s.id = t.parent)
+                )
+                SELECT id, parent, name
+                    FROM temptab
                 '''
             },
             dict(id=id)
@@ -824,25 +959,44 @@ class With(Simple):
                         WHERE root.id = :id
                 UNION ALL
                     SELECT t.level + 1, s.id, s.parent, s.name
-                        FROM
-                            simple AS s,
-                            temptab AS t
-                        WHERE s.parent = t.id
+                        FROM simple AS s
+                            JOIN temptab AS t
+                                ON (s.parent = t.id)
                 )
-                SELECT level, id, parent, name FROM temptab
+                SELECT level, id, parent, name
+                    FROM temptab
+                    WHERE level > 0
                 """,
+            'db2': '''
+                WITH temptab(level, id, parent, name) AS
+                (
+                    SELECT 0, root.id, root.parent, root.name
+                        FROM simple AS root
+                        WHERE root.id = :id
+                UNION ALL
+                    SELECT t.level + 1, s.id, s.parent, s.name
+                        FROM simple AS s, temptab AS t
+                        WHERE (s.parent = t.id)
+                )
+                SELECT level, id, parent, name
+                    FROM temptab
+                    WHERE level > 0
+                ''',
             '*': '''
                 WITH temptab(level, id, parent, name) AS
                 (
                     SELECT 0, root.id, root.parent, root.name
-                        FROM simple root
+                        FROM simple AS root
                         WHERE root.id = :id
                 UNION ALL
                     SELECT t.level + 1, s.id, s.parent, s.name
-                        FROM simple s, temptab t
-                        WHERE s.parent = t.id
+                        FROM simple AS s
+                            JOIN temptab AS t
+                                ON (s.parent = t.id)
                 )
-                SELECT level, id, parent, name FROM temptab
+                SELECT level, id, parent, name
+                    FROM temptab
+                    WHERE level > 0
                 ''',
             },
             dict(id=id)
@@ -881,8 +1035,8 @@ class ConnectBy(Simple):
 
 
 class PlSql(Simple):
-    tree_name = 'plsql'
-    tree_base = ['postgresql']
+    #tree_name = 'plsql'
+    #tree_base = ['postgresql']
     
     
     '''
@@ -1200,8 +1354,8 @@ SELECT id, parent, value FROM tree_descendants(1) AS t JOIN tree ON t = tree.id;
 
 class Ltree(Tree):
     tree_name = 'ltree'
-    tree_base = []
-    #tree_base = ['postgresql']
+    #tree_base = []
+    tree_base = ['postgresql']
     
    
     def create_table(self):
@@ -1314,8 +1468,8 @@ class Ltree(Tree):
 
 class HierarchyId(Tree):
     tree_name = 'hierarchyid'
-    tree_base = []
-    #tree_base = ['sqlserver']
+    #tree_base = []
+    tree_base = ['sqlserver']
     
     def create_table(self):
         if 'herid' in self.db.schema_list('table'):
@@ -1335,7 +1489,7 @@ class HierarchyId(Tree):
                 VALUES (hierarchyid::GetRoot(), 'ROOT')
             """
         )
-
+    
     def insert(self, parent, name):
         ''' http://technet.microsoft.com/en-us/library/bb677212.aspx '''
         if parent is None:
@@ -1366,7 +1520,7 @@ class HierarchyId(Tree):
 
     def get_roots(self):
         return self.db.execute_and_fetch("""
-            SELECT * 
+            SELECT node.ToString() AS path, name  
                 FROM herid 
                 WHERE node.GetLevel() = 1
             """
@@ -1374,7 +1528,7 @@ class HierarchyId(Tree):
 
     def get_parent(self, id):
         return self.db.execute_and_fetch("""
-            SELECT * 
+            SELECT node.ToString() AS path, name 
                 FROM herid 
                 WHERE node = (
                     SELECT node.GetAncestor(1) 
@@ -1384,50 +1538,46 @@ class HierarchyId(Tree):
             """, 
             dict(id=id)
         )
-
-    #def get_ancestors(self, id):
-        #return self.db.execute_and_fetch('''
-            #SELECT *
-                #FROM herid
-                #WHERE (
-                    #SELECT node n1 FROM herid WHERE id = :id
-                #).IsDescendant(node)
-                #''',
-            #dict(id=id)
-        #)
-
+    
     def get_ancestors(self, id):
         return self.db.execute_and_fetch("""
-            SELECT *
+            SELECT node.ToString() AS path, node.GetLevel() AS lvl, name 
                 FROM herid
-                WHERE node.IsDescendantOf((SELECT node n1 FROM herid WHERE id = :id))
+                WHERE (
+                    SELECT node n1 FROM herid WHERE id = :id
+                ).IsDescendantOf(node) = 1 AND
+                node.GetLevel() > 0
+                ORDER BY lvl DESC
+                
             """,
             dict(id=id)
         )
 
     def get_children(self, id):
         return self.db.execute_and_fetch("""
-            SELECT * 
+            SELECT node.ToString() AS path, name  
                 FROM herid 
                 WHERE node.GetAncestor(1) = (
                     SELECT node 
                         FROM herid 
-                        WHERE id = :parent
+                        WHERE id = :id
                 )
             """, 
-            dict(parent=id)
+            dict(id=id)
         )
 
 
     def get_descendants(self, id):
         return self.db.execute_and_fetch("""
-            SELECT * 
+            SELECT node.ToString() AS path, name
                 FROM herid 
-                WHERE node.IsDescendant((
-                    SELECT node FROM herid WHERE id = :parent
-                ))
+                WHERE node.IsDescendantOf((
+                    SELECT node FROM herid WHERE id = :id
+                )) = 1 AND
+                id <> :id
             """, 
-            dict(parent=id)
+            dict(id=id)
         )
+
 
 
