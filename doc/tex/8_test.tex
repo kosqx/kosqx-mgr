@@ -1,15 +1,15 @@
-\chapter{Metodyka testów wydajności}
+\chapter{Metodyka testów}
 
-Ważnyme elementem tej pracy jest sprawdzenie wydajności przedstawionych metod w bazach danych.
-Zostaną tu przedstawione warunki w jakich odbywały się testy.
+Ważnym elementem tej pracy jest sprawdzenie wydajności przedstawionych metod w bazach danych.
+W tym rozdziale zostaną przedstawione warunki w jakich odbywały się testy.
 
 \section*{Wybrane SZDB}
 
-Do testów zostały wybrane popularne, dostępne bezpłatnie (również do zastosowań komercyjnych) bazy danych. 
+Do testów zostały wybrane popularne, dostępne bezpłatnie bazy danych. 
 %W przypadku baz Open Source wykorzystano najnowsze, stabilne wersje.
 Dla baz komercyjnych zostały wybrane ich darmowe edycje. 
-Posiadają one ograniczenia co do wielkości baz danych, wykorzystania zasobów oraz zmniejszoną funkcjonalność. 
-Specyfika testów sprawia jednak, że te ograniczenia nie miały znaczenia podczas testów.
+Posiadają one ograniczenia co do wielkości danych, wykorzystania zasobów oraz zmniejszoną funkcjonalność. 
+Specyfika testów sprawia jednak, że te ograniczenia nie miały podczas nich znaczenia.
 
 
 
@@ -58,15 +58,20 @@ Microsoft SQL Server\index{SQL Server} &  2008 R2  & Express\\
 \section*{Dane testowe}
 
 By móc porównać metody przechowywania danych hierarchicznych należy zapewnić jednorodne warunki testów.
-Oznacza to konieczność wykonywania dokładnie tych samych operacji z takimi samymi parametrami w tej samej kolejności.
-Aby to osiągnąć testy są przechowywane jako pliki XML (w podkatalogu \verb|src/data|).
+Oznacza to konieczność wykonywania dokładnie tych samych operacji, z takimi samymi parametrami, w tej samej kolejności.
+Aby to osiągnąć testy są przechowywane wewnątrz plików XML (w podkatalogu \verb|src/data|).
 
 %W tym celu zastosowano pliki 
 
-Dane użyte podczas testów zostały wygenerowane w sposób automatyczny.
+Dane użyte podczas zaprezentowanych testów zostały wygenerowane w sposób automatyczny.
 Opisują one las o wysokości $10$, zawierający dwa drzewa, 
 z każdym węzłem wewnętrznym o stopniu $2$.
-W efekcie całe drzewo ma $4094$ węzłów.
+W efekcie całe drzewo ma $4094$ węzły.
+
+%Natomiast parametry operacji pobierających węzły zostały wylosowane ze zbioru identyfikatorów węzłów i również zapisane w plik
+
+%W Operacje pobierające węzły potrzebują jednego parametru.
+%Został on wylosowany 
 
 
 
@@ -134,8 +139,8 @@ Sprzęt, na którym wykonywane były testy, składał się z:
   \item dysku HDD 1TB klasy ekonomicznej
 \end{itemize}
 
-Server bazy danych działał na tej samej maszynie co program testujący.
-Zminejszało to opóźnienia sieciowe ale zwiększało zużycie procesora%
+Serwer bazy danych działał na tej samej maszynie co program testujący.
+Zmniejsza to opóźnienia sieciowe, ale zwiększa zużycie procesora%
 \footnote{W praktyce na maszynie czterordzeniowej czas procesora nie był problemem.}.
 
 %Aby zminimalizować potencjalne problemy wynikające z instalacji wielu baz na 
@@ -161,14 +166,14 @@ Aby nie faworyzować żadnej z testowanych baz ustanowione zostały poniższe za
         oraz kluczy obcych.
   %\item Algorytm każdej operacji był pisane tak by był czytelne i ogólne, a nie
     Zapytania były pisane z myślą by być czytelne i dobrze ilustrować koncepcje danej reprezentacji.
-    Została więc zastowowana maksyma Donalda Knutha: \emph{,,przedwczesna optymalizacja jest źródłem wszelkiego zła''}.
+    Została więc zastosowana maksyma Donalda Knutha: \emph{,,przedwczesna optymalizacja jest źródłem wszelkiego zła''}.
 \end{itemize}
 
 \section*{Prezentacja wyników}
 
 Wyniki wydajności są prezentowane na końcu opisu każdej z opisywanych metod.
-Są podawane zarówno w postaći tabeli (umożliwiającej dokładną analizę wyników)
-jak i wykresu słupkowego (dającego możliwość szybkiego przejżenia wyników).
+Są podawane zarówno w postaci tabeli (umożliwiającej dokładną analizę wyników)
+jak i wykresu słupkowego (dającego możliwość szybkiego przejrzenia wyników).
 
 %%Uwagi:
 %% - 

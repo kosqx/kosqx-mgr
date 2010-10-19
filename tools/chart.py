@@ -71,12 +71,14 @@ def chart(data, filename, value2desc=value2desc):
     #for l in leg.get_lines():
         #l.set_linewidth(1.5)
     
-    for rect in rects:
-        for r in rect:
-            height = r.get_height()
-            plt.text(r.get_x() + r.get_width() * 0.6, height + 0.02 * maxval, '%.2f\r' % height, 
-                    ha='center', va='bottom', rotation='vertical', size=14, lod=True
-            )
+    show_data = False
+    if show_data:
+        for rect in rects:
+            for r in rect:
+                height = r.get_height()
+                plt.text(r.get_x() + r.get_width() * 0.6, height + 0.02 * maxval, '%.2f\r' % height, 
+                        ha='center', va='bottom', rotation='vertical', size=14, lod=True
+                )
     
     plt.savefig(filename, dpi=150)
     plt.close()

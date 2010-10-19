@@ -203,17 +203,8 @@ def do_code_results(line):
     
     return final, method, testdata
 
-def code_results_table(line):
-    #global results
-    #
-    #parts = line.split()
-    #method = parts[-2]
-    #testdata = parts[-1]
-    #
-    #final = process_results(results, method, testdata)
-    
-    final, method, testdata = do_code_results(line)
-    
+
+def gen_results_table(final):
     lines = [
         '\\begin{tabular}{| r | ' + ('r ' * (len(final[0]) - 1)) + '  |}',
         '\\hline',
@@ -234,6 +225,10 @@ def code_results_table(line):
     
     return '\n'.join(lines)
 
+def code_results_table(line):
+    final, method, testdata = do_code_results(line)
+    return gen_results_table(final)
+    
 def code_results_chart(line):
     #global results
     #
@@ -262,7 +257,9 @@ def code_results_testdata(line):
     
     return ''
 
-def code_summary_chart(line):
+
+
+def gen_summary():
     global results
     global config
     
@@ -285,23 +282,21 @@ def code_summary_chart(line):
         avg = lambda x: sum(x)/len(x)
         return [avg(summary[(method, i)]) for i in grp]
     
-    #final = [
-    #    [None,         'create', 'insert', 'roots', 'parent', 'children', 'ancestors', 'descendants'],
-    #    ['simple',      ] + rand_list(7, 20),
-    #    ['nested',      ] + rand_list(7, 20),
-    #    ['pathenum',    ] + rand_list(7, 20),
-    #    ['full',        ] + rand_list(7, 20),
-    #    ['with',        ] + rand_list(7, 20),
-    #    ['connectby',   ] + rand_list(7, 20),
-    #    ['ltree',       ] + rand_list(7, 20),
-    #    ['hierarchyid', ] + rand_list(7, 20),
-    #]
     
     final = [
         [None,         'create', 'insert', 'roots', 'parent', 'children', 'ancestors', 'descendants'],
     ]
     for i in ['simple', 'nested', 'pathenum', 'full', 'with', 'connectby', 'ltree', 'hierarchyid']:
         final.append([i] + do_list(i))
+        
+    return final
+
+def code_summary_table(line):
+    final = gen_summary()
+    return gen_results_table(final)
+
+def code_summary_chart(line):
+    final = gen_summary()
     
     
     filename = 'img_chart_summary.png'
@@ -416,6 +411,7 @@ def main(args):
         (r'^%! *result-testdata',           None,                 code_results_testdata),
         
         (r'^%! *summary-chart',             None,                 code_summary_chart),
+        (r'^%! *summary-table',             None,                 code_summary_table),
     ])
     
     os.system('make pdf')

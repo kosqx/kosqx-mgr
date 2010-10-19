@@ -166,7 +166,7 @@ def run_checkgen(testcases):
     
     
     #print repr(testcases)
-    case = int(testcases.get('roots', ['1'])[0])
+    case = int(testcases.get('roots', ['100'])[0])
     sw.start('roots')
     for i in xrange(case):
         report(tree.get_roots())

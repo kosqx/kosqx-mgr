@@ -7,7 +7,7 @@
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -15,14 +15,14 @@
 # 0
 # descendants 409
 # 0
-simple:sqlite:deep3:create      7.194
-simple:sqlite:deep3:insert      15507.565
-simple:sqlite:deep3:roots       1000.072
-simple:sqlite:deep3:parent      9511.632
-simple:sqlite:deep3:children    1683.127
-simple:sqlite:deep3:ancestors   933.790
-simple:sqlite:deep3:descendants 519.695
-simple:sqlite:deep3:total       29163.076
+simple:sqlite:deep3:create      6.944
+simple:sqlite:deep3:insert      14068.734
+simple:sqlite:deep3:roots       0.000
+simple:sqlite:deep3:parent      9318.201
+simple:sqlite:deep3:children    1579.150
+simple:sqlite:deep3:ancestors   987.923
+simple:sqlite:deep3:descendants 508.707
+simple:sqlite:deep3:total       26469.658
 ## database sqlite PathEnum
 # create 1
 # insert 4094
@@ -32,7 +32,7 @@ simple:sqlite:deep3:total       29163.076
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -40,14 +40,14 @@ simple:sqlite:deep3:total       29163.076
 # 0
 # descendants 409
 # 0
-pathenum:sqlite:deep3:create      6.452
-pathenum:sqlite:deep3:insert      8338.087
-pathenum:sqlite:deep3:roots       999.834
-pathenum:sqlite:deep3:parent      9738.138
-pathenum:sqlite:deep3:children    1718.486
-pathenum:sqlite:deep3:ancestors   7716.985
-pathenum:sqlite:deep3:descendants 1087.766
-pathenum:sqlite:deep3:total       29605.747
+pathenum:sqlite:deep3:create      6.536
+pathenum:sqlite:deep3:insert      8600.843
+pathenum:sqlite:deep3:roots       0.000
+pathenum:sqlite:deep3:parent      9761.892
+pathenum:sqlite:deep3:children    1740.426
+pathenum:sqlite:deep3:ancestors   7865.378
+pathenum:sqlite:deep3:descendants 1082.011
+pathenum:sqlite:deep3:total       29057.086
 ## database sqlite Full
 # create 1
 # insert 4094
@@ -57,7 +57,7 @@ pathenum:sqlite:deep3:total       29605.747
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -65,14 +65,14 @@ pathenum:sqlite:deep3:total       29605.747
 # 0
 # descendants 409
 # 0
-full:sqlite:deep3:create      2.506
-full:sqlite:deep3:insert      349.079
+full:sqlite:deep3:create      3.436
+full:sqlite:deep3:insert      347.597
 full:sqlite:deep3:roots       199.995
-full:sqlite:deep3:parent      179.465
-full:sqlite:deep3:children    179.859
-full:sqlite:deep3:ancestors   179.543
-full:sqlite:deep3:descendants 36.067
-full:sqlite:deep3:total       1126.515
+full:sqlite:deep3:parent      183.036
+full:sqlite:deep3:children    178.915
+full:sqlite:deep3:ancestors   182.916
+full:sqlite:deep3:descendants 36.724
+full:sqlite:deep3:total       1132.620
 ## database sqlite NestedSets
 # create 1
 # insert 4094
@@ -82,7 +82,7 @@ full:sqlite:deep3:total       1126.515
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -90,14 +90,14 @@ full:sqlite:deep3:total       1126.515
 # 0
 # descendants 409
 # 0
-nested:sqlite:deep3:create      5.988
-nested:sqlite:deep3:insert      1446.643
-nested:sqlite:deep3:roots       0.321
-nested:sqlite:deep3:parent      1022.500
-nested:sqlite:deep3:children    757.407
+nested:sqlite:deep3:create      8.000
+nested:sqlite:deep3:insert      1476.912
+nested:sqlite:deep3:roots       0.322
+nested:sqlite:deep3:parent      1032.746
+nested:sqlite:deep3:children    771.698
 nested:sqlite:deep3:ancestors   1059.586
 nested:sqlite:deep3:descendants 987.923
-nested:sqlite:deep3:total       5280.368
+nested:sqlite:deep3:total       5337.186
 ## database mysql Simple
 # create 1
 # insert 4094
@@ -107,7 +107,7 @@ nested:sqlite:deep3:total       5280.368
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -115,14 +115,14 @@ nested:sqlite:deep3:total       5280.368
 # 0
 # descendants 409
 # 0
-simple:mysql:deep3:create      8.696
-simple:mysql:deep3:insert      2992.691
+simple:mysql:deep3:create      15.625
+simple:mysql:deep3:insert      2981.792
 simple:mysql:deep3:roots       199.995
-simple:mysql:deep3:parent      3587.717
-simple:mysql:deep3:children    363.556
-simple:mysql:deep3:ancestors   511.890
-simple:mysql:deep3:descendants 160.204
-simple:mysql:deep3:total       7824.748
+simple:mysql:deep3:parent      3416.670
+simple:mysql:deep3:children    366.816
+simple:mysql:deep3:ancestors   482.881
+simple:mysql:deep3:descendants 162.366
+simple:mysql:deep3:total       7626.145
 ## database mysql PathEnum
 # create 1
 # insert 4094
@@ -132,7 +132,7 @@ simple:mysql:deep3:total       7824.748
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -140,14 +140,14 @@ simple:mysql:deep3:total       7824.748
 # 0
 # descendants 409
 # 0
-pathenum:mysql:deep3:create      8.850
-pathenum:mysql:deep3:insert      1865.998
-pathenum:mysql:deep3:roots       249.988
-pathenum:mysql:deep3:parent      246.237
-pathenum:mysql:deep3:children    286.214
-pathenum:mysql:deep3:ancestors   222.888
-pathenum:mysql:deep3:descendants 276.165
-pathenum:mysql:deep3:total       3156.341
+pathenum:mysql:deep3:create      10.870
+pathenum:mysql:deep3:insert      1932.956
+pathenum:mysql:deep3:roots       333.331
+pathenum:mysql:deep3:parent      243.613
+pathenum:mysql:deep3:children    288.842
+pathenum:mysql:deep3:ancestors   222.283
+pathenum:mysql:deep3:descendants 278.042
+pathenum:mysql:deep3:total       3309.935
 ## database mysql Full
 # create 1
 # insert 4094
@@ -157,7 +157,7 @@ pathenum:mysql:deep3:total       3156.341
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -165,14 +165,14 @@ pathenum:mysql:deep3:total       3156.341
 # 0
 # descendants 409
 # 0
-full:mysql:deep3:create      5.181
-full:mysql:deep3:insert      41.861
-full:mysql:deep3:roots       23.256
-full:mysql:deep3:parent      25.098
-full:mysql:deep3:children    25.051
-full:mysql:deep3:ancestors   25.192
-full:mysql:deep3:descendants 2.771
-full:mysql:deep3:total       148.410
+full:mysql:deep3:create      6.173
+full:mysql:deep3:insert      41.773
+full:mysql:deep3:roots       23.809
+full:mysql:deep3:parent      24.921
+full:mysql:deep3:children    24.866
+full:mysql:deep3:ancestors   25.135
+full:mysql:deep3:descendants 2.770
+full:mysql:deep3:total       149.448
 ## database mysql NestedSets
 # create 1
 # insert 4094
@@ -182,7 +182,7 @@ full:mysql:deep3:total       148.410
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -190,14 +190,14 @@ full:mysql:deep3:total       148.410
 # 0
 # descendants 409
 # 0
-nested:mysql:deep3:create      12.821
-nested:mysql:deep3:insert      133.130
-nested:mysql:deep3:roots       0.113
-nested:mysql:deep3:parent      303.412
-nested:mysql:deep3:children    167.829
-nested:mysql:deep3:ancestors   300.514
-nested:mysql:deep3:descendants 299.414
-nested:mysql:deep3:total       1217.233
+nested:mysql:deep3:create      10.638
+nested:mysql:deep3:insert      132.175
+nested:mysql:deep3:roots       0.112
+nested:mysql:deep3:parent      302.806
+nested:mysql:deep3:children    167.417
+nested:mysql:deep3:ancestors   301.845
+nested:mysql:deep3:descendants 301.845
+nested:mysql:deep3:total       1216.839
 ## database postgresql Full
 # create 1
 # insert 4094
@@ -207,7 +207,7 @@ nested:mysql:deep3:total       1217.233
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -215,14 +215,14 @@ nested:mysql:deep3:total       1217.233
 # 0
 # descendants 409
 # 0
-full:postgresql:deep3:create      16.667
-full:postgresql:deep3:insert      232.257
-full:postgresql:deep3:roots       111.110
-full:postgresql:deep3:parent      143.509
-full:postgresql:deep3:children    151.201
-full:postgresql:deep3:ancestors   91.478
-full:postgresql:deep3:descendants 13.505
-full:postgresql:deep3:total       759.728
+full:postgresql:deep3:create      18.182
+full:postgresql:deep3:insert      232.733
+full:postgresql:deep3:roots       100.000
+full:postgresql:deep3:parent      143.357
+full:postgresql:deep3:children    149.598
+full:postgresql:deep3:ancestors   104.657
+full:postgresql:deep3:descendants 13.806
+full:postgresql:deep3:total       762.332
 ## database postgresql Simple
 # create 1
 # insert 4094
@@ -232,7 +232,7 @@ full:postgresql:deep3:total       759.728
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -240,14 +240,14 @@ full:postgresql:deep3:total       759.728
 # 0
 # descendants 409
 # 0
-simple:postgresql:deep3:create      14.084
-simple:postgresql:deep3:insert      3701.628
+simple:postgresql:deep3:create      18.182
+simple:postgresql:deep3:insert      3675.045
 simple:postgresql:deep3:roots       499.977
-simple:postgresql:deep3:parent      3170.544
-simple:postgresql:deep3:children    1152.113
-simple:postgresql:deep3:ancestors   401.768
-simple:postgresql:deep3:descendants 312.691
-simple:postgresql:deep3:total       9252.805
+simple:postgresql:deep3:parent      3106.061
+simple:postgresql:deep3:children    1132.964
+simple:postgresql:deep3:ancestors   393.269
+simple:postgresql:deep3:descendants 310.790
+simple:postgresql:deep3:total       9136.288
 ## database postgresql Ltree
 # create 1
 # insert 4094
@@ -257,7 +257,7 @@ simple:postgresql:deep3:total       9252.805
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -265,14 +265,14 @@ simple:postgresql:deep3:total       9252.805
 # 0
 # descendants 409
 # 0
-ltree:postgresql:deep3:create      11.111
-ltree:postgresql:deep3:insert      2569.994
-ltree:postgresql:deep3:roots       249.988
-ltree:postgresql:deep3:parent      567.268
+ltree:postgresql:deep3:create      12.346
+ltree:postgresql:deep3:insert      2591.139
+ltree:postgresql:deep3:roots       333.331
+ltree:postgresql:deep3:parent      575.035
 ltree:postgresql:deep3:children    39.832
-ltree:postgresql:deep3:ancestors   582.621
-ltree:postgresql:deep3:descendants 576.057
-ltree:postgresql:deep3:total       4596.871
+ltree:postgresql:deep3:ancestors   574.438
+ltree:postgresql:deep3:descendants 571.229
+ltree:postgresql:deep3:total       4697.351
 ## database postgresql NestedSets
 # create 1
 # insert 4094
@@ -282,7 +282,7 @@ ltree:postgresql:deep3:total       4596.871
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -291,13 +291,13 @@ ltree:postgresql:deep3:total       4596.871
 # descendants 409
 # 0
 nested:postgresql:deep3:create      20.833
-nested:postgresql:deep3:insert      336.042
-nested:postgresql:deep3:roots       0.556
-nested:postgresql:deep3:parent      566.482
-nested:postgresql:deep3:children    216.173
-nested:postgresql:deep3:ancestors   618.759
-nested:postgresql:deep3:descendants 597.953
-nested:postgresql:deep3:total       2356.799
+nested:postgresql:deep3:insert      332.710
+nested:postgresql:deep3:roots       0.555
+nested:postgresql:deep3:parent      559.345
+nested:postgresql:deep3:children    216.288
+nested:postgresql:deep3:ancestors   613.194
+nested:postgresql:deep3:descendants 599.707
+nested:postgresql:deep3:total       2342.632
 ## database postgresql PathEnum
 # create 1
 # insert 4094
@@ -307,7 +307,7 @@ nested:postgresql:deep3:total       2356.799
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -315,14 +315,14 @@ nested:postgresql:deep3:total       2356.799
 # 0
 # descendants 409
 # 0
-pathenum:postgresql:deep3:create      20.408
-pathenum:postgresql:deep3:insert      2729.333
-pathenum:postgresql:deep3:roots       500.036
-pathenum:postgresql:deep3:parent      279.754
-pathenum:postgresql:deep3:children    900.881
-pathenum:postgresql:deep3:ancestors   281.875
-pathenum:postgresql:deep3:descendants 813.121
-pathenum:postgresql:deep3:total       5525.408
+pathenum:postgresql:deep3:create      19.608
+pathenum:postgresql:deep3:insert      2700.528
+pathenum:postgresql:deep3:roots       333.331
+pathenum:postgresql:deep3:parent      277.402
+pathenum:postgresql:deep3:children    919.101
+pathenum:postgresql:deep3:ancestors   278.990
+pathenum:postgresql:deep3:descendants 816.367
+pathenum:postgresql:deep3:total       5345.327
 ## database postgresql With
 # create 1
 # insert 4094
@@ -332,7 +332,7 @@ pathenum:postgresql:deep3:total       5525.408
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -340,14 +340,14 @@ pathenum:postgresql:deep3:total       5525.408
 # 0
 # descendants 409
 # 0
-with:postgresql:deep3:create      20.000
-with:postgresql:deep3:insert      3691.614
-with:postgresql:deep3:roots       999.834
-with:postgresql:deep3:parent      3146.157
-with:postgresql:deep3:children    1142.458
-with:postgresql:deep3:ancestors   142.113
-with:postgresql:deep3:descendants 503.695
-with:postgresql:deep3:total       9645.870
+with:postgresql:deep3:create      20.833
+with:postgresql:deep3:insert      3675.045
+with:postgresql:deep3:roots       499.977
+with:postgresql:deep3:parent      3082.709
+with:postgresql:deep3:children    1148.877
+with:postgresql:deep3:ancestors   141.229
+with:postgresql:deep3:descendants 504.316
+with:postgresql:deep3:total       9072.986
 ## database db2 Simple
 # create 1
 # insert 4094
@@ -357,7 +357,7 @@ with:postgresql:deep3:total       9645.870
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -365,14 +365,14 @@ with:postgresql:deep3:total       9645.870
 # 0
 # descendants 409
 # 0
-simple:db2:deep3:create      2.273
-simple:db2:deep3:insert      1054.883
-simple:db2:deep3:roots       249.988
-simple:db2:deep3:parent      2921.431
-simple:db2:deep3:children    412.298
-simple:db2:deep3:ancestors   317.547
-simple:db2:deep3:descendants 145.190
-simple:db2:deep3:total       5103.610
+simple:db2:deep3:create      1.088
+simple:db2:deep3:insert      1071.728
+simple:db2:deep3:roots       333.357
+simple:db2:deep3:parent      2971.014
+simple:db2:deep3:children    427.377
+simple:db2:deep3:ancestors   327.987
+simple:db2:deep3:descendants 156.226
+simple:db2:deep3:total       5288.778
 ## database db2 PathEnum
 # create 1
 # insert 4094
@@ -382,7 +382,7 @@ simple:db2:deep3:total       5103.610
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -390,14 +390,14 @@ simple:db2:deep3:total       5103.610
 # 0
 # descendants 409
 # 0
-pathenum:db2:deep3:create      14.925
-pathenum:db2:deep3:insert      557.994
-pathenum:db2:deep3:roots       499.977
-pathenum:db2:deep3:parent      428.721
-pathenum:db2:deep3:children    448.957
-pathenum:db2:deep3:ancestors   761.639
-pathenum:db2:deep3:descendants 792.636
-pathenum:db2:deep3:total       3504.848
+pathenum:db2:deep3:create      12.195
+pathenum:db2:deep3:insert      668.081
+pathenum:db2:deep3:roots       500.036
+pathenum:db2:deep3:parent      461.712
+pathenum:db2:deep3:children    481.743
+pathenum:db2:deep3:ancestors   879.570
+pathenum:db2:deep3:descendants 836.401
+pathenum:db2:deep3:total       3839.738
 ## database db2 Full
 # create 1
 # insert 4094
@@ -407,7 +407,7 @@ pathenum:db2:deep3:total       3504.848
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -415,14 +415,14 @@ pathenum:db2:deep3:total       3504.848
 # 0
 # descendants 409
 # 0
-full:db2:deep3:create      11.111
-full:db2:deep3:insert      105.980
+full:db2:deep3:create      8.197
+full:db2:deep3:insert      111.190
 full:db2:deep3:roots       166.666
-full:db2:deep3:parent      241.726
-full:db2:deep3:children    242.442
-full:db2:deep3:ancestors   134.628
-full:db2:deep3:descendants 22.629
-full:db2:deep3:total       925.182
+full:db2:deep3:parent      239.346
+full:db2:deep3:children    238.762
+full:db2:deep3:ancestors   132.320
+full:db2:deep3:descendants 22.798
+full:db2:deep3:total       919.278
 ## database db2 With
 # create 1
 # insert 4094
@@ -432,7 +432,7 @@ full:db2:deep3:total       925.182
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -440,14 +440,14 @@ full:db2:deep3:total       925.182
 # 0
 # descendants 409
 # 0
-with:db2:deep3:create      25.000
-with:db2:deep3:insert      1005.650
-with:db2:deep3:roots       333.357
-with:db2:deep3:parent      1690.082
-with:db2:deep3:children    400.588
-with:db2:deep3:ancestors   1834.080
-with:db2:deep3:descendants 53.837
-with:db2:deep3:total       5342.594
+with:db2:deep3:create      27.027
+with:db2:deep3:insert      1144.215
+with:db2:deep3:roots       333.331
+with:db2:deep3:parent      3253.970
+with:db2:deep3:children    425.156
+with:db2:deep3:ancestors   1956.937
+with:db2:deep3:descendants 55.593
+with:db2:deep3:total       7196.229
 ## database db2 NestedSets
 # create 1
 # insert 4094
@@ -457,7 +457,7 @@ with:db2:deep3:total       5342.594
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -465,14 +465,14 @@ with:db2:deep3:total       5342.594
 # 0
 # descendants 409
 # 0
-nested:db2:deep3:create      10.638
-nested:db2:deep3:insert      201.576
-nested:db2:deep3:roots       0.117
-nested:db2:deep3:parent      383.318
-nested:db2:deep3:children    128.576
-nested:db2:deep3:ancestors   371.143
-nested:db2:deep3:descendants 366.487
-nested:db2:deep3:total       1461.855
+nested:db2:deep3:create      12.987
+nested:db2:deep3:insert      251.954
+nested:db2:deep3:roots       0.120
+nested:db2:deep3:parent      374.771
+nested:db2:deep3:children    127.256
+nested:db2:deep3:ancestors   370.136
+nested:db2:deep3:descendants 365.179
+nested:db2:deep3:total       1502.403
 ## database oracle Simple
 # create 1
 # insert 4094
@@ -482,7 +482,7 @@ nested:db2:deep3:total       1461.855
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -490,14 +490,14 @@ nested:db2:deep3:total       1461.855
 # 0
 # descendants 409
 # 0
-simple:oracle:deep3:create      9.709
-simple:oracle:deep3:insert      1591.757
-simple:oracle:deep3:roots       333.357
-simple:oracle:deep3:parent      1395.903
-simple:oracle:deep3:children    2985.405
-simple:oracle:deep3:ancestors   272.122
-simple:oracle:deep3:descendants 229.646
-simple:oracle:deep3:total       6817.900
+simple:oracle:deep3:create      7.576
+simple:oracle:deep3:insert      1429.968
+simple:oracle:deep3:roots       142.858
+simple:oracle:deep3:parent      1366.667
+simple:oracle:deep3:children    2942.447
+simple:oracle:deep3:ancestors   273.031
+simple:oracle:deep3:descendants 240.306
+simple:oracle:deep3:total       6402.852
 ## database oracle PathEnum
 # create 1
 # insert 4094
@@ -507,7 +507,7 @@ simple:oracle:deep3:total       6817.900
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -515,14 +515,14 @@ simple:oracle:deep3:total       6817.900
 # 0
 # descendants 409
 # 0
-pathenum:oracle:deep3:create      1.403
-pathenum:oracle:deep3:insert      957.885
-pathenum:oracle:deep3:roots       55.556
-pathenum:oracle:deep3:parent      304.315
-pathenum:oracle:deep3:children    1282.132
-pathenum:oracle:deep3:ancestors   386.579
-pathenum:oracle:deep3:descendants 1059.585
-pathenum:oracle:deep3:total       4047.454
+pathenum:oracle:deep3:create      7.194
+pathenum:oracle:deep3:insert      1001.958
+pathenum:oracle:deep3:roots       250.003
+pathenum:oracle:deep3:parent      309.201
+pathenum:oracle:deep3:children    1294.304
+pathenum:oracle:deep3:ancestors   387.678
+pathenum:oracle:deep3:descendants 1093.583
+pathenum:oracle:deep3:total       4343.921
 ## database oracle Full
 # create 1
 # insert 4094
@@ -532,7 +532,7 @@ pathenum:oracle:deep3:total       4047.454
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -540,14 +540,14 @@ pathenum:oracle:deep3:total       4047.454
 # 0
 # descendants 409
 # 0
-full:oracle:deep3:create      9.615
-full:oracle:deep3:insert      294.936
-full:oracle:deep3:roots       38.462
-full:oracle:deep3:parent      330.372
-full:oracle:deep3:children    429.622
-full:oracle:deep3:ancestors   302.739
-full:oracle:deep3:descendants 409.000
-full:oracle:deep3:total       1814.744
+full:oracle:deep3:create      10.309
+full:oracle:deep3:insert      268.917
+full:oracle:deep3:roots       27.778
+full:oracle:deep3:parent      326.693
+full:oracle:deep3:children    425.156
+full:oracle:deep3:ancestors   298.758
+full:oracle:deep3:descendants 399.804
+full:oracle:deep3:total       1757.416
 ## database oracle ConnectBy
 # create 1
 # insert 4094
@@ -557,7 +557,7 @@ full:oracle:deep3:total       1814.744
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -565,14 +565,14 @@ full:oracle:deep3:total       1814.744
 # 0
 # descendants 409
 # 0
-connectby:oracle:deep3:create      14.706
-connectby:oracle:deep3:insert      1532.186
-connectby:oracle:deep3:roots       499.977
-connectby:oracle:deep3:parent      1327.922
-connectby:oracle:deep3:children    2801.372
-connectby:oracle:deep3:ancestors   113.140
-connectby:oracle:deep3:descendants 332.520
-connectby:oracle:deep3:total       6621.822
+connectby:oracle:deep3:create      6.579
+connectby:oracle:deep3:insert      1567.982
+connectby:oracle:deep3:roots       100.000
+connectby:oracle:deep3:parent      1362.126
+connectby:oracle:deep3:children    2985.400
+connectby:oracle:deep3:ancestors   115.963
+connectby:oracle:deep3:descendants 341.402
+connectby:oracle:deep3:total       6479.451
 ## database oracle NestedSets
 # create 1
 # insert 4094
@@ -582,7 +582,7 @@ connectby:oracle:deep3:total       6621.822
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -590,14 +590,14 @@ connectby:oracle:deep3:total       6621.822
 # 0
 # descendants 409
 # 0
-nested:oracle:deep3:create      23.256
-nested:oracle:deep3:insert      522.127
-nested:oracle:deep3:roots       0.512
-nested:oracle:deep3:parent      925.340
-nested:oracle:deep3:children    425.156
-nested:oracle:deep3:ancestors   1136.111
-nested:oracle:deep3:descendants 929.545
-nested:oracle:deep3:total       3962.047
+nested:oracle:deep3:create      16.393
+nested:oracle:deep3:insert      474.117
+nested:oracle:deep3:roots       0.510
+nested:oracle:deep3:parent      897.155
+nested:oracle:deep3:children    420.350
+nested:oracle:deep3:ancestors   1108.400
+nested:oracle:deep3:descendants 919.101
+nested:oracle:deep3:total       3836.027
 ## database sqlserver Full
 # create 1
 # insert 4094
@@ -607,7 +607,7 @@ nested:oracle:deep3:total       3962.047
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -615,14 +615,14 @@ nested:oracle:deep3:total       3962.047
 # 0
 # descendants 409
 # 0
-full:sqlserver:deep3:create      19.231
-full:sqlserver:deep3:insert      113.203
-full:sqlserver:deep3:roots       7.752
-full:sqlserver:deep3:parent      148.673
-full:sqlserver:deep3:children    147.494
-full:sqlserver:deep3:ancestors   135.207
-full:sqlserver:deep3:descendants 40.596
-full:sqlserver:deep3:total       612.155
+full:sqlserver:deep3:create      62.500
+full:sqlserver:deep3:insert      154.520
+full:sqlserver:deep3:roots       8.000
+full:sqlserver:deep3:parent      141.379
+full:sqlserver:deep3:children    150.202
+full:sqlserver:deep3:ancestors   133.138
+full:sqlserver:deep3:descendants 40.884
+full:sqlserver:deep3:total       690.623
 ## database sqlserver Simple
 # create 1
 # insert 4094
@@ -632,7 +632,7 @@ full:sqlserver:deep3:total       612.155
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -640,14 +640,14 @@ full:sqlserver:deep3:total       612.155
 # 0
 # descendants 409
 # 0
-simple:sqlserver:deep3:create      8.475
-simple:sqlserver:deep3:insert      2265.634
+simple:sqlserver:deep3:create      100.000
+simple:sqlserver:deep3:insert      2266.888
 simple:sqlserver:deep3:roots       111.110
-simple:sqlserver:deep3:parent      474.478
-simple:sqlserver:deep3:children    436.499
-simple:sqlserver:deep3:ancestors   276.725
-simple:sqlserver:deep3:descendants 309.146
-simple:sqlserver:deep3:total       3882.067
+simple:sqlserver:deep3:parent      451.542
+simple:sqlserver:deep3:children    440.733
+simple:sqlserver:deep3:ancestors   250.766
+simple:sqlserver:deep3:descendants 285.814
+simple:sqlserver:deep3:total       3906.854
 ## database sqlserver NestedSets
 # create 1
 # insert 4094
@@ -657,7 +657,7 @@ simple:sqlserver:deep3:total       3882.067
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -665,14 +665,14 @@ simple:sqlserver:deep3:total       3882.067
 # 0
 # descendants 409
 # 0
-nested:sqlserver:deep3:create      111.110
-nested:sqlserver:deep3:insert      281.762
-nested:sqlserver:deep3:roots       0.190
-nested:sqlserver:deep3:parent      153.702
-nested:sqlserver:deep3:children    40.447
-nested:sqlserver:deep3:ancestors   174.563
-nested:sqlserver:deep3:descendants 157.550
-nested:sqlserver:deep3:total       919.323
+nested:sqlserver:deep3:create      50.000
+nested:sqlserver:deep3:insert      255.428
+nested:sqlserver:deep3:roots       0.194
+nested:sqlserver:deep3:parent      162.312
+nested:sqlserver:deep3:children    41.271
+nested:sqlserver:deep3:ancestors   179.307
+nested:sqlserver:deep3:descendants 163.862
+nested:sqlserver:deep3:total       852.375
 ## database sqlserver HierarchyId
 # create 1
 # insert 4094
@@ -682,7 +682,7 @@ nested:sqlserver:deep3:total       919.323
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -690,14 +690,14 @@ nested:sqlserver:deep3:total       919.323
 # 0
 # descendants 409
 # 0
-hierarchyid:sqlserver:deep3:create      0.309
-hierarchyid:sqlserver:deep3:insert      38.510
-hierarchyid:sqlserver:deep3:roots       22.727
-hierarchyid:sqlserver:deep3:parent      30.377
-hierarchyid:sqlserver:deep3:children    30.036
-hierarchyid:sqlserver:deep3:ancestors   17.783
-hierarchyid:sqlserver:deep3:descendants 27.075
-hierarchyid:sqlserver:deep3:total       166.817
+hierarchyid:sqlserver:deep3:create      124.998
+hierarchyid:sqlserver:deep3:insert      40.552
+hierarchyid:sqlserver:deep3:roots       50.000
+hierarchyid:sqlserver:deep3:parent      34.564
+hierarchyid:sqlserver:deep3:children    34.518
+hierarchyid:sqlserver:deep3:ancestors   21.250
+hierarchyid:sqlserver:deep3:descendants 31.993
+hierarchyid:sqlserver:deep3:total       337.875
 ## database sqlserver PathEnum
 # create 1
 # insert 4094
@@ -707,7 +707,7 @@ hierarchyid:sqlserver:deep3:total       166.817
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -715,14 +715,14 @@ hierarchyid:sqlserver:deep3:total       166.817
 # 0
 # descendants 409
 # 0
-pathenum:sqlserver:deep3:create      28.572
-pathenum:sqlserver:deep3:insert      307.635
-pathenum:sqlserver:deep3:roots       13.158
-pathenum:sqlserver:deep3:parent      121.944
-pathenum:sqlserver:deep3:children    125.345
-pathenum:sqlserver:deep3:ancestors   103.413
-pathenum:sqlserver:deep3:descendants 64.766
-pathenum:sqlserver:deep3:total       764.833
+pathenum:sqlserver:deep3:create      333.331
+pathenum:sqlserver:deep3:insert      336.899
+pathenum:sqlserver:deep3:roots       22.727
+pathenum:sqlserver:deep3:parent      124.696
+pathenum:sqlserver:deep3:children    130.838
+pathenum:sqlserver:deep3:ancestors   108.344
+pathenum:sqlserver:deep3:descendants 61.885
+pathenum:sqlserver:deep3:total       1118.721
 ## database sqlserver With
 # create 1
 # insert 4094
@@ -732,7 +732,7 @@ pathenum:sqlserver:deep3:total       764.833
 # 3000
 # 4000
 # roots 1
-# parent 409
+# parent 410
 # 0
 # children 409
 # 0
@@ -740,11 +740,11 @@ pathenum:sqlserver:deep3:total       764.833
 # 0
 # descendants 409
 # 0
-with:sqlserver:deep3:create      200.005
-with:sqlserver:deep3:insert      2240.832
-with:sqlserver:deep3:roots       90.910
-with:sqlserver:deep3:parent      446.995
-with:sqlserver:deep3:children    410.643
-with:sqlserver:deep3:ancestors   328.514
-with:sqlserver:deep3:descendants 49.354
-with:sqlserver:deep3:total       3767.252
+with:sqlserver:deep3:create      100.000
+with:sqlserver:deep3:insert      2324.816
+with:sqlserver:deep3:roots       111.110
+with:sqlserver:deep3:parent      465.380
+with:sqlserver:deep3:children    1405.499
+with:sqlserver:deep3:ancestors   447.974
+with:sqlserver:deep3:descendants 51.087
+with:sqlserver:deep3:total       4905.865
