@@ -492,11 +492,11 @@ class PathEnum(Tree):
                 FROM pathenum 
                 WHERE path = ''
             """,
-            'oracle': """
+            'oracle': '''
             SELECT *
                 FROM pathenum 
                 WHERE trim(path) IS NULL
-            """,
+            ''',
         })
 
     def get_parent(self, id):
@@ -632,7 +632,7 @@ class PathEnum(Tree):
                             WHERE id = :parent
                     )
                 ''',
-            'sqlserver': """
+            'sqlserver': '''
                 SELECT * 
                     FROM pathenum 
                     WHERE path = (
@@ -640,7 +640,7 @@ class PathEnum(Tree):
                             FROM pathenum 
                             WHERE id = :parent
                     )
-                """,
+                ''',
             }, 
             dict(parent=id)
         )
@@ -676,7 +676,7 @@ class PathEnum(Tree):
                             WHERE id = :parent
                     )
                 ''',
-            'sqlserver': """
+            'sqlserver': '''
                 SELECT * 
                     FROM pathenum 
                     WHERE path LIKE (
@@ -684,7 +684,7 @@ class PathEnum(Tree):
                             FROM pathenum
                             WHERE id = :parent
                     )
-                """,
+                ''',
             },
             dict(parent=id)
         )

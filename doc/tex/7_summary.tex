@@ -1,9 +1,9 @@
 \chapter{Podsumowanie}
 
-Do tej pory wyniki testów były przedstawiane dla każdej metody oddzielnie, pokazując różnice pomiędzy systemami baz danych.
-By móc porównać metody między sobą warto je przedstawić w jednym miejscu.
-Przedstawione tu wyniki powstały poprzez uśrednienie wyników wszystkich SZBD umożliwiających implementację danej metody.
-Wyniki są podane w ilości zapytań ma milisekundę.
+Do tej pory wyniki testów były prezentowane dla każdej metody oddzielnie, pokazując różnice pomiędzy systemami baz danych.
+By móc porównać metody między sobą warto je ująć w jednym miejscu.
+Przedstawione tu wartości powstały poprzez uśrednienie wyników wszystkich SZBD umożliwiających implementację danej metody.
+%Są podane w postaci ilości zapytań ma milisekundę.
 
 
 \begin{qxfig}{summary}{Porównanie wydajności metod}
@@ -15,19 +15,49 @@ Wyniki są podane w ilości zapytań ma milisekundę.
 %\end{qxtab}
 
 
-%\section*{Wnioski}
-%
-%Negatywnym zaskoczeniem są wyniki typu \texttt{hierarchyid}.
-%Okazał się być bardzo wolny we wszystkich operacjach.
-%Ciekawa metoda pełnych ścieżek również okazała się być zbyt powolna.
-%
-%Natomiast metoda zmaterializowanych ścieżek oraz typ \texttt{ltree} wypadły bardzo dobrze.
-%
-%Warto zauważyć, że metoda krawędziowa, pomimo konieczności wykonywania wielu zapytań, całkiem dobrze radzi sobie z pobieraniem przodków i potomków.
-
-
-
 \section*{Którą metodę wybrać?}
+
+W poprzednich rozdziałach zostały przedstawione popularne oraz warte zainteresowania metody przechowywania danych hierarchicznych.
+Zaprezentowano ich implementacje oraz wyniki wydajności.
+
+%Daje to podstawę do odpowiedzi na powyższe pytanie.
+
+Jak można się domyślić, nie istnieje metoda najlepsza w wszystkich sytuacjach%
+\footnote{Dowód nie wprost: jeśli by istniała perfekcyjna metoda to tylko ona była by stosowana}.
+Czyli programista musi przewidzieć
+\footnote{Jeszcze lepiej było by sprawdzić założenia, przeprowadzając symulację}
+jakie operacje będą najczęściej wykorzystywane.
+
+
+Poniżej zostaną podane rady ułatwiające wybór metody dla konkretnego, praktycznego zastosowania.
+
+\begin{description}
+	\item[Częste wstawianie węzłów]
+		Jeśli struktura hierarchiczna jest często modyfikowana to należy wybrać metodę oferującą szybką operację wstawiania.
+		Zdecydowanie najlepsza jest w tym metoda krawędziowa. 
+		Ewentualnie można by użyć reprezentacji zmaterializowanych ścieżek.
+		Przy okazji warto zauważyć, że oparty na niej typ \texttt{ltree} oferuje równie dobrą wydajność. 
+		
+	\item[Pobieranie przodków i potomków]
+		Są to operacje w których reprezentacja krawędziowa radzi sobie słabo.
+		Z tego wynika popularność metody zagnieżdżonych zbiorów, która jest uważana za najlepszą w tych operacjach.
+		Jak pokazały wyniki, niesłusznie.
+		Wprawdzie oferuje dobrą wydajność, ale metoda zmaterializowanych ścieżek jest w tej sytuacji jeszcze lepsza.
+\end{description}
+
+Jeśli nie jest możliwe przewidzenie jak będą używane dane hierarchiczne to najlepiej zastosować reprezentację krawędziową.
+Przemawia za tym:
+\begin{itemize}
+  	\item
+    	Jest najprostsza w implementacji.
+  	\item 
+  		Metoda ma dobrą wydajność. W kilku operacjach jest najszybsza, nigdzie nie jest bardzo powolna.
+  	\item
+  		W razie potrzeby można (bez zmian w strukturze tabel, wystarczy zastosować inne zapytania) przekształcić ją w metodę Wspólnych Wyrażeń Tabelowych lub \texttt{CONNECT BY}.
+  	\item 
+  		Opiera się na bardzo prostej koncepcji, więc przeniesienie danych z niej do dowolnej z omówionych w tej pracy metod powinno być proste.
+\end{itemize}
+
 
 
 

@@ -212,8 +212,8 @@ W takiej sytuacji fragmenty kodu zawierają kod języka \emph{Python}\index{Pyth
 Został on wybrany do tego zadania ze względu na jego ekspresyjność, zwięzłość oraz wysoki poziom abstrakcji.
 Z powodu tych cech jest często nazywany \emph{wykonywalnym pseudokodem}.
 
-Aby polepszyć zwięzłość fragmenty kodu korzystają z biblioteki PADA, stworzonej aby uprościć pisanie implementacji opisanych metod. 
-Więcej informacji o tej bibliotece znajduje się w dodatkach\todo{Załączniku 2}.
+%Aby polepszyć zwięzłość fragmenty kodu korzystają z biblioteki PADA, stworzonej aby uprościć pisanie implementacji opisanych metod. 
+%Więcej informacji o tej bibliotece znajduje się w dodatkach\todo{Załączniku 2}.
 
 
 
@@ -221,6 +221,83 @@ Więcej informacji o tej bibliotece znajduje się w dodatkach\todo{Załączniku 
 %Wszystkie operacje wykorzystują sztucznie utworzony klucz główny\index{klucz!główny} \texttt{id}. 
 
 
+
+
+\section{Metodyka testów}
+
+Ważnym elementem tej pracy jest sprawdzenie wydajności przedstawionych metod w bazach danych.
+W tym rozdziale zostaną przedstawione warunki w jakich odbywały się testy.
+
+\subsection*{Wybrane SZDB}
+
+Do testów zostały wybrane popularne, dostępne bezpłatnie bazy danych. 
+%W przypadku baz Open Source wykorzystano najnowsze, stabilne wersje.
+Dla baz komercyjnych zostały wybrane ich darmowe edycje. 
+Posiadają one ograniczenia co do wielkości danych, wykorzystania zasobów oraz zmniejszoną funkcjonalność. 
+Specyfika testów sprawia jednak, że te ograniczenia nie miały podczas nich znaczenia.
+
+
+\begin{qxtab}{edgeenum}{Użyte wersje baz danych}
+\begin{tabular}{l|l|l}
+Baza danych                            & Wersja & Edycja \\
+\hline
+PostgreSQL\index{PostgreSQL}           &  8.4      & \\
+MySQL\index{MySQL}                     &  5.1      & \\
+SQLite\index{SQLite}                   &  3        & \\
+Oracle Database\index{Oracle}          &  10g      & Express Edition \\
+IBM DB2\index{IBM DB2}                 &  9.7      & Express-C \\
+Microsoft SQL Server\index{SQL Server} &  2008 R2  & Express\\
+\end{tabular}
+\end{qxtab}
+
+\todo{Napisać jaki typ tabelek został użyty w MySQL (MyISAM, InnoDB)}
+
+\subsection*{Dane testowe}
+
+By móc porównać metody przechowywania danych hierarchicznych należy zapewnić jednorodne warunki testów.
+Oznacza to konieczność wykonywania dokładnie tych samych operacji, z takimi samymi parametrami, w tej samej kolejności.
+Aby to osiągnąć testy są przechowywane wewnątrz plików XML (w podkatalogu \verb|src/data|).
+
+Dane użyte podczas zaprezentowanych testów zostały wygenerowane w sposób automatyczny.
+Opisują one las o wysokości $10$, zawierający dwa drzewa, 
+z każdym węzłem wewnętrznym o stopniu $2$.
+W efekcie całe drzewo ma $4094$ węzły.
+
+\subsection*{Środowisko testowe}
+
+Bazy danych były testowane na systemie operacyjnym \emph{Microsoft Windows 7 32bit}.
+Wybór ten był podyktowany faktem, że jedna z testowanych baz (SQL Server) posiadała wersję wyłącznie na systemy z rodziny Windows.
+
+Sprzęt, na którym wykonywane były testy, składał się z:
+\begin{itemize}
+  \item procesora Intel Core2 Quad 2.4 Ghz
+  \item 4 GB pamięci DDR2 (3,25 GB pamięci dostępnej dla systemu)
+  \item dysku HDD 1TB klasy ekonomicznej
+\end{itemize}
+
+Serwer bazy danych działał na tej samej maszynie co program testujący.
+Zmniejsza to opóźnienia sieciowe, ale zwiększa zużycie procesora%
+\footnote{W praktyce na maszynie czterordzeniowej czas procesora nie był problemem.}.
+
+\subsection*{Optymalizacje}
+
+Aby nie faworyzować żadnej z testowanych baz ustanowione zostały poniższe zasady:
+\begin{itemize}
+    \item Bazy nie były w żaden sposób dostrajane \eng{database tuning}, czyli pracują z domyślnymi ustawieniami.
+    \item Nie zastosowano indeksów\footnote{Jawnych indeksów --- klucze główne były stosowane}
+        oraz kluczy obcych.
+    \item Zapytania były pisane z myślą by być czytelne i dobrze ilustrować koncepcje danej reprezentacji.
+    Została więc zastosowana maksyma Donalda Knutha: \emph{,,przedwczesna optymalizacja jest źródłem wszelkiego zła''}.
+\end{itemize}
+
+\subsection*{Prezentacja wyników}
+
+Wyniki wydajności są prezentowane na końcu opisu każdej z opisywanych metod.
+Są podawane zarówno w postaci tabeli (umożliwiającej dokładną analizę wyników)
+jak i wykresu słupkowego (dającego możliwość szybkiego przejrzenia wyników).
+
+Zastosowaną miarą wydajności jest \emph{przepustowość} (czyli ilość wykonanych zapytań w danym czasie).
+Takie podejście jest intuicyjne dla ludzi --- większa wartość oznacza lepszy wynik. 
 
 
 
