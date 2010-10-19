@@ -26,6 +26,15 @@ def chart(data, filename, value2desc=value2desc):
         'oracle':     '#f00000',
         'db2':        '#167018',
         'sqlserver':  '#000000',
+        
+        'simple':     '#010202',
+        'nested':     '#ee2e2f',
+        'pathenum':   '#008c48',
+        'full':       '#185aa9',
+        'with':       '#f47d23',
+        'connectby':  '#662c91',
+        'ltree':      '#a21d21',
+        'hierarchyid':'#b43894',
     }
     
     N = len(data[0]) - 1
@@ -35,7 +44,7 @@ def chart(data, filename, value2desc=value2desc):
     width = 1.0 / N
     bwidth = 1.0 / (M + 1)
     
-    print '==' * 200, N, M
+    #print '==' * 200, N, M
 
     
     plt.gca().yaxis.grid(True)
@@ -49,8 +58,8 @@ def chart(data, filename, value2desc=value2desc):
         rects.append(plt.bar(ind + bwidth * i + (bwidth/2), none2zero(fordb[1:]), bwidth, color=colors[fordb[0]]))
     
     
-    #plt.ylabel(u'Przepustowość (zapytań/s).', size=16)
-    plt.ylabel(u'Czas (s).', size=16)
+    plt.ylabel(u'Przepustowość [zapytań/ms].', size=16)
+    #plt.ylabel(u'Czas (s).', size=16)
     plt.xticks(ind + (width * N / 2), [value2desc(i) for i in data[0][1:]], fontsize=16)
     plt.ylim(ymax=maxval * (1.06 + 0.075 * M))
     

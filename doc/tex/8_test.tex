@@ -3,12 +3,7 @@
 Ważnyme elementem tej pracy jest sprawdzenie wydajności przedstawionych metod w bazach danych.
 Zostaną tu przedstawione warunki w jakich odbywały się testy.
 
-Uwagi:
- - czas obejmuje również pobranie wynikóww z bazy
-
-Prezentacja wyników: jako przepustowość (czyli większa wartość - lepiej)
-
-\section{Wybrane SZDB}
+\section*{Wybrane SZDB}
 
 Do testów zostały wybrane popularne, dostępne bezpłatnie (również do zastosowań komercyjnych) bazy danych. 
 %W przypadku baz Open Source wykorzystano najnowsze, stabilne wersje.
@@ -60,40 +55,52 @@ Microsoft SQL Server\index{SQL Server} &  2008 R2  & Express\\
 
 
 
-\section{Dane testowe}
+\section*{Dane testowe}
 
-% Dane użyte podczas testów zostały wygenerowane losowo w sposób automatyczny. 
-% Program który zajmuje się tym zadaniem został dołączony do tej pracy.
+By móc porównać metody przechowywania danych hierarchicznych należy zapewnić jednorodne warunki testów.
+Oznacza to konieczność wykonywania dokładnie tych samych operacji z takimi samymi parametrami w tej samej kolejności.
+Aby to osiągnąć testy są przechowywane jako pliki XML (w podkatalogu \verb|src/data|).
 
-Dane użyte podczas testów pochodzą to drzewo kategorii \url{http://www.dmoz.org/}.
+%W tym celu zastosowano pliki 
 
-
-%\begin{qxtab}{dmozdist}{Liczebność węzłów na poszczegółnych poziomach w danych testowych}\end{qxfig}
-\begin{tabular}{|l|l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }|}
-\hline
-Poziom     & 0      & 1     & 2     & 3     & 4     & 5     & 6     & 7     & 8     & 9     & 10    & 11 \\
-\hline
-Liczebność & 21     & 539   & 6259  & 25834 & 50654 & 41752 & 31325 & 21573 & 7388  & 2090  & 303   & 16 \\
-\hline
-\end{tabular}
-%\end{qxtab}
+Dane użyte podczas testów zostały wygenerowane w sposób automatyczny.
+Opisują one las o wysokości $10$, zawierający dwa drzewa, 
+z każdym węzłem wewnętrznym o stopniu $2$.
+W efekcie całe drzewo ma $4094$ węzłów.
 
 
-Większość testów wymaga identyfikatorów węzłów. 
-Wybranie losowego identyfikatora z istniejących w bazie danych było by najprostrzym 
-ale też niedoskonałym \todo{obarczonym błędem} rozwiązaniem.
-Wynika to z tego, że w drzewe (o stopniu większym niż 2\todo{bardzo nieprecyzyjnie napisane}) 
-liście stanowią najliczniejszą grupę węzłów.
-Natomiast węzły o niskim poziomie są małoliczne.
-Dlatego zapytanie o potomków tak wylosowanego węzła było by zadaniem prostym, natomiast przodków --- trudnym (gdyż z dużym prawdopodobieństwem wylosowany by został liść).
 
-Aby zapobiec takiej sytuacji identyfikatory dla zapytań losowane są dwuetapowo:
-\begin{enumerate}
- \item najpierw losowany jest jeden z poziomów węzłów w drzewie
- \item nastepnia losowany jest jeden z węzłów identyfikatorów
-\end{enumerate}
-Ta procedura powtarza się do uzyskania wymaganej ilości identyfikatorów węzłów. 
-W obu losowaniach wykorzystywany jest \emph{dyskretny rozkład jednostajny}. 
+%Program który zajmuje się tym zadaniem został dołączony do tej pracy.
+%
+%Dane użyte podczas testów pochodzą to drzewo kategorii \url{http://www.dmoz.org/}.
+%
+%
+%%\begin{qxtab}{dmozdist}{Liczebność węzłów na poszczegółnych poziomach w danych testowych}\end{qxfig}
+%\begin{tabular}{|l|l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }l@{ }|}
+%\hline
+%Poziom     & 0      & 1     & 2     & 3     & 4     & 5     & 6     & 7     & 8     & 9     & 10    & 11 \\
+%\hline
+%Liczebność & 21     & 539   & 6259  & 25834 & 50654 & 41752 & 31325 & 21573 & 7388  & 2090  & 303   & 16 \\
+%\hline
+%\end{tabular}
+%%\end{qxtab}
+%
+%
+%Większość testów wymaga identyfikatorów węzłów. 
+%Wybranie losowego identyfikatora z istniejących w bazie danych było by najprostrzym 
+%ale też niedoskonałym \todo{obarczonym błędem} rozwiązaniem.
+%Wynika to z tego, że w drzewe (o stopniu większym niż 2\todo{bardzo nieprecyzyjnie napisane}) 
+%liście stanowią najliczniejszą grupę węzłów.
+%Natomiast węzły o niskim poziomie są małoliczne.
+%Dlatego zapytanie o potomków tak wylosowanego węzła było by zadaniem prostym, natomiast przodków --- trudnym (gdyż z dużym prawdopodobieństwem wylosowany by został liść).
+%
+%Aby zapobiec takiej sytuacji identyfikatory dla zapytań losowane są dwuetapowo:
+%\begin{enumerate}
+% \item najpierw losowany jest jeden z poziomów węzłów w drzewie
+% \item nastepnia losowany jest jeden z węzłów identyfikatorów
+%\end{enumerate}
+%Ta procedura powtarza się do uzyskania wymaganej ilości identyfikatorów węzłów. 
+%W obu losowaniach wykorzystywany jest \emph{dyskretny rozkład jednostajny}. 
 
 
 
@@ -115,20 +122,58 @@ W obu losowaniach wykorzystywany jest \emph{dyskretny rozkład jednostajny}.
 % \end{itemize}
 
 
-\section{Środowisko testowe}
+\section*{Środowisko testowe}
 
-Aby zminimalizować potencjalne problemy wynikające z instalacji wielu baz na 
-jednej maszynie dla potrzeb testów zostały stworzone dla nich odzielne maszyny wirtualne. 
-Wykorzystano VirtualBox 2.1. Każdej maszynie został przyznany 10GB virtualny dysk 
-o~stałym rozmiarze oraz 512 MB RAM. Program testujący działał również na maszynie wirtualnej, 
-więc ominięto problem przepustowości interfacu sieciowego. 
-\todo{lepsze nazwy; wersja; usunac powtórzenia}
+Bazy danych były testowane na systemie operacyjnym \emph{Microsoft Windows 7 32bit}.
+Wybór ten był podyktowany faktem, że jedna z testowanych baz (SQL Server) posiadała wersję wyłącznie na systemy z rodziny Windows.
 
-Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. 
-Baza Microsoft SQL Server została zainstalowana na Windows XP Service Pack 2.
+Sprzęt, na którym wykonywane były testy, składał się z:
+\begin{itemize}
+  \item procesora Intel Core2 Quad 2.4 Ghz
+  \item 4 GB pamięci DDR2 (3,25 GB pamięci dostępnej dla systemu)
+  \item dysku HDD 1TB klasy ekonomicznej
+\end{itemize}
 
-\section{Dostrajanie baz danych}
+Server bazy danych działał na tej samej maszynie co program testujący.
+Zminejszało to opóźnienia sieciowe ale zwiększało zużycie procesora%
+\footnote{W praktyce na maszynie czterordzeniowej czas procesora nie był problemem.}.
 
-Bazy nie były w żaden sposób dostrajane \eng{tuning}, czyli pracują z domyślnymi ustawieniami. 
+%Aby zminimalizować potencjalne problemy wynikające z instalacji wielu baz na 
+%jednej maszynie dla potrzeb testów zostały stworzone dla nich odzielne maszyny wirtualne. 
+%Wykorzystano VirtualBox 2.1. Każdej maszynie został przyznany 10GB virtualny dysk 
+%o~stałym rozmiarze oraz 512 MB RAM. Program testujący działał również na maszynie wirtualnej, 
+%więc ominięto problem przepustowości interfacu sieciowego. 
+%\todo{lepsze nazwy; wersja; usunac powtórzenia}
+%
+%Bazy posiadające wersję dla systemu GNU/Linux zostały zainstalowane na nim. 
+%Baza Microsoft SQL Server została zainstalowana na Windows XP Service Pack 2.
 
+\section*{Optymalizacje}
 
+%Najczęstrzym zastrzerzeniem odnoszącym się do wyników benchmarków
+%
+%
+
+Aby nie faworyzować żadnej z testowanych baz ustanowione zostały poniższe zasady:
+\begin{itemize}
+    \item Bazy nie były w żaden sposób dostrajane \eng{database tuning}, czyli pracują z domyślnymi ustawieniami.
+    \item Nie zastosowano indeksów\footnote{Jawnych indeksów --- klucze główne były stosowane}
+        oraz kluczy obcych.
+  %\item Algorytm każdej operacji był pisane tak by był czytelne i ogólne, a nie
+    Zapytania były pisane z myślą by być czytelne i dobrze ilustrować koncepcje danej reprezentacji.
+    Została więc zastowowana maksyma Donalda Knutha: \emph{,,przedwczesna optymalizacja jest źródłem wszelkiego zła''}.
+\end{itemize}
+
+\section*{Prezentacja wyników}
+
+Wyniki wydajności są prezentowane na końcu opisu każdej z opisywanych metod.
+Są podawane zarówno w postaći tabeli (umożliwiającej dokładną analizę wyników)
+jak i wykresu słupkowego (dającego możliwość szybkiego przejżenia wyników).
+
+%%Uwagi:
+%% - 
+%%
+%%Prezentacja wyników: jako przepustowość (czyli większa wartość - lepiej)
+
+Zastosowaną miarą wydajności jest \emph{przepustowość} (czyli ilość wykonanych zapytań w danym czasie).
+Takie podejście jest intuicyjne dla ludzi --- większa wartość oznacza lepszy wynik. 

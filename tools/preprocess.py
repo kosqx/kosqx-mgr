@@ -54,13 +54,23 @@ def value2desc(value, none=' --- '):
         'children':    'Dzieci',
         'ancestors':   'Przodkowie',
         'descendants': 'Potomkowie',
+        
+        'simple':      'Metoda krawędziowa',
+        'nested':      'Metoda zagnieżdżonych zbiorów',
+        'pathenum':    'Metoda zmaterializowanych ścieżek',
+        'full':        'Metoda pełnych ścieżek',
+        'with':        'Wspólne Wyrażenia Tabelowe',
+        'connectby':   'CONNECT BY',
+        'ltree':       'PostgreSQL ltree',
+        'hierarchyid': 'SQL Server hierarchyid',
+        
     }
     if value is None:
         return none
     elif value in names:
         return names[value]
     elif isinstance(value, (int, float)):
-        return ('$%.2f$' % float(value)).replace('.', ',')
+        return ('$%.3f$' % float(value)).replace('.', ',')
     else:
         return value
 
@@ -77,7 +87,9 @@ def read_results(filename):
         name = tuple(parts[0].split(':'))
         value = float(parts[1])
         
-        result[name] = value
+        if name[-1] != 'total':
+            ## FIXME
+            result[name] = value / 1000.0
         
     return result
 
@@ -239,6 +251,8 @@ def code_results_chart(line):
     chart(final, filename, value2desc)
     return r'\includegraphics[totalheight=0.4\textheight]{%s}' % filename
     #return r'\includegraphics[width=\textwidth]{%s}' % filename
+    
+
 
 def code_results_testdata(line):
     global config
@@ -247,6 +261,53 @@ def code_results_testdata(line):
     config['testdata'] = parts[-1]
     
     return ''
+
+def code_summary_chart(line):
+    global results
+    global config
+    
+    import random
+    
+    testdata = config['testdata']
+    
+    summary = {}
+    for (method, db, data, op) in results:
+        if data == testdata:
+            summary[(method, op)] = summary.get((method, op), []) + [results[(method, db, data, op)]]
+    
+    
+    #final = process_results(results, method, testdata)
+    def rand_list(n, mul=1.0):
+        return [random.random() * mul + 4 for i in xrange(n)]
+
+    def do_list(method):
+        grp = ['create', 'insert', 'roots', 'parent', 'children', 'ancestors', 'descendants']
+        avg = lambda x: sum(x)/len(x)
+        return [avg(summary[(method, i)]) for i in grp]
+    
+    #final = [
+    #    [None,         'create', 'insert', 'roots', 'parent', 'children', 'ancestors', 'descendants'],
+    #    ['simple',      ] + rand_list(7, 20),
+    #    ['nested',      ] + rand_list(7, 20),
+    #    ['pathenum',    ] + rand_list(7, 20),
+    #    ['full',        ] + rand_list(7, 20),
+    #    ['with',        ] + rand_list(7, 20),
+    #    ['connectby',   ] + rand_list(7, 20),
+    #    ['ltree',       ] + rand_list(7, 20),
+    #    ['hierarchyid', ] + rand_list(7, 20),
+    #]
+    
+    final = [
+        [None,         'create', 'insert', 'roots', 'parent', 'children', 'ancestors', 'descendants'],
+    ]
+    for i in ['simple', 'nested', 'pathenum', 'full', 'with', 'connectby', 'ltree', 'hierarchyid']:
+        final.append([i] + do_list(i))
+    
+    
+    filename = 'img_chart_summary.png'
+    chart(final, filename, value2desc)
+    return r'\includegraphics[totalheight=0.4\textheight]{%s}' % filename
+    #return r'\includegraphics[width=\textwidth]{%s}' % filename
 
 def code_dot(lines):
     filename = 'img_graph_%s.png' % lines[0].split()[-1]
@@ -322,6 +383,11 @@ def main(args):
     global config
     config = {}
     
+    
+    for i in results:
+        if results[i] > 10000.:
+            print i, results[i]
+    
     tmpdir = tempfile.mkdtemp()
     abspath = os.path.abspath(args[0])
     
@@ -348,6 +414,8 @@ def main(args):
         (r'^%! *result-table',              None,                 code_results_table),
         (r'^%! *result-chart',              None,                 code_results_chart),
         (r'^%! *result-testdata',           None,                 code_results_testdata),
+        
+        (r'^%! *summary-chart',             None,                 code_summary_chart),
     ])
     
     os.system('make pdf')
